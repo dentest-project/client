@@ -37,4 +37,8 @@ html {
 h1 {
   margin: 1rem 0;
 }
+
+a {
+  color: inherit;
+}
 </style>

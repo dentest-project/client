@@ -8,15 +8,19 @@ declare module 'vue/types/vue' {
 
 interface Colors {
   primary: string,
+  secondary: string,
   add: string,
   success: string,
-  error: string
+  error: string,
+  lightPrimary: string
 }
 
-// palette: https://flatuicolors.com/palette/gb
+// palette: https://flatuicolors.com/palette/au
 Vue.prototype.$colors = {
-  primary: '#40739e',
-  add: '#0097E6',
-  success: '#44BD32',
-  error: '#C23616'
+  primary: '#686de0',
+  secondary: '#f0932b',
+  add: '#4834d4',
+  success: '#6ab04c',
+  error: '#eb4d4b',
+  lightPrimary: '#E2E7FF'
 };

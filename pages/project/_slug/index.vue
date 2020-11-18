@@ -1,6 +1,11 @@
 <template>
   <main>
     <h1>{{ title }}</h1>
+    <breadcrumb :items="breadcrumbItems" />
+    <actions-bar>
+      <add-folder-button />
+      <add-feature-button />
+    </actions-bar>
     <grid3>
       <primary-link-button v-for="path in path.children" :key="path.id" :to="`/project/${path.id}`" :content="path.path" />
     </grid3>
@@ -9,9 +14,13 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import ActionsBar from '~/components/ActionsBar.vue';
+import AddFeatureButton from '~/components/AddFeatureButton.vue';
+import AddFolderButton from '~/components/AddFolderButton.vue';
+import Breadcrumb from '~/components/Breadcrumb.vue';
 import Grid3 from '~/components/Grid3.vue';
 import PrimaryLinkButton from '~/components/PrimaryLinkButton.vue';
-import { Path, PathFeature, PathList } from '~/types';
+import { Breadcrumb as BreadcrumbType, Path, PathFeature, PathList } from '~/types';
 
 interface InitialData {
   path: Path
@@ -20,7 +29,7 @@ interface InitialData {
 interface Data extends InitialData {}
 
 export default Vue.extend({
-  components: { Grid3, PrimaryLinkButton },
+  components: { AddFeatureButton, AddFolderButton, ActionsBar, Breadcrumb, Grid3, PrimaryLinkButton },
   async asyncData({ $api, params }): Promise<InitialData> {
     const path: Path = await $api.getPath(params.slug);
 
@@ -43,8 +52,24 @@ export default Vue.extend({
   methods: {
   },
   computed: {
-    title() {
+    title(): string {
       return (this as any).path.project ? (this as any).path.project.title : (this as any).path.path;
+    },
+    breadcrumbItems(): BreadcrumbType {
+      const out = [] as BreadcrumbType;
+      let path = (this as any).path;
+
+      while (path !== undefined) {
+        out.push({
+          text: path.project ? path.project.title : path.path,
+          href: path.id,
+          disabled: path.id === this.path.id
+        });
+        path = path.parent;
+      }
+      out.push({ text: 'Entest', href: '/', disabled: false });
+
+      return out.reverse();
     }
   }
 });

@@ -1,3 +1,9 @@
+interface BreadcrumbItem {
+  text: string,
+  disabled: boolean,
+  href: string
+}
+
 interface ProjectListItemPath {
   id: string
 }
@@ -27,7 +33,8 @@ interface Path {
   features: Array<PathFeature>
 }
 
+type Breadcrumb = Array<BreadcrumbItem>
 type PathList = Array<Path>
 type ProjectList = Array<ProjectListItem>
 
-export { Path, PathFeature, PathList, ProjectList, ProjectListItem };
+export { Breadcrumb, Path, PathFeature, PathList, ProjectList, ProjectListItem };
