@@ -4,13 +4,22 @@ interface BreadcrumbItem {
   href: string
 }
 
-interface CreatePathParent {
+interface CreateFeature {
+  path: CreateFeaturePath,
+  title: string
+}
+
+interface CreateFeaturePath {
   id: string
 }
 
 interface CreatePath {
   parent: CreatePathParent,
   path: string
+}
+
+interface CreatePathParent {
+  id: string
 }
 
 interface CreateProject {
@@ -22,14 +31,13 @@ interface CreateProjectRootPath {
   path: string
 }
 
-interface ProjectListItemPath {
-  id: string
-}
-
-interface ProjectListItem {
+interface Path {
   id: string,
-  title: string,
-  rootPath: ProjectListItemPath
+  project?: PathProject,
+  parent?: Path,
+  path: string,
+  children: PathList,
+  features: Array<PathFeature>
 }
 
 interface PathFeature {
@@ -42,17 +50,28 @@ interface PathProject {
   title: string
 }
 
-interface Path {
+interface ProjectListItem {
   id: string,
-  project?: PathProject,
-  parent?: Path,
-  path: string,
-  children: PathList,
-  features: Array<PathFeature>
+  title: string,
+  rootPath: ProjectListItemPath
+}
+
+interface ProjectListItemPath {
+  id: string
 }
 
 type Breadcrumb = Array<BreadcrumbItem>
 type PathList = Array<Path>
 type ProjectList = Array<ProjectListItem>
 
-export { Breadcrumb, CreatePath, CreateProject, Path, PathFeature, PathList, ProjectList, ProjectListItem };
+export {
+  Breadcrumb,
+  CreateFeature,
+  CreatePath,
+  CreateProject,
+  Path,
+  PathFeature,
+  PathList,
+  ProjectList,
+  ProjectListItem
+};
