@@ -16,10 +16,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import ActionsBar from '~/components/ActionsBar.vue';
-import AddButton from '~/components/AddButton.vue';
-import CreateProjectDialog from '~/components/CreateProjectDialog.vue';
+import AddButton from '~/components/buttons/AddButton.vue';
+import CreateProjectDialog from '~/components/dialogs/CreateProjectDialog.vue';
 import Grid3 from '~/components/Grid3.vue';
-import PrimaryLinkButton from '~/components/PrimaryLinkButton.vue';
+import PrimaryLinkButton from '~/components/buttons/PrimaryLinkButton.vue';
 import { ProjectList } from '~/types';
 
 interface InitialData {
@@ -39,7 +39,6 @@ export default Vue.extend({
     return {
       projects: [] as ProjectList,
       createProjectDialog: false,
-      projectName: '',
       createdSnackbarOpened: false,
       creationErrorSnackbarOpened: false
     }

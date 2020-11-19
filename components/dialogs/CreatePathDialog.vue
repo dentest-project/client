@@ -2,17 +2,13 @@
   <v-dialog width="480" :value=value @input="onDialogStatusChanged">
     <form @submit.prevent="onSubmit">
       <v-card>
-        <v-card-title class="headline">
-          Create project
-        </v-card-title>
+        <v-card-title class="headline">Create new path</v-card-title>
         <v-card-text>
-          <v-text-field v-model="projectName" label="Project name" clearable />
+          <v-text-field v-model="pathName" label="Path name" clearable />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn type="submit" :color="$colors.primary" text>
-            Create
-          </v-btn>
+          <submit-button>Create path</submit-button>
         </v-card-actions>
       </v-card>
     </form>
@@ -20,32 +16,42 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropOptions } from 'vue';
+import SubmitButton from '~/components/buttons/SubmitButton.vue';
+import { Path } from '~/types';
 
 export default Vue.extend({
+  components: { SubmitButton },
   model: {
     prop: 'value'
   },
   props: {
-    value: Boolean
+    value: {
+      type: Boolean,
+      required: true
+    },
+    path: {
+      type: Object,
+      required: true
+    } as PropOptions<Path>
   },
   data: function () {
     return {
-      projectName: ''
+      pathName: ''
     }
   },
   methods: {
     async onSubmit (): Promise<void> {
       try {
-        await this.$axios.post(`${this.$axios.defaults.baseURL}/projects`, {
-          title: this.projectName,
-          rootPath: {
-            path: '/'
-          }
-        });
+        await this.$api.createPath({
+          parent: {
+            id: this.path.id
+          },
+          path: this.pathName
+        }, this.$axios);
 
         this.$emit('created');
-        this.projectName = '';
+        this.pathName = '';
       } catch (error) {
         this.$emit('errored');
       }
