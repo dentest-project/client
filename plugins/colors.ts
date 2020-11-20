@@ -12,7 +12,8 @@ interface Colors {
   add: string,
   success: string,
   error: string,
-  lightPrimary: string
+  lightPrimary: string,
+  cancel: string
 }
 
 // palette: https://flatuicolors.com/palette/au
@@ -22,5 +23,6 @@ Vue.prototype.$colors = {
   add: '#4834d4',
   success: '#6ab04c',
   error: '#eb4d4b',
-  lightPrimary: '#E2E7FF'
+  lightPrimary: '#E2E7FF',
+  cancel: '#777777'
 };

@@ -1,11 +1,11 @@
 <template>
-  <section>
+  <v-row class="actions-bar">
     <slot />
-  </section>
+  </v-row>
 </template>
 
 <style scoped>
-section {
+.actions-bar {
   margin: 1rem 0 2rem;
 }
 </style>
