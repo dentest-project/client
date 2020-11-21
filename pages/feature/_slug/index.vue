@@ -4,8 +4,17 @@
     <breadcrumb :items="breadcrumbItems" />
     <actions-bar>
       <v-spacer />
-      <delete-button @click.stop="onDeleteButtonClicked" />
+      <delete-button @click.stop="activateDeleteDialog" />
     </actions-bar>
+    <delete-feature-dialog
+      v-model="deleteDialog"
+      @close="deactivateDeleteDialog"
+      @deleted="onDeleted"
+      @errored="onDeleteErrored"
+      :feature="feature"
+    />
+    <v-snackbar v-model="deletedSnackbarOpened" :color="$colors.success">Feature deleted</v-snackbar>
+    <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the feature</v-snackbar>
   </main>
 </template>
 
@@ -14,6 +23,7 @@ import Vue from 'vue'
 import ActionsBar from '~/components/ActionsBar.vue';
 import Breadcrumb from '~/components/Breadcrumb.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
+import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
 import { Breadcrumb as BreadcrumbType, Feature, Scenario } from '~/types';
 
 interface InitialData {
@@ -21,6 +31,9 @@ interface InitialData {
 }
 
 interface Data extends InitialData {
+  deleteDialog: boolean,
+  deletedSnackbarOpened: boolean,
+  deleteErrorSnackbarOpened: boolean
 }
 
 export default Vue.extend({
@@ -28,6 +41,7 @@ export default Vue.extend({
     ActionsBar,
     Breadcrumb,
     DeleteButton,
+    DeleteFeatureDialog
   },
   async asyncData({ $api, params }): Promise<InitialData> {
     const feature: Feature = await $api.getFeature(params.slug);
@@ -44,12 +58,27 @@ export default Vue.extend({
         title: '',
         description: '',
         scenarios: [] as Array<Scenario>
-      } as Feature
+      } as Feature,
+      deleteDialog: false,
+      deletedSnackbarOpened: false,
+      deleteErrorSnackbarOpened: false
     }
   },
   methods: {
-    onDeleteButtonClicked(): void {
-      alert('click');
+    activateDeleteDialog(): void {
+      this.deleteDialog = true;
+    },
+    deactivateDeleteDialog(): void {
+      this.deleteDialog = false;
+    },
+    onDeleted(): void {
+      this.deactivateDeleteDialog();
+      this.deletedSnackbarOpened = true;
+      setTimeout(() => this.$router.push(this.$routes.project(this.feature.path.id)), 2000);
+    },
+    onDeleteErrored(): void {
+      this.deactivateDeleteDialog();
+      this.deleteErrorSnackbarOpened = true;
     }
   },
   computed: {
