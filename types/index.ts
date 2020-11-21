@@ -157,5 +157,6 @@ export {
   PathFeature,
   PathList,
   Project,
-  ProjectList
+  ProjectList,
+  Scenario
 };
