@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { Plugin } from '@nuxt/types'
 import { NuxtAxiosInstance } from '@nuxtjs/axios';
-import { CreateFeature, CreatePath, CreateProject, Path, ProjectList } from '~/types';
+import { CreateFeature, CreatePath, CreateProject, Feature, Path, Project, ProjectList } from '~/types';
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -18,9 +18,9 @@ declare module '@nuxt/types' {
 }
 
 interface Api {
-  createFeature(feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<any>,
+  createFeature(feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
   createPath(path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path>,
-  createProject(project: CreateProject, axios?: NuxtAxiosInstance): Promise<any>,
+  createProject(project: CreateProject, axios?: NuxtAxiosInstance): Promise<Project>,
   deletePath(id:string, axios?: NuxtAxiosInstance): Promise<void>,
   deleteProject(id: string, axios?: NuxtAxiosInstance): Promise<void>,
   getPath(id: string, axios?: NuxtAxiosInstance): Promise<Path>,
@@ -47,9 +47,9 @@ const Api = (context: any) => {
   }
 
   context.$api = {
-    createFeature: async (feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<any> => post('features', feature, axios),
+    createFeature: async (feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => post('features', feature, axios),
     createPath: async (path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path> => post('paths', path, axios),
-    createProject: async (project: CreateProject, axios?: NuxtAxiosInstance): Promise<any> => post('projects', project, axios),
+    createProject: async (project: CreateProject, axios?: NuxtAxiosInstance): Promise<Project> => post('projects', project, axios),
     deletePath: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`paths/${id}`, axios),
     deleteProject: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`projects/${id}`, axios),
     getPath: async (id: string, axios?: NuxtAxiosInstance): Promise<Path> => get(`paths/${id}`, axios),

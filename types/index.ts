@@ -1,3 +1,34 @@
+enum ScenarioType {
+  Background = 'background',
+  Outline = 'outline',
+  Regular = 'regular'
+}
+
+enum StepAdverb {
+  Given = 'given',
+  When = 'when',
+  Then = 'then',
+  And = 'and',
+  But = 'but'
+}
+
+enum StepParamType {
+  Inline = 'inline',
+  Multiline = 'multiline',
+  Table = 'table'
+}
+
+enum StepPartType {
+  Sentence = 'sentence',
+  Param = 'param'
+}
+
+enum StepType {
+  Given = 'given',
+  When = 'when',
+  Then = 'then'
+}
+
 interface BreadcrumbItem {
   text: string,
   disabled: boolean,
@@ -31,6 +62,23 @@ interface CreateProjectRootPath {
   path: string
 }
 
+interface Feature {
+  id: string,
+  path: Path,
+  title: string,
+  description: string,
+  scenarios: Array<Scenario>
+}
+
+interface InlineStepParam extends StepParam {
+  content: string,
+  stepPart: StepPart
+}
+
+interface MultilineStepParam extends StepParam {
+  content: string
+}
+
 interface Path {
   id: string,
   project?: PathProject,
@@ -50,28 +98,64 @@ interface PathProject {
   title: string
 }
 
-interface ProjectListItem {
-  id: string,
-  title: string,
-  rootPath: ProjectListItemPath
+interface Project extends PathProject {
+  rootPath: ProjectRootPath
 }
 
-interface ProjectListItemPath {
+interface ProjectRootPath {
   id: string
+}
+
+interface Scenario {
+  id: number,
+  type: ScenarioType,
+  title: string,
+  steps: Array<ScenarioStep>,
+  examples?: Array<Array<string>>
+}
+
+interface ScenarioStep {
+  id: number,
+  adverb: StepAdverb,
+  step: Step,
+  params: Array<InlineStepParam | MultilineStepParam | TableStepParam>
+}
+
+interface Step {
+  id: number,
+  type: StepType,
+  parts: Array<StepPart>
+}
+
+interface StepParam {
+  id: number,
+  type: StepParamType,
+}
+
+interface StepPart {
+  id: number,
+  type: StepPartType,
+  content: string,
+  priority: number
+}
+
+interface TableStepParam extends StepParam {
+  content: Array<Array<string>>
 }
 
 type Breadcrumb = Array<BreadcrumbItem>
 type PathList = Array<Path>
-type ProjectList = Array<ProjectListItem>
+type ProjectList = Array<Project>
 
 export {
   Breadcrumb,
   CreateFeature,
   CreatePath,
   CreateProject,
+  Feature,
   Path,
   PathFeature,
   PathList,
-  ProjectList,
-  ProjectListItem
+  Project,
+  ProjectList
 };
