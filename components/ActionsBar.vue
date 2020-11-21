@@ -8,4 +8,8 @@
 .actions-bar {
   margin: 1rem 0 2rem;
 }
+
+.actions-bar > * {
+  margin: 0.2rem;
+}
 </style>

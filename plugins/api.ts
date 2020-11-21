@@ -21,7 +21,8 @@ interface Api {
   createFeature(feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<any>,
   createPath(path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path>,
   createProject(project: CreateProject, axios?: NuxtAxiosInstance): Promise<any>,
-  deletePath(path: Path, axios?: NuxtAxiosInstance): Promise<void>,
+  deletePath(id:string, axios?: NuxtAxiosInstance): Promise<void>,
+  deleteProject(id: string, axios?: NuxtAxiosInstance): Promise<void>,
   getPath(id: string, axios?: NuxtAxiosInstance): Promise<Path>,
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>
 }
@@ -50,9 +51,10 @@ const Api = (context: any) => {
     createPath: async (path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path> => post('paths', path, axios),
     createProject: async (project: CreateProject, axios?: NuxtAxiosInstance): Promise<any> => post('projects', project, axios),
     deletePath: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`paths/${id}`, axios),
+    deleteProject: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`projects/${id}`, axios),
     getPath: async (id: string, axios?: NuxtAxiosInstance): Promise<Path> => get(`paths/${id}`, axios),
     getProjects: async (axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`projects`, axios)
-  }
+  } as Api;
 };
 
 const ApiPlugin: Plugin = Api;

@@ -5,7 +5,7 @@
       <add-button @click.stop="activateCreateProjectDialog" />
     </actions-bar>
     <grid3>
-      <primary-link-button v-for="project in projects" :key="project.id" :to="`/project/${project.rootPath.id}`" :content="project.title" />
+      <primary-link-button v-for="project in projects" :key="project.id" :to="$routes.project(project.rootPath.id)" :content="project.title" />
     </grid3>
     <create-project-dialog v-model="createProjectDialog" @close="deActivateCreateProjectDialog" @created="onCreated" @errored="onErrored" />
     <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Project created</v-snackbar>

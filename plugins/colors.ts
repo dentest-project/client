@@ -25,4 +25,4 @@ Vue.prototype.$colors = {
   error: '#eb4d4b',
   lightPrimary: '#E2E7FF',
   cancel: '#777777'
-};
+} as Colors;

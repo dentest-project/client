@@ -9,8 +9,8 @@
       <delete-button @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
-      <primary-link-button v-for="path in path.children" :key="path.id" :to="`/project/${path.id}`" :content="path.path" />
-      <secondary-link-button v-for="feature in path.features" :key="feature.id" :to="`/feature/${feature.id}`" :content="feature.title" />
+      <primary-link-button v-for="path in path.children" :key="path.id" :to="$routes.project(path.id)" :content="path.path" />
+      <secondary-link-button v-for="feature in path.features" :key="feature.id" :to="$routes.feature(feature.id)" :content="feature.title" />
     </grid3>
     <create-path-dialog
       v-model="createPathDialog"
@@ -33,12 +33,21 @@
       @errored="onPathDeleteErrored"
       :path="path"
     />
+    <delete-project-dialog
+      v-model="deleteProjectDialog"
+      @close="deActivateDeleteProjectDialog"
+      @deleted="onProjectDeleted"
+      @errored="onProjectDeleteErrored"
+      :path="path"
+    />
     <v-snackbar v-model="pathCreatedSnackbarOpened" :color="$colors.success">Path created</v-snackbar>
     <v-snackbar v-model="featureCreatedSnackbarOpened" :color="$colors.success">Feature created</v-snackbar>
     <v-snackbar v-model="pathDeleteSnackbarOpened" :color="$colors.success">Path deleted</v-snackbar>
+    <v-snackbar v-model="projectDeleteSnackbarOpened" :color="$colors.success">Project deleted</v-snackbar>
     <v-snackbar v-model="pathCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the path</v-snackbar>
     <v-snackbar v-model="featureCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the feature</v-snackbar>
     <v-snackbar v-model="pathDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the path</v-snackbar>
+    <v-snackbar v-model="projectDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the project</v-snackbar>
   </main>
 </template>
 
@@ -51,7 +60,8 @@ import Breadcrumb from '~/components/Breadcrumb.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
 import CreateFeatureDialog from '~/components/dialogs/CreateFeatureDialog.vue';
 import CreatePathDialog from '~/components/dialogs/CreatePathDialog.vue';
-import DeletePathDialog from '~/components/dialogs/DeletePathDialog';
+import DeletePathDialog from '~/components/dialogs/DeletePathDialog.vue';
+import DeleteProjectDialog from '~/components/dialogs/DeleteProjectDialog.vue';
 import Grid3 from '~/components/Grid3.vue';
 import PrimaryLinkButton from '~/components/buttons/PrimaryLinkButton.vue';
 import SecondaryLinkButton from '~/components/buttons/SecondaryLinkButton.vue';
@@ -65,12 +75,15 @@ interface Data extends InitialData {
   createPathDialog: boolean,
   createFeatureDialog: boolean,
   deletePathDialog: boolean,
+  deleteProjectDialog: boolean,
   pathCreatedSnackbarOpened: boolean,
   featureCreatedSnackbarOpened: boolean,
   pathDeleteSnackbarOpened: boolean,
+  projectDeleteSnackbarOpened: boolean,
   pathCreationErrorSnackbarOpened: boolean,
   featureCreationErrorSnackbarOpened: boolean,
-  pathDeleteErrorSnackbarOpened: boolean
+  pathDeleteErrorSnackbarOpened: boolean,
+  projectDeleteErrorSnackbarOpened: boolean
 }
 
 export default Vue.extend({
@@ -83,6 +96,7 @@ export default Vue.extend({
     CreatePathDialog,
     DeleteButton,
     DeletePathDialog,
+    DeleteProjectDialog,
     Grid3,
     PrimaryLinkButton,
     SecondaryLinkButton
@@ -107,12 +121,15 @@ export default Vue.extend({
       createPathDialog: false,
       createFeatureDialog: false,
       deletePathDialog: false,
+      deleteProjectDialog: false,
       pathCreatedSnackbarOpened: false,
       featureCreatedSnackbarOpened: false,
       pathDeleteSnackbarOpened: false,
+      projectDeleteSnackbarOpened: false,
       pathCreationErrorSnackbarOpened: false,
       featureCreationErrorSnackbarOpened: false,
-      pathDeleteErrorSnackbarOpened: false
+      pathDeleteErrorSnackbarOpened: false,
+      projectDeleteErrorSnackbarOpened: false
     }
   },
   methods: {
@@ -125,6 +142,9 @@ export default Vue.extend({
     activateDeletePathDialog(): void {
       this.deletePathDialog = true;
     },
+    activateDeleteProjectDialog(): void {
+      this.deleteProjectDialog = true;
+    },
     deActivateCreatePathDialog(): void {
       this.createPathDialog = false;
     },
@@ -134,12 +154,15 @@ export default Vue.extend({
     deActivateDeletePathDialog(): void {
       this.deletePathDialog = false;
     },
+    deActivateDeleteProjectDialog(): void {
+      this.deleteProjectDialog = false;
+    },
     async loadPath(): Promise<void> {
       this.path = await this.$api.getPath(this.$route.params.slug, this.$axios);
     },
     onDeleteButtonClicked(): void {
       if (this.path.project) {
-
+        this.activateDeleteProjectDialog();
       } else {
         this.activateDeletePathDialog();
       }
@@ -157,7 +180,16 @@ export default Vue.extend({
     onPathDeleted(): void {
       this.deActivateDeletePathDialog();
       this.pathDeleteSnackbarOpened = true;
-      setTimeout(() => this.$router.push(`/project/${this.path.parent.id}`), 2000);
+      setTimeout(() => {
+        if (this.path.parent) {
+          this.$router.push(this.$routes.project(this.path.parent?.id));
+        }
+      }, 2000);
+    },
+    onProjectDeleted(): void {
+      this.deActivateDeleteProjectDialog();
+      this.projectDeleteSnackbarOpened = true;
+      setTimeout(() => this.$router.push(this.$routes.home()), 2000);
     },
     onPathErrored(): void {
       this.deActivateCreatePathDialog();
@@ -170,6 +202,10 @@ export default Vue.extend({
     onPathDeleteErrored(): void {
       this.deActivateDeletePathDialog();
       this.pathDeleteErrorSnackbarOpened = true;
+    },
+    onProjectDeleteErrored(): void {
+      this.deActivateDeleteProjectDialog();
+      this.projectDeleteErrorSnackbarOpened = true;
     }
   },
   computed: {
