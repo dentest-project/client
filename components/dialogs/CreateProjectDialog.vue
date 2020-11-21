@@ -6,7 +6,7 @@
           Create project
         </v-card-title>
         <v-card-text>
-          <v-text-field v-model="projectName" label="Project name" clearable />
+          <v-text-field v-model="projectName" label="Project name" autofocus clearable />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>

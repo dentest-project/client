@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title class="headline">Create new feature</v-card-title>
         <v-card-text>
-          <v-text-field v-model="featureTitle" label="Feature title" clearable />
+          <v-text-field v-model="featureTitle" label="Feature title" autofocus clearable />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>

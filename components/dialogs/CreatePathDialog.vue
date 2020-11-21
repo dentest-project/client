@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title class="headline">Create new path</v-card-title>
         <v-card-text>
-          <v-text-field v-model="pathName" label="Path name" clearable />
+          <v-text-field v-model="pathName" label="Path name" autofocus clearable />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
