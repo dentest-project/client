@@ -1,6 +1,6 @@
 <template>
   <main>
-    <h1>{{ feature.title }}</h1>
+    <editable-title label="Feature title" v-model="feature.title" />
     <breadcrumb :items="breadcrumbItems" />
     <actions-bar>
       <v-spacer />
@@ -24,6 +24,7 @@ import ActionsBar from '~/components/ActionsBar.vue';
 import Breadcrumb from '~/components/Breadcrumb.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
 import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
+import EditableTitle from '~/components/EditableTitle.vue';
 import { Breadcrumb as BreadcrumbType, Feature, Scenario } from '~/types';
 
 interface InitialData {
@@ -41,7 +42,8 @@ export default Vue.extend({
     ActionsBar,
     Breadcrumb,
     DeleteButton,
-    DeleteFeatureDialog
+    DeleteFeatureDialog,
+    EditableTitle
   },
   async asyncData({ $api, params }): Promise<InitialData> {
     const feature: Feature = await $api.getFeature(params.slug);
