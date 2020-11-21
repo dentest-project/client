@@ -40,7 +40,7 @@ export default Vue.extend({
     return {
       feature: {
         id: this.$route.params.slug,
-        path: undefined,
+        path: {},
         title: '',
         description: '',
         scenarios: [] as Array<Scenario>
@@ -64,7 +64,7 @@ export default Vue.extend({
       while (path !== undefined) {
         out.push({
           text: path.project ? path.project.title : path.path,
-          href: path.id,
+          href: (this as any).$routes.project(path.id),
           disabled: false
         });
         path = path.parent;
