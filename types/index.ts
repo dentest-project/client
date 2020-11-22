@@ -143,6 +143,16 @@ interface TableStepParam extends StepParam {
   content: Array<Array<string>>
 }
 
+interface UpdateFeature{
+  id: string,
+  path: UpdateFeaturePath,
+  title: string,
+  description: string,
+  scenarios: Array<Scenario>
+}
+
+interface UpdateFeaturePath extends CreateFeaturePath {}
+
 type Breadcrumb = Array<BreadcrumbItem>
 type PathList = Array<Path>
 type ProjectList = Array<Project>
@@ -158,5 +168,6 @@ export {
   PathList,
   Project,
   ProjectList,
-  Scenario
+  Scenario,
+  UpdateFeature
 };

@@ -1,8 +1,9 @@
 <template>
   <main>
-    <editable-title label="Feature title" v-model="feature.title" />
+    <editable-title label="Feature title" v-model="feature.title" @input="onChanged" />
     <breadcrumb :items="breadcrumbItems" />
     <actions-bar>
+      <save-button :enabled="saveEnabled" @click="save" />
       <v-spacer />
       <delete-button @click.stop="activateDeleteDialog" />
     </actions-bar>
@@ -15,6 +16,8 @@
     />
     <v-snackbar v-model="deletedSnackbarOpened" :color="$colors.success">Feature deleted</v-snackbar>
     <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the feature</v-snackbar>
+    <v-snackbar v-model="savedSnackbarOpened" :color="$colors.success">Feature saved</v-snackbar>
+    <v-snackbar v-model="saveErrorSnackbarOpened" :color="$colors.error">An error occurred while saving the feature</v-snackbar>
   </main>
 </template>
 
@@ -23,9 +26,10 @@ import Vue from 'vue'
 import ActionsBar from '~/components/ActionsBar.vue';
 import Breadcrumb from '~/components/Breadcrumb.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
+import SaveButton from '~/components/buttons/SaveButton.vue';
 import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
-import { Breadcrumb as BreadcrumbType, Feature, Scenario } from '~/types';
+import { Breadcrumb as BreadcrumbType, Feature, Scenario, UpdateFeature } from '~/types';
 
 interface InitialData {
   feature: Feature
@@ -34,11 +38,15 @@ interface InitialData {
 interface Data extends InitialData {
   deleteDialog: boolean,
   deletedSnackbarOpened: boolean,
-  deleteErrorSnackbarOpened: boolean
+  deleteErrorSnackbarOpened: boolean,
+  saveEnabled: boolean,
+  savedSnackbarOpened: boolean,
+  saveErrorSnackbarOpened: boolean
 }
 
 export default Vue.extend({
   components: {
+    SaveButton,
     ActionsBar,
     Breadcrumb,
     DeleteButton,
@@ -63,7 +71,10 @@ export default Vue.extend({
       } as Feature,
       deleteDialog: false,
       deletedSnackbarOpened: false,
-      deleteErrorSnackbarOpened: false
+      deleteErrorSnackbarOpened: false,
+      saveEnabled: false,
+      savedSnackbarOpened: false,
+      saveErrorSnackbarOpened: false
     }
   },
   methods: {
@@ -73,6 +84,9 @@ export default Vue.extend({
     deactivateDeleteDialog(): void {
       this.deleteDialog = false;
     },
+    onChanged(): void {
+      this.saveEnabled = true;
+    },
     onDeleted(): void {
       this.deactivateDeleteDialog();
       this.deletedSnackbarOpened = true;
@@ -81,6 +95,26 @@ export default Vue.extend({
     onDeleteErrored(): void {
       this.deactivateDeleteDialog();
       this.deleteErrorSnackbarOpened = true;
+    },
+    onSaved(): void {
+      this.savedSnackbarOpened = true;
+      this.saveEnabled = false;
+    },
+    onSaveErrored(): void {
+      this.saveErrorSnackbarOpened = true;
+    },
+    async save(): Promise<void> {
+      try {
+        this.feature = await this.$api.saveFeature({
+          ...this.feature,
+          path: {
+            id: this.feature.path.id
+          }
+        }, this.$axios);
+        this.onSaved();
+      } catch (error) {
+        this.onSaveErrored();
+      }
     }
   },
   computed: {

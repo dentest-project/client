@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { Plugin } from '@nuxt/types'
 import { NuxtAxiosInstance } from '@nuxtjs/axios';
-import { CreateFeature, CreatePath, CreateProject, Feature, Path, Project, ProjectList } from '~/types';
+import { CreateFeature, CreatePath, CreateProject, Feature, Path, Project, ProjectList, UpdateFeature } from '~/types';
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -26,7 +26,8 @@ interface Api {
   deleteProject(id: string, axios?: NuxtAxiosInstance): Promise<void>,
   getFeature(id: string, axios?: NuxtAxiosInstance): Promise<Feature>,
   getPath(id: string, axios?: NuxtAxiosInstance): Promise<Path>,
-  getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>
+  getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
+  saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
 }
 
 const Api = (context: any) => {
@@ -48,6 +49,12 @@ const Api = (context: any) => {
     return a.$post(`${a.defaults.baseURL}/${url}`, body);
   }
 
+  const put = (url: string, body: any, axios?: NuxtAxiosInstance) => {
+    const a = typeof axios !== 'undefined' ? axios : context.$axios;
+
+    return a.$put(`${a.defaults.baseURL}/${url}`, body);
+  }
+
   context.$api = {
     createFeature: async (feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => post('features', feature, axios),
     createPath: async (path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path> => post('paths', path, axios),
@@ -57,7 +64,8 @@ const Api = (context: any) => {
     deleteProject: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`projects/${id}`, axios),
     getFeature: async (id: string, axios?: NuxtAxiosInstance): Promise<Feature> => get(`features/${id}`, axios),
     getPath: async (id: string, axios?: NuxtAxiosInstance): Promise<Path> => get(`paths/${id}`, axios),
-    getProjects: async (axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`projects`, axios)
+    getProjects: async (axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`projects`, axios),
+    saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => put('features', feature, axios),
   } as Api;
 };
 
