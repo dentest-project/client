@@ -41,4 +41,9 @@ h1 {
 a {
   color: inherit;
 }
+
+.v-textarea.v-text-field--enclosed textarea {
+  line-height: initial;
+  margin-top: 48px;
+}
 </style>

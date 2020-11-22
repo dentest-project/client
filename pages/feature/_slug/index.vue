@@ -7,6 +7,7 @@
       <v-spacer />
       <delete-button @click.stop="activateDeleteDialog" />
     </actions-bar>
+    <feature-content v-model="feature" @input="onChanged" />
     <delete-feature-dialog
       v-model="deleteDialog"
       @close="deactivateDeleteDialog"
@@ -26,9 +27,10 @@ import Vue from 'vue'
 import ActionsBar from '~/components/ActionsBar.vue';
 import Breadcrumb from '~/components/Breadcrumb.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
-import SaveButton from '~/components/buttons/SaveButton.vue';
 import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
+import FeatureContent from '~/components/FeatureContent.vue';
+import SaveButton from '~/components/buttons/SaveButton.vue';
 import { Breadcrumb as BreadcrumbType, Feature, Scenario, UpdateFeature } from '~/types';
 
 interface InitialData {
@@ -51,7 +53,8 @@ export default Vue.extend({
     Breadcrumb,
     DeleteButton,
     DeleteFeatureDialog,
-    EditableTitle
+    EditableTitle,
+    FeatureContent
   },
   async asyncData({ $api, params }): Promise<InitialData> {
     const feature: Feature = await $api.getFeature(params.slug);
@@ -84,6 +87,14 @@ export default Vue.extend({
     deactivateDeleteDialog(): void {
       this.deleteDialog = false;
     },
+    formatFeatureForSave(): UpdateFeature {
+      return {
+        ...this.feature,
+        path: {
+          id: this.feature.path.id
+        }
+      };
+    },
     onChanged(): void {
       this.saveEnabled = true;
     },
@@ -105,12 +116,7 @@ export default Vue.extend({
     },
     async save(): Promise<void> {
       try {
-        this.feature = await this.$api.saveFeature({
-          ...this.feature,
-          path: {
-            id: this.feature.path.id
-          }
-        }, this.$axios);
+        this.feature = await this.$api.saveFeature(this.formatFeatureForSave(), this.$axios);
         this.onSaved();
       } catch (error) {
         this.onSaveErrored();
