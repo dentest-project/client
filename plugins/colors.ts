@@ -13,6 +13,7 @@ interface Colors {
   success: string,
   error: string,
   lightPrimary: string,
+  lightSecondary: string,
   cancel: string,
   disabled: string
 }
@@ -25,6 +26,7 @@ Vue.prototype.$colors = {
   success: '#6ab04c',
   error: '#eb4d4b',
   lightPrimary: '#E2E7FF',
+  lightSecondary: '#FDEFDF',
   cancel: '#777777',
   disabled: '#777777'
 } as Colors;

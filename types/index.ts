@@ -1,3 +1,8 @@
+enum Mode {
+  View,
+  Edit
+}
+
 enum ScenarioType {
   Background = 'background',
   Outline = 'outline',
@@ -163,11 +168,14 @@ export {
   CreatePath,
   CreateProject,
   Feature,
+  Mode,
   Path,
   PathFeature,
   PathList,
   Project,
   ProjectList,
   Scenario,
+  ScenarioStep,
+  ScenarioType,
   UpdateFeature
 };

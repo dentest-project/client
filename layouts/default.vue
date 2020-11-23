@@ -38,6 +38,10 @@ h1 {
   padding: 1rem;
 }
 
+h2 {
+  padding: 0.5rem;
+}
+
 a {
   color: inherit;
 }

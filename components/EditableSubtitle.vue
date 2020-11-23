@@ -1,8 +1,8 @@
 <template>
   <form v-if="mode === $modes.edit" @submit.prevent="onSubmit">
-      <input type="text" :value="value" :placeholder="label" autofocus @input="onChanged" @blur="onSubmit" />
+    <input type="text" :value="value" :placeholder="label" autofocus @input="onChanged" @blur="onSubmit" />
   </form>
-  <h1 v-else @click="switchToEdit">{{ value }}</h1>
+  <h2 v-else @click="switchToEdit">{{ value }}</h2>
 </template>
 
 <script lang="ts">
@@ -47,13 +47,13 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-h1:hover {
-  background-color: #eeeeee;
+h2:hover {
+  background-color: rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 input[type=text] {
-  padding: 1rem;
-  font-size: 2em;
+  padding: 0.5rem;
+  font-size: 1.5em;
   font-weight: bold;
   border: 1px solid #aaaaaa;
   width: 100%;

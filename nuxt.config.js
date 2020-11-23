@@ -20,6 +20,7 @@ export default {
   plugins: [
     '~/plugins/api.ts',
     '~/plugins/colors.ts',
+    '~/plugins/mode.ts',
     '~/plugins/routes.ts'
   ],
 
