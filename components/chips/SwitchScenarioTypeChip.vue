@@ -29,8 +29,8 @@ export default Vue.extend({
   },
   methods: {
     switchType(): void {
-      if (this.mode === Mode.Edit) {
-        this.$emit('input', this.value === ScenarioType.Background ? ScenarioType.Regular : ScenarioType.Background);
+      if ((this as any).mode === Mode.Edit) {
+        this.$emit('input', (this as any).value === ScenarioType.Background ? ScenarioType.Regular : ScenarioType.Background);
       }
     }
   },

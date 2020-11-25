@@ -1,12 +1,13 @@
 <template>
-  <form class="scenario" :style="`background-color: ${mode === $modes.view ? '#f5f5f5' : $colors.lightSecondary};`">
+  <div class="scenario" :style="`background-color: ${mode === $modes.view ? '#f5f5f5' : $colors.lightSecondary};`">
     <edit-button v-if="mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
     <view-button v-else class="scenario-edit" @click="switchToViewMode" />
     <delete-button class="scenario-delete" @click="onDeleteClick" />
     <switch-scenario-type-chip v-if="shouldDisplayTypeSwitch" :value="scenario.type" :mode="mode" @input="onTypeChanged" />
     <editable-subtitle v-if="mode === $modes.edit" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>
-  </form>
+    <step-list :mode="mode" :steps="scenario.steps" @input="onStepsChanged" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -15,15 +16,17 @@ import DeleteButton from '~/components/buttons/DeleteButton.vue';
 import EditButton from '~/components/buttons/EditButton.vue';
 import ViewButton from '~/components/buttons/ViewButton.vue';
 import EditableSubtitle from '~/components/EditableSubtitle.vue';
+import StepList from '~/components/StepList.vue';
 import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
-import { Mode, Scenario, ScenarioType } from '~/types';
+import { Mode, Scenario, ScenarioStep, ScenarioType } from '~/types';
 
 export default Vue.extend({
   components: {
-    DeleteButton,
     ViewButton,
+    DeleteButton,
     EditButton,
     EditableSubtitle,
+    StepList,
     SwitchScenarioTypeChip
   },
   model: {
@@ -48,6 +51,12 @@ export default Vue.extend({
     onDeleteClick(): void {
       this.$emit('deleted');
     },
+    onStepsChanged(steps: Array<ScenarioStep>): void {
+      this.$emit('input', {
+        ...this.scenario,
+        steps
+      });
+    },
     onTitleChanged(title: string): void {
       this.$emit('input', {
         ...this.scenario,
@@ -57,7 +66,8 @@ export default Vue.extend({
     onTypeChanged(type: string): void {
       this.$emit('input', {
         ...this.scenario,
-        type
+        type,
+        title: ''
       });
     },
     switchToEditMode() {

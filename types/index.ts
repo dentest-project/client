@@ -120,9 +120,9 @@ interface Scenario {
 }
 
 interface ScenarioStep {
-  id: number,
+  id?: number,
   adverb: StepAdverb,
-  step: Step,
+  step?: Step,
   params: Array<InlineStepParam | MultilineStepParam | TableStepParam>
 }
 
@@ -168,7 +168,9 @@ export {
   CreatePath,
   CreateProject,
   Feature,
+  InlineStepParam,
   Mode,
+  MultilineStepParam,
   Path,
   PathFeature,
   PathList,
@@ -177,5 +179,10 @@ export {
   Scenario,
   ScenarioStep,
   ScenarioType,
+  Step,
+  StepAdverb,
+  StepPart,
+  StepType,
+  TableStepParam,
   UpdateFeature
 };

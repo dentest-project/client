@@ -39,8 +39,8 @@ export default Vue.extend({
     onSubmit (): void {
       this.mode = Mode.View
     },
-    onChanged(e: boolean): void {
-      this.$emit('input', e.target.value);
+    onChanged(e: InputEvent): void {
+      this.$emit('input', (e.currentTarget as HTMLInputElement).value);
     }
   }
 });

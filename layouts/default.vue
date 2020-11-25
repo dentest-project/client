@@ -50,4 +50,15 @@ a {
   line-height: initial;
   margin-top: 48px;
 }
+
+.v-text-field.v-text-field--enclosed .v-input__slot {
+  margin-bottom: 0;
+}
+
+.v-text-field.v-text-field--enclosed .v-text-field__details {
+  margin-bottom: 0;
+  height: 0;
+  min-height: 0;
+}
+
 </style>
