@@ -2,45 +2,21 @@
   <div class="step">
     <deletable-row v-if="mode === $modes.edit" @delete="onDeleteClick">
       <v-select v-if="step.step" class="step-type-select" :items="adverbsSelectItems" :value="step.adverb" solo />
-      <v-autocomplete
-        v-if="!step.step"
-        :loading="isAutocompleteLoading"
-        :items="autocompleteItems"
-        :search-input.sync="autocompleteSearch"
-        solo
-        @change="onAutocompleteChanged"
-      >
-        <template v-slot:no-data>
-          <v-list-item>
-            <v-list-item-title>
-              <v-btn small @mousedown="activateStepCreationDialog">
-                <strong>Create a new step</strong>
-              </v-btn>
-            </v-list-item-title>
-          </v-list-item>
-        </template>
-      </v-autocomplete>
+      <step-search v-else />
     </deletable-row>
-    <create-step-dialog
-      v-model="stepCreationDialog"
-      @created="onStepCreated"
-      @errored="onStepCreationError"
-    />
-    <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success">Step deleted</v-snackbar>
-    <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the step</v-snackbar>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
 import DeletableRow from '~/components/DeletableRow.vue';
+import StepSearch from '~/components/StepSearch.vue';
 import { Mode, ScenarioStep, SelectItem, StepAdverb } from '~/types';
 
 export default Vue.extend({
   components: {
-    CreateStepDialog,
-    DeletableRow
+    DeletableRow,
+    StepSearch
   },
   model: {
     prop: 'step'
@@ -61,35 +37,12 @@ export default Vue.extend({
   },
   data() {
     return {
-      isAutocompleteLoading: false,
-      autocompleteSearch: null,
-      autocompleteItems: [] as Array<SelectItem>,
-      stepCreationDialog: false,
-      stepCreatedSnackbarOpened: false,
-      stepCreationErrorSnackbarOpened: false
     }
   },
   methods: {
-    activateStepCreationDialog(): void {
-      this.stepCreationDialog = true;
-    },
-    deactivateStepCreationDialog(): void {
-      this.stepCreationDialog = false;
-    },
-    onAutocompleteChanged(val): void {
-      console.log(val);
-    },
     onDeleteClick(): void {
       this.$emit('deleted');
-    },
-    onStepCreated(): void {
-      this.deactivateStepCreationDialog();
-      this.stepCreatedSnackbarOpened = true;
-    },
-    onStepCreationError(): void {
-      this.deactivateStepCreationDialog();
-      this.stepCreationErrorSnackbarOpened = true;
-    },
+    }
   },
   computed: {
     adverbsSelectItems(): Array<SelectItem> {
@@ -106,10 +59,6 @@ export default Vue.extend({
         value: a,
         disabled: false
       }));
-    }
-  },
-  watch: {
-    async autocompleteSearch() {
     }
   }
 });
