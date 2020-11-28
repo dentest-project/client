@@ -67,7 +67,7 @@ export default Vue.extend({
       this.$emit('input', {
         ...this.scenario,
         type,
-        title: ''
+        title: type === ScenarioType.Background ? '' : 'Scenario title'
       });
     },
     switchToEditMode() {

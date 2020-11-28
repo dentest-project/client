@@ -61,4 +61,8 @@ a {
   min-height: 0;
 }
 
+.theme--light.v-input input {
+  color: inherit;
+}
+
 </style>

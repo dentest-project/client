@@ -10,10 +10,10 @@
     <feature-content v-model="feature" @input="onChanged" />
     <delete-feature-dialog
       v-model="deleteDialog"
+      :feature="feature"
       @close="deactivateDeleteDialog"
       @deleted="onDeleted"
       @errored="onDeleteErrored"
-      :feature="feature"
     />
     <v-snackbar v-model="deletedSnackbarOpened" :color="$colors.success">Feature deleted</v-snackbar>
     <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the feature</v-snackbar>

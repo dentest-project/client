@@ -126,8 +126,14 @@ interface ScenarioStep {
   params: Array<InlineStepParam | MultilineStepParam | TableStepParam>
 }
 
+interface SelectItem {
+  text: string,
+  value: string,
+  disabled: boolean
+}
+
 interface Step {
-  id: number,
+  id?: number,
   type: StepType,
   parts: Array<StepPart>
 }
@@ -138,7 +144,7 @@ interface StepParam {
 }
 
 interface StepPart {
-  id: number,
+  id?: number,
   type: StepPartType,
   content: string,
   priority: number
@@ -179,9 +185,11 @@ export {
   Scenario,
   ScenarioStep,
   ScenarioType,
+  SelectItem,
   Step,
   StepAdverb,
   StepPart,
+  StepPartType,
   StepType,
   TableStepParam,
   UpdateFeature
