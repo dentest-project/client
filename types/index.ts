@@ -75,6 +75,10 @@ interface Feature {
   scenarios: Array<Scenario>
 }
 
+interface FeatureRootProject {
+  id: number
+}
+
 interface InlineStepParam extends StepParam {
   content: string,
   stepPart: StepPart
@@ -134,6 +138,7 @@ interface SelectItem {
 
 interface Step {
   id?: number,
+  project: StepProject,
   type: StepType,
   parts: Array<StepPart>
 }
@@ -148,6 +153,10 @@ interface StepPart {
   type: StepPartType,
   content: string,
   priority: number
+}
+
+interface StepProject {
+  id: number
 }
 
 interface TableStepParam extends StepParam {
@@ -174,6 +183,7 @@ export {
   CreatePath,
   CreateProject,
   Feature,
+  FeatureRootProject,
   InlineStepParam,
   Mode,
   MultilineStepParam,

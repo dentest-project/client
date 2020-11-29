@@ -19,19 +19,20 @@
     </v-autocomplete>
     <create-step-dialog
       v-model="stepCreationDialog"
+      :feature-root-project="featureRootProject"
       @created="onStepCreated"
       @errored="onStepCreationError"
     />
-    <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success">Step deleted</v-snackbar>
+    <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success">Step created</v-snackbar>
     <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the step</v-snackbar>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropOptions } from 'vue'
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
 import DeletableRow from '~/components/DeletableRow.vue';
-import { SelectItem } from '~/types';
+import { FeatureRootProject, SelectItem } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -40,6 +41,12 @@ export default Vue.extend({
   },
   model: {
     prop: 'step'
+  },
+  props: {
+    featureRootProject: {
+      type: Object,
+      required: true
+    } as PropOptions<FeatureRootProject>
   },
   data() {
     return {

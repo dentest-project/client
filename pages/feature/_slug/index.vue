@@ -7,7 +7,7 @@
       <v-spacer />
       <delete-button @click.stop="activateDeleteDialog" />
     </actions-bar>
-    <feature-content v-model="feature" @input="onChanged" />
+    <feature-content v-model="feature" :feature-root-project="featureRootProject" @input="onChanged" />
     <delete-feature-dialog
       v-model="deleteDialog"
       :feature="feature"
@@ -31,10 +31,11 @@ import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
 import FeatureContent from '~/components/FeatureContent.vue';
 import SaveButton from '~/components/buttons/SaveButton.vue';
-import { Breadcrumb as BreadcrumbType, Feature, Scenario, UpdateFeature } from '~/types';
+import { Breadcrumb as BreadcrumbType, Feature, FeatureRootProject, Scenario, UpdateFeature } from '~/types';
 
 interface InitialData {
-  feature: Feature
+  feature: Feature,
+  featureRootProject: FeatureRootProject
 }
 
 interface Data extends InitialData {
@@ -57,10 +58,14 @@ export default Vue.extend({
     FeatureContent
   },
   async asyncData({ $api, params }): Promise<InitialData> {
-    const feature: Feature = await $api.getFeature(params.slug);
+    const [feature, featureRootProject]: [Feature, FeatureRootProject] = await Promise.all([
+      $api.getFeature(params.slug),
+      $api.getFeatureRootProject(params.slug)
+    ]);
 
     return {
-      feature
+      feature,
+      featureRootProject
     };
   },
   data: function (): Data {
@@ -72,6 +77,9 @@ export default Vue.extend({
         description: '',
         scenarios: [] as Array<Scenario>
       } as Feature,
+      featureRootProject: {
+        id: ''
+      } as FeatureRootProject,
       deleteDialog: false,
       deletedSnackbarOpened: false,
       deleteErrorSnackbarOpened: false,

@@ -29,9 +29,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropOptions } from 'vue';
 import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { SelectItem, Step, StepPartType, StepType } from '~/types';
+import { FeatureRootProject, SelectItem, Step, StepPartType, StepType } from '~/types';
 
 export default Vue.extend({
   components: { SubmitButton },
@@ -42,7 +42,11 @@ export default Vue.extend({
     value: {
       type: Boolean,
       required: true
-    }
+    },
+    featureRootProject: {
+      type: Object,
+      required: true
+    } as PropOptions<FeatureRootProject>
   },
   data: function (): Step {
     return {
@@ -130,6 +134,9 @@ export default Vue.extend({
       try {
         await this.$api.createStep({
           type: this.type,
+          project: {
+            id: this.featureRootProject.id
+          },
           parts: this.parts
         }, this.$axios);
 

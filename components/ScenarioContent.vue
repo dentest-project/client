@@ -6,7 +6,7 @@
     <switch-scenario-type-chip v-if="shouldDisplayTypeSwitch" :value="scenario.type" :mode="mode" @input="onTypeChanged" />
     <editable-subtitle v-if="mode === $modes.edit" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>
-    <step-list :mode="mode" :steps="scenario.steps" @input="onStepsChanged" />
+    <step-list :mode="mode" :steps="scenario.steps" :feature-root-project="featureRootProject" @input="onStepsChanged" />
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import ViewButton from '~/components/buttons/ViewButton.vue';
 import EditableSubtitle from '~/components/EditableSubtitle.vue';
 import StepList from '~/components/StepList.vue';
 import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
-import { Mode, Scenario, ScenarioStep, ScenarioType } from '~/types';
+import { FeatureRootProject, Mode, Scenario, ScenarioStep, ScenarioType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -40,7 +40,11 @@ export default Vue.extend({
     scenario: {
       type: Object,
       required: true
-    } as PropOptions<Scenario>
+    } as PropOptions<Scenario>,
+    featureRootProject: {
+      type: Object,
+      required: true
+    } as PropOptions<FeatureRootProject>
   },
   data() {
     return {

@@ -2,7 +2,7 @@
   <div class="step">
     <deletable-row v-if="mode === $modes.edit" @delete="onDeleteClick">
       <v-select v-if="step.step" class="step-type-select" :items="adverbsSelectItems" :value="step.adverb" solo />
-      <step-search v-else />
+      <step-search v-else :feature-root-project="featureRootProject" />
     </deletable-row>
   </div>
 </template>
@@ -11,7 +11,7 @@
 import Vue, { PropOptions } from 'vue'
 import DeletableRow from '~/components/DeletableRow.vue';
 import StepSearch from '~/components/StepSearch.vue';
-import { Mode, ScenarioStep, SelectItem, StepAdverb } from '~/types';
+import { FeatureRootProject, Mode, ScenarioStep, SelectItem, StepAdverb } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -33,7 +33,11 @@ export default Vue.extend({
     availableAdverbs: {
       type: Array,
       required: true
-    } as PropOptions<Array<StepAdverb>>
+    } as PropOptions<Array<StepAdverb>>,
+    featureRootProject: {
+      type: Object,
+      required: true
+    } as PropOptions<FeatureRootProject>
   },
   data() {
     return {

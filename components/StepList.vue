@@ -5,6 +5,7 @@
       :step="step"
       :mode="mode"
       :available-adverbs="getAvailableAdverbsForStep(i)"
+      :feature-root-project="featureRootProject"
       :key="i"
       @input="e => onUpdated(i, e)"
       @deleted="() => onDeleted(i)"
@@ -17,7 +18,15 @@
 import Vue, { PropOptions } from 'vue';
 import AddButton from '~/components/buttons/AddButton.vue';
 import StepContent from '~/components/StepContent.vue';
-import { InlineStepParam, Mode, MultilineStepParam, ScenarioStep, StepAdverb, TableStepParam } from '~/types';
+import {
+  FeatureRootProject,
+  InlineStepParam,
+  Mode,
+  MultilineStepParam,
+  ScenarioStep,
+  StepAdverb,
+  TableStepParam
+} from '~/types';
 
 export default Vue.extend({
   components: {
@@ -35,7 +44,11 @@ export default Vue.extend({
     steps: {
       type: Array,
       required: true
-    } as PropOptions<Array<ScenarioStep>>
+    } as PropOptions<Array<ScenarioStep>>,
+    featureRootProject: {
+      type: Object,
+      required: true
+    } as PropOptions<FeatureRootProject>
   },
   methods: {
     getAvailableAdverbsForStep(id: number): Array<StepAdverb> {

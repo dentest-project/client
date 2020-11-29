@@ -3,7 +3,7 @@
     <div class="description" :style="`background-color: ${$colors.lightPrimary}`">
       <editable-textarea :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
     </div>
-    <scenario-list :scenarios="feature.scenarios" @input="onScenariosChanged" />
+    <scenario-list :scenarios="feature.scenarios" :feature-root-project="featureRootProject" @input="onScenariosChanged" />
   </form>
 </template>
 
@@ -11,7 +11,7 @@
 import Vue, { PropOptions } from 'vue'
 import EditableTextarea from '~/components/EditableTextarea.vue';
 import ScenarioList from '~/components/ScenarioList.vue';
-import { Feature, Scenario } from '~/types';
+import { Feature, FeatureRootProject, Scenario } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -25,7 +25,11 @@ export default Vue.extend({
     feature: {
       type: Object,
       required: true
-    } as PropOptions<Feature>
+    } as PropOptions<Feature>,
+    featureRootProject: {
+      type: Object,
+      required: true
+    } as PropOptions<FeatureRootProject>
   },
   methods: {
     onDescriptionChanged(description: string): void {
