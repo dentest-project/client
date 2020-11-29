@@ -39,6 +39,7 @@ interface Api {
   getFeature(id: string, axios?: NuxtAxiosInstance): Promise<Feature>,
   getFeatureRootProject(id: string, axios?: NuxtAxiosInstance): Promise<FeatureRootProject>,
   getPath(id: string, axios?: NuxtAxiosInstance): Promise<Path>,
+  getProjectSteps(id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>>,
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
 }
@@ -79,6 +80,7 @@ const Api = (context: any) => {
     getFeature: async (id: string, axios?: NuxtAxiosInstance): Promise<Feature> => get(`features/${id}`, axios),
     getFeatureRootProject: async (id: string, axios?: NuxtAxiosInstance): Promise<FeatureRootProject> => get(`features/${id}/root-project`, axios),
     getPath: async (id: string, axios?: NuxtAxiosInstance): Promise<Path> => get(`paths/${id}`, axios),
+    getProjectSteps: async (id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>> => get(`projects/${id}/steps`, axios),
     getProjects: async (axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`projects`, axios),
     saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => put('features', feature, axios),
   } as Api;

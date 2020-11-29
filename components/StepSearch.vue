@@ -4,9 +4,18 @@
       :loading="isAutocompleteLoading"
       :items="autocompleteItems"
       :search-input.sync="autocompleteSearch"
+      :item-text="getStepItemText"
       solo
       @change="onAutocompleteChanged"
     >
+      <template v-slot:item="data">
+        <v-list-item-content>
+          <div>
+            <strong>{{ translateStepType(data.item.type) }}</strong>
+            <span v-for="part in data.item.parts" :key="part.id" :class="`step-search-step-type--${part.type}`">{{ part.content }} </span>
+          </div>
+        </v-list-item-content>
+      </template>
       <template v-slot:no-data>
         <v-list-item>
           <v-list-item-title>
@@ -25,6 +34,7 @@
     />
     <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success">Step created</v-snackbar>
     <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the step</v-snackbar>
+    <v-snackbar v-model="stepSearchErrorSnackbarOpened" :color="$colors.error">An error occurred while fetching steps</v-snackbar>
   </div>
 </template>
 
@@ -32,7 +42,7 @@
 import Vue, { PropOptions } from 'vue'
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
 import DeletableRow from '~/components/DeletableRow.vue';
-import { FeatureRootProject, SelectItem } from '~/types';
+import { FeatureRootProject, Step, StepPart, StepType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -52,10 +62,11 @@ export default Vue.extend({
     return {
       isAutocompleteLoading: false,
       autocompleteSearch: null,
-      autocompleteItems: [] as Array<SelectItem>,
+      autocompleteItems: [] as Array<Step>,
       stepCreationDialog: false,
       stepCreatedSnackbarOpened: false,
-      stepCreationErrorSnackbarOpened: false
+      stepCreationErrorSnackbarOpened: false,
+      stepSearchErrorSnackbarOpened: false
     }
   },
   methods: {
@@ -64,6 +75,9 @@ export default Vue.extend({
     },
     deactivateStepCreationDialog(): void {
       this.stepCreationDialog = false;
+    },
+    getStepItemText(step: Step) {
+      return step.parts.map(p => p.content).join(' ');
     },
     onAutocompleteChanged(val): void {
       console.log(val);
@@ -79,9 +93,42 @@ export default Vue.extend({
       this.deactivateStepCreationDialog();
       this.stepCreationErrorSnackbarOpened = true;
     },
+    translateStepType(type: StepType): string {
+      switch (type) {
+        case StepType.Given:
+          return 'Given';
+        case StepType.When:
+          return 'When';
+        case StepType.Then:
+          return 'Then'
+      }
+    }
   },
   watch: {
     async autocompleteSearch() {
+      if (this.autocompleteItems.length > 0 || this.isAutocompleteLoading) {
+        return;
+      }
+
+      this.isAutocompleteLoading = true;
+
+      try {
+        const steps: Array<Step> = await this.$api.getProjectSteps(this.featureRootProject.id, this.$axios);
+        for (let i = 0 ; i < steps.length ; i++) {
+          steps[i].parts.sort((a: StepPart, b: StepPart): number => {
+            if (a.priority === b.priority) {
+              return 0;
+            }
+
+            return a.priority < b.priority ? -1 : 1;
+          });
+        }
+        this.autocompleteItems = steps;
+      } catch (error) {
+        this.stepSearchErrorSnackbarOpened = true;
+      }
+
+      this.isAutocompleteLoading = false;
     }
   }
 });
@@ -90,5 +137,14 @@ export default Vue.extend({
 <style>
 .step-search {
   width: 100%;
+}
+
+.step-search-step-type--param:before {
+  content: ":";
+}
+
+.step-search-step-type--param {
+  color: #eb4d4b;
+  font-weight: bold;
 }
 </style>
