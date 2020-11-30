@@ -5,8 +5,9 @@
       :items="autocompleteItems"
       :search-input.sync="autocompleteSearch"
       :item-text="getStepItemText"
+      :item-value="getStepItemValue"
       solo
-      @change="onAutocompleteChanged"
+      @input="step => $emit('selected', step)"
     >
       <template v-slot:item="data">
         <v-list-item-content>
@@ -78,6 +79,9 @@ export default Vue.extend({
     },
     getStepItemText(step: Step) {
       return step.parts.map(p => p.content).join(' ');
+    },
+    getStepItemValue(step: Step) {
+      return step;
     },
     onAutocompleteChanged(val): void {
       console.log(val);

@@ -1,8 +1,8 @@
 <template>
   <div class="step">
     <deletable-row v-if="mode === $modes.edit" @delete="onDeleteClick">
-      <v-select v-if="step.step" class="step-type-select" :items="adverbsSelectItems" :value="step.adverb" solo />
-      <step-search v-else :feature-root-project="featureRootProject" />
+      <step-form v-if="step.step" :step="step" :available-adverbs="availableAdverbs" @input="onUpdated" />
+      <step-search v-else :feature-root-project="featureRootProject" @selected="onStepSelected" />
     </deletable-row>
   </div>
 </template>
@@ -10,12 +10,24 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import DeletableRow from '~/components/DeletableRow.vue';
+import StepForm from '~/components/StepForm.vue';
 import StepSearch from '~/components/StepSearch.vue';
-import { FeatureRootProject, Mode, ScenarioStep, SelectItem, StepAdverb } from '~/types';
+import {
+  FeatureRootProject,
+  InlineStepParam,
+  Mode,
+  ScenarioStep,
+  Step,
+  StepAdverb,
+  StepParamType,
+  StepPartType,
+  StepType
+} from '~/types';
 
 export default Vue.extend({
   components: {
     DeletableRow,
+    StepForm,
     StepSearch
   },
   model: {
@@ -30,10 +42,6 @@ export default Vue.extend({
       type: Object,
       required: true
     } as PropOptions<ScenarioStep>,
-    availableAdverbs: {
-      type: Array,
-      required: true
-    } as PropOptions<Array<StepAdverb>>,
     featureRootProject: {
       type: Object,
       required: true
@@ -46,23 +54,31 @@ export default Vue.extend({
   methods: {
     onDeleteClick(): void {
       this.$emit('deleted');
+    },
+    onUpdated(e: ScenarioStep): void {
+      this.$emit('input', e);
+    },
+    onStepSelected(step: Step): void {
+      this.$emit('input', {
+        ...this.step,
+        step,
+        params: step.parts.filter(p => p.type === StepPartType.Param).map(stepPart => ({ type: StepParamType.Inline, content: stepPart.content , stepPart } as InlineStepParam))
+      });
     }
   },
   computed: {
-    adverbsSelectItems(): Array<SelectItem> {
-      const labels = {
-        [StepAdverb.Given]: 'Given',
-        [StepAdverb.When]: 'When',
-        [StepAdverb.Then]: 'Then',
-        [StepAdverb.And]: 'And',
-        [StepAdverb.But]: 'But'
-      } as Record<StepAdverb, string>;
+    availableAdverbs(): Array<StepAdverb> {
+      const correspondingAdverbs = {
+        [StepType.Given]: StepAdverb.Given,
+        [StepType.When]: StepAdverb.When,
+        [StepType.Then]: StepAdverb.Then
+      };
 
-      return (this as any).availableAdverbs.map((a: StepAdverb): SelectItem => ({
-        text: labels[a],
-        value: a,
-        disabled: false
-      }));
+      return [
+        correspondingAdverbs[(this as any).step.step.type],
+        StepAdverb.And,
+        StepAdverb.But
+      ];
     }
   }
 });

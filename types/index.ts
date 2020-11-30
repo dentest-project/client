@@ -20,7 +20,8 @@ enum StepAdverb {
 enum StepParamType {
   Inline = 'inline',
   Multiline = 'multiline',
-  Table = 'table'
+  Table = 'table',
+  None = 'none'
 }
 
 enum StepPartType {
@@ -198,6 +199,8 @@ export {
   SelectItem,
   Step,
   StepAdverb,
+  StepParam,
+  StepParamType,
   StepPart,
   StepPartType,
   StepType,

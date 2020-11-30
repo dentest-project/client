@@ -4,7 +4,6 @@
       v-for="(step, i) in steps"
       :step="step"
       :mode="mode"
-      :available-adverbs="getAvailableAdverbsForStep(i)"
       :feature-root-project="featureRootProject"
       :key="i"
       @input="e => onUpdated(i, e)"
@@ -51,13 +50,6 @@ export default Vue.extend({
     } as PropOptions<FeatureRootProject>
   },
   methods: {
-    getAvailableAdverbsForStep(id: number): Array<StepAdverb> {
-      if (id === 0) {
-        return [StepAdverb.Given, StepAdverb.When];
-      }
-
-      return [StepAdverb.Given, StepAdverb.When, StepAdverb.Then, StepAdverb.And, StepAdverb.But];
-    },
     onAdd(): void {
       this.$emit('input', [
         ...this.steps,
