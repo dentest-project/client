@@ -148,4 +148,14 @@ export default Vue.extend({
   padding: 0.3rem;
   text-align: center;
 }
+
+@media screen and (max-width: 640px) {
+  .step-form .step-form-sentence {
+    display: grid;
+  }
+
+  .step-form .step-form-sentence > * {
+    text-align: left;
+  }
+}
 </style>
