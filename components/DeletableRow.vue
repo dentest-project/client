@@ -22,6 +22,8 @@ export default Vue.extend({
   align-items: center;
   justify-content: center;
   width: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 2rem 0.5rem;
 }
 
 .deletable-row > * {
