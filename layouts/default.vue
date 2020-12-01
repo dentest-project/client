@@ -1,9 +1,11 @@
 <template>
-  <div data-app>
+  <div>
     <Menu />
-    <v-container>
-      <Nuxt />
-    </v-container>
+    <v-app>
+      <v-container>
+        <Nuxt />
+      </v-container>
+    </v-app>
   </div>
 </template>
 

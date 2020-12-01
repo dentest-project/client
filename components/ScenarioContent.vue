@@ -1,5 +1,5 @@
 <template>
-  <div class="scenario" :style="`background-color: ${mode === $modes.view ? '#f5f5f5' : $colors.lightSecondary};`">
+  <v-sheet class="scenario" :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary" shaped elevation="2">
     <edit-button v-if="mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
     <view-button v-else class="scenario-edit" @click="switchToViewMode" />
     <delete-button class="scenario-delete" @click="onDeleteClick" />
@@ -7,7 +7,7 @@
     <editable-subtitle v-if="mode === $modes.edit" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>
     <step-list :mode="mode" :steps="scenario.steps" :feature-root-project="featureRootProject" @input="onStepsChanged" />
-  </div>
+  </v-sheet>
 </template>
 
 <script lang="ts">
@@ -94,11 +94,7 @@ export default Vue.extend({
 <style scoped>
 .scenario {
   padding: 1rem;
-  border: 1px solid #aaaaaa;
   margin: 2rem 0;
-  border-radius: 0.5rem;
-  background-color: #f5f5f5;
-  display: block;
   width: 100%;
   position: relative;
 }
