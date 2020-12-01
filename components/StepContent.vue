@@ -52,6 +52,16 @@ export default Vue.extend({
     }
   },
   methods: {
+    getCorrespondingAdverb(type: StepType): StepAdverb {
+      switch (type) {
+        case StepType.Given:
+          return StepAdverb.Given;
+        case StepType.When:
+          return StepAdverb.When;
+        case StepType.Then:
+          return StepAdverb.Then;
+      }
+    },
     onDeleteClick(): void {
       this.$emit('deleted');
     },
@@ -61,6 +71,7 @@ export default Vue.extend({
     onStepSelected(step: Step): void {
       this.$emit('input', {
         ...this.step,
+        adverb: this.getCorrespondingAdverb(step.type),
         step,
         params: step.parts.filter(p => p.type === StepPartType.Param).map(stepPart => ({ type: StepParamType.Inline, content: stepPart.content , stepPart } as InlineStepParam))
       });
@@ -68,14 +79,8 @@ export default Vue.extend({
   },
   computed: {
     availableAdverbs(): Array<StepAdverb> {
-      const correspondingAdverbs = {
-        [StepType.Given]: StepAdverb.Given,
-        [StepType.When]: StepAdverb.When,
-        [StepType.Then]: StepAdverb.Then
-      };
-
       return [
-        correspondingAdverbs[(this as any).step.step.type],
+        (this as any).getCorrespondingAdverb((this as any).step.step.type),
         StepAdverb.And,
         StepAdverb.But
       ];

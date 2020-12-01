@@ -48,7 +48,7 @@ export default Vue.extend({
       required: true
     } as PropOptions<FeatureRootProject>
   },
-  data: function (): Step {
+  data: function () {
     return {
       type: StepType.Given,
       parts: [
@@ -58,14 +58,14 @@ export default Vue.extend({
           content: ''
         }
       ],
-      partsHashes: [Math.random(0, 2000000000)]
+      partsHashes: [Math.random()]
     }
   },
   methods: {
     fixPriorities() {
       for (let i = 0 ; i < this.parts.length ; i++) {
         this.parts[i].priority = i;
-        this.partsHashes[i] = Math.random(0, 2000000000);
+        this.partsHashes[i] = Math.random();
       }
     },
     onContentSelected(i: number, e: InputEvent): void {
@@ -73,9 +73,10 @@ export default Vue.extend({
         return;
       }
 
-      const before = e.target.value.substring(0, e.target.selectionStart).trim();
-      const selected = e.target.value.substring(e.target.selectionStart, e.target.selectionEnd).trim();
-      const after = e.target.value.substring(e.target.selectionEnd).trim();
+      const target = e.target as HTMLInputElement;
+      const before = (target as HTMLInputElement).value.substring(0, this.resolveSelectionBounding(target.selectionStart)).trim();
+      const selected = target.value.substring(this.resolveSelectionBounding(target.selectionStart), this.resolveSelectionBounding(target.selectionEnd)).trim();
+      const after = target.value.substring(this.resolveSelectionBounding(target.selectionEnd)).trim();
 
       if (after !== '') {
         this.parts.splice(i + 1, 0, {
@@ -149,6 +150,9 @@ export default Vue.extend({
     },
     onDialogStatusChanged(e: boolean) {
       this.$emit('input', e);
+    },
+    resolveSelectionBounding(n: number | null): number {
+      return typeof n === 'number' ? n : 0;
     }
   },
   computed: {

@@ -10,6 +10,7 @@
     <div class="step-form-param-selector">
       <step-param-selector :step-param-type="extraParamType" class="step-form-param-selector" @input="onExtraParamTypeChanged" />
     </div>
+    <v-textarea v-if="extraParamType === 'multiline'" filled auto-grow />
   </form>
 </template>
 
@@ -18,7 +19,7 @@ import Vue, { PropOptions } from 'vue'
 import InlineStepParamForm from '~/components/InlineStepParamForm.vue';
 import StepParamSelector from '~/components/StepParamSelector.vue';
 import {
-  InlineStepParam,
+  InlineStepParam, isInlineStepParam,
   MultilineStepParam,
   ScenarioStep,
   SelectItem,
@@ -48,8 +49,14 @@ export default Vue.extend({
     } as PropOptions<Array<StepAdverb>>
   },
   methods: {
-    getParamForPart(part: StepPart): InlineStepParam {
-      return (this.step as ScenarioStep).params.find((p: InlineStepParam) => p.stepPart?.id === part.id);
+    getParamForPart(part: StepPart): InlineStepParam | undefined {
+      const param = (this.step as ScenarioStep)
+        .params
+        .find(p => isInlineStepParam(p) && p.stepPart?.id === part.id);
+
+      if (param && isInlineStepParam(param)) {
+        return param;
+      }
     },
     onAdverbChanged(adverb: StepAdverb) {
       this.$emit('input', {
@@ -58,7 +65,10 @@ export default Vue.extend({
       });
     },
     onInlineParamUpdated(param: InlineStepParam) {
-      const updatedParamIndex = this.step.params.findIndex(p => p.stepPart?.id === param.stepPart.id);
+      const updatedParamIndex = this
+        .step
+        .params
+        .findIndex(p => isInlineStepParam(p) && p.stepPart?.id === param.stepPart.id);
       const params = [...this.step.params];
 
       params[updatedParamIndex] = param;
@@ -88,7 +98,7 @@ export default Vue.extend({
         params
       });
     },
-    removeExtraParam(params: Array<StepParam>): void {
+    removeExtraParam(params: Array<StepParam>): Array<StepParam> {
       const index = params.findIndex((p: StepParam) => p.type !== StepParamType.Inline);
 
       if (index !== -1) {

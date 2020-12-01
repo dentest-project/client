@@ -77,7 +77,7 @@ interface Feature {
 }
 
 interface FeatureRootProject {
-  id: number
+  id: string
 }
 
 interface InlineStepParam extends StepParam {
@@ -145,7 +145,7 @@ interface Step {
 }
 
 interface StepParam {
-  id: number,
+  id?: number,
   type: StepParamType,
 }
 
@@ -157,7 +157,7 @@ interface StepPart {
 }
 
 interface StepProject {
-  id: number
+  id: string
 }
 
 interface TableStepParam extends StepParam {
@@ -177,6 +177,10 @@ interface UpdateFeaturePath extends CreateFeaturePath {}
 type Breadcrumb = Array<BreadcrumbItem>
 type PathList = Array<Path>
 type ProjectList = Array<Project>
+
+function isInlineStepParam(param: StepParam): param is InlineStepParam {
+  return 'content' in param && typeof 'content' === 'string' && 'stepPart' in param;
+}
 
 export {
   Breadcrumb,
@@ -205,5 +209,6 @@ export {
   StepPartType,
   StepType,
   TableStepParam,
-  UpdateFeature
+  UpdateFeature,
+  isInlineStepParam
 };

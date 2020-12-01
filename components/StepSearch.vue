@@ -83,9 +83,6 @@ export default Vue.extend({
     getStepItemValue(step: Step) {
       return step;
     },
-    onAutocompleteChanged(val): void {
-      console.log(val);
-    },
     onDeleteClick(): void {
       this.$emit('deleted');
     },
