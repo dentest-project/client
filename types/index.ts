@@ -141,6 +141,7 @@ interface Step {
   id?: number,
   project: StepProject,
   type: StepType,
+  extraParamType: StepParamType,
   parts: Array<StepPart>
 }
 

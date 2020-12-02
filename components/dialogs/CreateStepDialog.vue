@@ -17,6 +17,9 @@
                 @click:clear.stop="() => onInputCleared(i)"
               />
             </div>
+            <div class="create-step-type-selector">
+              <step-param-type-selector v-model="extraParamType" />
+            </div>
           </div>
         </v-card-text>
         <v-card-actions>
@@ -30,11 +33,12 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue';
+import StepParamTypeSelector from '~/components/StepParamTypeSelector.vue';
 import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { FeatureRootProject, SelectItem, Step, StepPartType, StepType } from '~/types';
+import { FeatureRootProject, SelectItem, StepParamType, StepPartType, StepType } from '~/types';
 
 export default Vue.extend({
-  components: { SubmitButton },
+  components: { StepParamTypeSelector, SubmitButton },
   model: {
     prop: 'value'
   },
@@ -58,6 +62,7 @@ export default Vue.extend({
           content: ''
         }
       ],
+      extraParamType: StepParamType.None,
       partsHashes: [Math.random()]
     }
   },
@@ -138,6 +143,7 @@ export default Vue.extend({
           project: {
             id: this.featureRootProject.id
           },
+          extraParamType: this.extraParamType,
           parts: this.parts
         }, this.$axios);
 
@@ -180,5 +186,9 @@ export default Vue.extend({
 }
 .create-step-inputs {
   display: flex;
+}
+.create-step-type-selector {
+  width: fit-content;
+  margin: auto;
 }
 </style>

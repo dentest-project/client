@@ -15,13 +15,14 @@ import StepSearch from '~/components/StepSearch.vue';
 import {
   FeatureRootProject,
   InlineStepParam,
-  Mode,
+  Mode, MultilineStepParam,
   ScenarioStep,
   Step,
   StepAdverb,
+  StepParam,
   StepParamType,
   StepPartType,
-  StepType
+  StepType, TableStepParam
 } from '~/types';
 
 export default Vue.extend({
@@ -52,6 +53,33 @@ export default Vue.extend({
     }
   },
   methods: {
+    generateParams(step: Step): Array<StepParam> {
+      const params: Array<InlineStepParam | MultilineStepParam | TableStepParam> = step
+        .parts
+        .filter(p => p.type === StepPartType.Param)
+        .map(stepPart => ({
+          type: StepParamType.Inline,
+          content: stepPart.content ,
+          stepPart
+        } as InlineStepParam));
+
+      if (step.extraParamType === StepParamType.None) {
+        return params;
+      }
+      if (step.extraParamType === StepParamType.Multiline) {
+        params.push({
+          type: step.extraParamType,
+          content: ''
+        });
+      } else {
+        params.push({
+          type: step.extraParamType,
+          content: [] as Array<Array<string>>
+        });
+      }
+
+      return params;
+    },
     getCorrespondingAdverb(type: StepType): StepAdverb {
       switch (type) {
         case StepType.Given:
@@ -73,7 +101,7 @@ export default Vue.extend({
         ...this.step,
         adverb: this.getCorrespondingAdverb(step.type),
         step,
-        params: step.parts.filter(p => p.type === StepPartType.Param).map(stepPart => ({ type: StepParamType.Inline, content: stepPart.content , stepPart } as InlineStepParam))
+        params: this.generateParams(step)
       });
     }
   },

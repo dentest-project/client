@@ -1,8 +1,8 @@
 <template>
   <form>
-    <div class="description" :style="`background-color: ${$colors.lightPrimary}`">
+    <v-sheet elevation="2" class="description" :style="`background-color: ${$colors.lightPrimary}`">
       <editable-textarea :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
-    </div>
+    </v-sheet>
     <scenario-list :scenarios="feature.scenarios" :feature-root-project="featureRootProject" @input="onScenariosChanged" />
   </form>
 </template>

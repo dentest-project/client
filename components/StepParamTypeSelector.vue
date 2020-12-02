@@ -3,9 +3,9 @@
     <template v-slot:activator>
       <v-btn v-model="activated" :color="$colors.secondary" dark fab x-small>
         <v-icon v-if="activated">mdi-close</v-icon>
-        <v-icon v-else-if="stepParamType === 'multiline'">mdi-text-box</v-icon>
-        <v-icon v-else-if="stepParamType === 'table'">mdi-table-large</v-icon>
-        <v-icon v-else>mdi-circle-off-outline</v-icon>
+        <v-icon v-else-if="stepParamType === 'multiline'" title="With multiline param">mdi-text-box</v-icon>
+        <v-icon v-else-if="stepParamType === 'table'" title="With table param">mdi-table-large</v-icon>
+        <v-icon v-else title="With no param">mdi-circle-off-outline</v-icon>
       </v-btn>
     </template>
     <none-step-param-type-button @click="onNoneSelected" />
@@ -23,6 +23,9 @@ import InlineStepParamForm from '~/components/InlineStepParamForm.vue';
 import { StepParamType } from '~/types';
 
 export default Vue.extend({
+  model: {
+    prop: 'stepParamType'
+  },
   components: {
     TableStepParamButton,
     MultilineStepParamButton,
