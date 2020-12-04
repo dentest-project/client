@@ -3,18 +3,20 @@
     <deletable-row v-if="mode === $modes.edit" @delete="onDeleteClick">
       <step-form v-if="step.step" :step="step" :available-adverbs="availableAdverbs" @input="onUpdated" />
       <step-search v-else :feature-root-project="featureRootProject" @selected="onStepSelected" />
+      <create-table-step-param-dialog v-model="createTableStepParamDialog" @selected="onTableStepParamDimensionsSelected" />
     </deletable-row>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
+import CreateTableStepParamDialog from '~/components/dialogs/CreateTableStepParamDialog.vue';
 import DeletableRow from '~/components/DeletableRow.vue';
 import StepForm from '~/components/StepForm.vue';
 import StepSearch from '~/components/StepSearch.vue';
 import {
   FeatureRootProject,
-  InlineStepParam,
+  InlineStepParam, isInlineStepParam,
   Mode, MultilineStepParam,
   ScenarioStep,
   Step,
@@ -27,6 +29,7 @@ import {
 
 export default Vue.extend({
   components: {
+    CreateTableStepParamDialog,
     DeletableRow,
     StepForm,
     StepSearch
@@ -50,6 +53,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      createTableStepParamDialog: false
     }
   },
   methods: {
@@ -102,6 +106,18 @@ export default Vue.extend({
         adverb: this.getCorrespondingAdverb(step.type),
         step,
         params: this.generateParams(step)
+      });
+      this.createTableStepParamDialog = true;
+    },
+    onTableStepParamDimensionsSelected(width: number, height: number) {
+      const params = [...this.step.params];
+
+      params[params.findIndex(p => !isInlineStepParam(p))].content = new Array(height + 1).fill().map(() => new Array(width + 1).fill(''));
+
+      this.createTableStepParamDialog = false;
+      this.$emit('input', {
+        ...this.step,
+        params
       });
     }
   },
