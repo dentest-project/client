@@ -1,0 +1,102 @@
+<template>
+  <div class="step-display">
+    <div class="step-display-sentence">
+      <span class="step-display-adverb">{{ adverb }}</span>
+      <span v-for="(part, id) in step.step.parts">
+        <span v-if="part.type === 'sentence'" :key="id"> {{ part.content }}</span>
+        <span v-else :key="id" class="step-display-inline-param"> {{ getParamForPart(part).content }}</span>
+      </span>
+    </div>
+    <div v-if="extraParamType === 'multiline'" class="step-display-multiline-param">{{ extraParamValue }}</div>
+    <table v-else-if="extraParamType === 'table'" class="step-display-table-param">
+      <tr v-for="(row, j) in extraParamValue" :key="j">
+        <td v-for="(cell, i) in row" :key="`${j}-${i}`">{{ cell }}</td>
+      </tr>
+    </table>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue, { PropOptions } from 'vue'
+import {
+  InlineStepParam,
+  isInlineStepParam,
+  ScenarioStep,
+  StepAdverb,
+  StepParam,
+  StepParamType,
+  StepPart,
+} from '~/types';
+
+export default Vue.extend({
+  model: {
+    prop: 'step'
+  },
+  props: {
+    step: {
+      type: Object,
+      required: true
+    } as PropOptions<ScenarioStep>
+  },
+  methods: {
+    getParamForPart(part: StepPart): InlineStepParam | undefined {
+      const param = (this.step as ScenarioStep)
+        .params
+        .find(p => isInlineStepParam(p) && p.stepPart?.id === part.id);
+
+      if (param && isInlineStepParam(param)) {
+        return param;
+      }
+    }
+  },
+  computed: {
+    adverb() {
+      return {
+        [StepAdverb.Given]: 'Given',
+        [StepAdverb.When]: 'When',
+        [StepAdverb.Then]: 'Then',
+        [StepAdverb.And]: 'And',
+        [StepAdverb.But]: 'But'
+      }[(this as any).step.adverb];
+    },
+    extraParamType(): StepParamType {
+      const extraParam = (this as any).step.params.find((p: StepParam) => !isInlineStepParam(p));
+
+      if (!extraParam) {
+        return StepParamType.None;
+      }
+
+      return extraParam.type;
+    },
+    extraParamValue(): string | Array<Array<string>> {
+      return (this as any).step.params.find((p: StepParam) => !isInlineStepParam(p)).content;
+    }
+  }
+});
+</script>
+
+<style scoped>
+.step-display-adverb {
+  font-weight: bold;
+}
+
+.step-display-inline-param {
+  font-weight: bold;
+  color: green;
+}
+
+.step-display-multiline-param {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  white-space: pre;
+}
+
+.step-display-table-param {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.step-display-table-param td {
+  padding: 1rem;
+  margin: 0;
+}
+</style>

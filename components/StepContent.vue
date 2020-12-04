@@ -5,6 +5,7 @@
       <step-search v-else :feature-root-project="featureRootProject" @selected="onStepSelected" />
       <create-table-step-param-dialog v-model="createTableStepParamDialog" @selected="onTableStepParamDimensionsSelected" />
     </deletable-row>
+    <step-display v-else :step="step" />
   </div>
 </template>
 
@@ -12,12 +13,15 @@
 import Vue, { PropOptions } from 'vue'
 import CreateTableStepParamDialog from '~/components/dialogs/CreateTableStepParamDialog.vue';
 import DeletableRow from '~/components/DeletableRow.vue';
+import StepDisplay from '~/components/StepDisplay.vue';
 import StepForm from '~/components/StepForm.vue';
 import StepSearch from '~/components/StepSearch.vue';
 import {
   FeatureRootProject,
-  InlineStepParam, isInlineStepParam,
-  Mode, MultilineStepParam,
+  InlineStepParam,
+  isInlineStepParam,
+  Mode,
+  MultilineStepParam,
   ScenarioStep,
   Step,
   StepAdverb,
@@ -31,6 +35,7 @@ export default Vue.extend({
   components: {
     CreateTableStepParamDialog,
     DeletableRow,
+    StepDisplay,
     StepForm,
     StepSearch
   },
@@ -67,7 +72,7 @@ export default Vue.extend({
           stepPart
         } as InlineStepParam));
 
-      if (step.extraParamType === StepParamType.None) {
+      if (!step.extraParamType || step.extraParamType === StepParamType.None) {
         return params;
       }
       if (step.extraParamType === StepParamType.Multiline) {
@@ -80,6 +85,7 @@ export default Vue.extend({
           type: step.extraParamType,
           content: [] as Array<Array<string>>
         });
+        this.createTableStepParamDialog = true;
       }
 
       return params;
@@ -107,7 +113,6 @@ export default Vue.extend({
         step,
         params: this.generateParams(step)
       });
-      this.createTableStepParamDialog = true;
     },
     onTableStepParamDimensionsSelected(width: number, height: number) {
       const params = [...this.step.params];
