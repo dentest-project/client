@@ -6,6 +6,7 @@
         class="step-list-drop-target"
         :class="{ 'step-list-drop-target--over': i === hoveredTargetId }"
         @dragover.prevent="onDragOver(i)"
+        @dragleave.prevent="onDragLeave"
         @drop="onDrop(i)"
       />
       <step-content
@@ -93,6 +94,9 @@ export default Vue.extend({
 
       steps.splice(i, 1);
       this.$emit('input', this.fixPriorities(steps));
+    },
+    onDragLeave() {
+      this.hoveredTargetId = null;
     },
     onDragOver(i: number) {
       if (this.draggedElementId === null) {
