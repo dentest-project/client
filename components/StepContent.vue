@@ -1,5 +1,5 @@
 <template>
-  <div class="step">
+  <div class="step" :draggable="mode === $modes.edit" @dragstart="$emit('dragstart', step)" @dragend="$emit('dragend')">
     <deletable-row v-if="mode === $modes.edit" @delete="onDeleteClick">
       <step-form v-if="step.step" :step="step" :available-adverbs="availableAdverbs" @input="onUpdated" />
       <step-search v-else :feature-root-project="featureRootProject" @selected="onStepSelected" />
@@ -117,7 +117,7 @@ export default Vue.extend({
     onTableStepParamDimensionsSelected(width: number, height: number) {
       const params = [...this.step.params];
 
-      params[params.findIndex(p => !isInlineStepParam(p))].content = new Array(height + 1).fill().map(() => new Array(width + 1).fill(''));
+      params[params.findIndex(p => !isInlineStepParam(p))].content = new Array(height + 1).fill(null).map(() => new Array(width + 1).fill(''));
 
       this.createTableStepParamDialog = false;
       this.$emit('input', {
@@ -139,9 +139,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.step {
-  margin-bottom: 2rem;
-}
 .step-type-select {
   flex-grow: 0;
 }

@@ -9,9 +9,11 @@
     </div>
     <div v-if="extraParamType === 'multiline'" class="step-display-multiline-param">{{ extraParamValue }}</div>
     <table v-else-if="extraParamType === 'table'" class="step-display-table-param">
-      <tr v-for="(row, j) in extraParamValue" :key="j">
-        <td v-for="(cell, i) in row" :key="`${j}-${i}`">{{ cell }}</td>
-      </tr>
+      <tbody>
+        <tr v-for="(row, j) in extraParamValue" :key="j">
+          <td v-for="(cell, i) in row" :key="`${j}-${i}`">{{ cell }}</td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>
@@ -50,14 +52,14 @@ export default Vue.extend({
     }
   },
   computed: {
-    adverb() {
-      return {
+    adverb(): string {
+      return ({
         [StepAdverb.Given]: 'Given',
         [StepAdverb.When]: 'When',
         [StepAdverb.Then]: 'Then',
         [StepAdverb.And]: 'And',
         [StepAdverb.But]: 'But'
-      }[(this as any).step.adverb];
+      } as Record<StepAdverb, string>)[((this as any).step as ScenarioStep).adverb];
     },
     extraParamType(): StepParamType {
       const extraParam = (this as any).step.params.find((p: StepParam) => !isInlineStepParam(p));
@@ -76,6 +78,10 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.step-display {
+  margin: 1rem 0;
+}
+
 .step-display-adverb {
   font-weight: bold;
 }
@@ -91,12 +97,9 @@ export default Vue.extend({
   white-space: pre;
 }
 
-.step-display-table-param {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
 .step-display-table-param td {
   padding: 1rem;
   margin: 0;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 </style>

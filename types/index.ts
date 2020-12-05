@@ -128,7 +128,8 @@ interface ScenarioStep {
   id?: number,
   adverb: StepAdverb,
   step?: Step,
-  params: Array<InlineStepParam | MultilineStepParam | TableStepParam>
+  params: Array<InlineStepParam | MultilineStepParam | TableStepParam>,
+  priority: number
 }
 
 interface SelectItem {
