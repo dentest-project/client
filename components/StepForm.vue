@@ -8,14 +8,14 @@
       </div>
     </div>
     <v-textarea v-if="extraParamType === 'multiline'" :value="extraParamValue" filled auto-grow @input="onExtraParamUpdated" />
-    <table-step-param-form v-else-if="extraParamType === 'table'" :value="extraParamValue" @input="onExtraParamUpdated" />
+    <table-form v-else-if="extraParamType === 'table'" :value="extraParamValue" :deletable-columns="true" @input="onExtraParamUpdated" />
   </form>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import InlineStepParamForm from '~/components/InlineStepParamForm.vue';
-import TableStepParamForm from '~/components/TableStepParamForm.vue';
+import TableForm from '~/components/TableForm.vue';
 import {
   InlineStepParam,
   isInlineStepParam,
@@ -30,7 +30,7 @@ import {
 export default Vue.extend({
   components: {
     InlineStepParamForm,
-    TableStepParamForm
+    TableForm
   },
   model: {
     prop: 'step'

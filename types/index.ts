@@ -121,7 +121,7 @@ interface Scenario {
   type: ScenarioType,
   title: string,
   steps: Array<ScenarioStep>,
-  examples?: Array<Array<string>>
+  examples?: Record<string, Array<string>>
 }
 
 interface ScenarioStep {

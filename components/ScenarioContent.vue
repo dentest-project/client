@@ -6,18 +6,25 @@
     <switch-scenario-type-chip v-if="shouldDisplayTypeSwitch" :value="scenario.type" :mode="mode" @input="onTypeChanged" />
     <editable-subtitle v-if="mode === $modes.edit" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>
-    <step-list :mode="mode" :steps="scenario.steps" :feature-root-project="featureRootProject" @input="onStepsChanged" />
+    <step-list
+      :mode="mode"
+      :steps="scenario.steps"
+      :feature-root-project="featureRootProject"
+      @input="onStepsChanged"
+    />
+    <examples-content v-if="scenario.examples" class="scenario-examples" :examples="scenario.examples" :mode="mode" @input="onExamplesChanged" />
   </v-sheet>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
-import EditButton from '~/components/buttons/EditButton.vue';
-import ViewButton from '~/components/buttons/ViewButton.vue';
 import EditableSubtitle from '~/components/EditableSubtitle.vue';
+import EditButton from '~/components/buttons/EditButton.vue';
+import ExamplesContent from '~/components/ExamplesContent.vue';
 import StepList from '~/components/StepList.vue';
 import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
+import ViewButton from '~/components/buttons/ViewButton.vue';
 import { FeatureRootProject, Mode, Scenario, ScenarioStep, ScenarioType } from '~/types';
 
 export default Vue.extend({
@@ -26,6 +33,7 @@ export default Vue.extend({
     DeleteButton,
     EditButton,
     EditableSubtitle,
+    ExamplesContent,
     StepList,
     SwitchScenarioTypeChip
   },
@@ -55,10 +63,21 @@ export default Vue.extend({
     onDeleteClick(): void {
       this.$emit('deleted');
     },
-    onStepsChanged(steps: Array<ScenarioStep>): void {
+    onExamplesChanged(examples: Record<string, Array<string>>): void {
       this.$emit('input', {
         ...this.scenario,
-        steps
+        examples
+      });
+    },
+    onStepsChanged(steps: Array<ScenarioStep>): void {
+      const examples = this.updateExamples(steps);
+      const type = examples ? ScenarioType.Outline : ScenarioType.Regular;
+
+      this.$emit('input', {
+        ...this.scenario,
+        type,
+        steps,
+        examples
       });
     },
     onTitleChanged(title: string): void {
@@ -70,9 +89,48 @@ export default Vue.extend({
     onTypeChanged(type: string): void {
       this.$emit('input', {
         ...this.scenario,
-        type,
+        type: type === this.scenario.examples ? ScenarioType.Outline : type,
         title: type === ScenarioType.Background ? '' : 'Scenario title'
       });
+    },
+    updateExamples(steps: Array<ScenarioStep>): Record<string, Array<string>> | undefined {
+      const newExamples = {};
+      const keys = [];
+      const re = new RegExp('<([^<>]+)>', 'g');
+
+      steps.forEach((step: ScenarioStep) => {
+        step.params.forEach(param => {
+          if (typeof param.content === 'string') {
+            param.content.replace(re, function () {
+              keys.push(arguments[1]);
+            });
+          } else {
+            param.content.forEach(row => {
+              row.forEach(cell => {
+                cell.replace(re, function () {
+                  keys.push(arguments[1]);
+                });
+              })
+            })
+          }
+        });
+      });
+
+      if (keys.length === 0) {
+        return;
+      }
+
+      const currentValues = this.scenario.examples ? Object.values(this.scenario.examples) : [];
+      const newValuesLength = currentValues.length > 0 ? currentValues[0].length : 1;
+      keys.forEach(k => {
+        if (this.scenario.examples && Object.keys(this.scenario.examples).indexOf(k) !== -1) {
+          newExamples[k] = this.scenario.examples[k];
+          return;
+        }
+        newExamples[k] = new Array(newValuesLength).fill('');
+      });
+
+      return newExamples;
     },
     switchToEditMode() {
       this.mode = Mode.Edit;
@@ -109,5 +167,9 @@ export default Vue.extend({
   position: absolute;
   right: -16px;
   top: -16px;
+}
+
+.scenario .scenario-examples {
+  margin-top: 2rem;
 }
 </style>

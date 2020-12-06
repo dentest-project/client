@@ -1,23 +1,31 @@
 <template>
   <table>
-    <tr v-if="value.length > 0">
-      <td />
-      <td v-for="(cell, i) in value[0]" :key="`del-col-${i}`" class="delete-column-cell">
-        <insert-column-before-chip @click="onInsertColumnBefore(i)" />
-        <delete-chip v-if="value[0].length > 1" @click="onDeleteColumn(i)" />
-        <insert-column-after-chip @click="onInsertColumnAfter(i)" />
-      </td>
-    </tr>
-    <tr v-for="(row, i) in value" :key="i">
-      <td class="delete-row-cell">
-        <insert-row-before-chip @click="onInsertRowBefore(i)" /><br>
-        <delete-chip v-if="value.length > 1" @click="onDeleteRow(i)" /><br>
-        <insert-row-after-chip @click="onInsertRowAfter(i)" />
-      </td>
-      <td v-for="(cell, j) in row" :key="`${i}-${j}`">
-        <v-text-field :value="cell" filled @input="e => onCellUpdated(i, j, e)" />
-      </td>
-    </tr>
+    <thead v-if="headers">
+      <tr>
+        <th />
+        <th v-for="(header, hi) in headers" :key="hi">{{ header }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-if="value.length > 0 && deletableColumns">
+        <td />
+        <td v-for="(cell, i) in value[0]" :key="`del-col-${i}`" class="delete-column-cell">
+          <insert-column-before-chip @click="onInsertColumnBefore(i)" />
+          <delete-chip v-if="value[0].length > 1" @click="onDeleteColumn(i)" />
+          <insert-column-after-chip @click="onInsertColumnAfter(i)" />
+        </td>
+      </tr>
+      <tr v-for="(row, i) in value" :key="i">
+        <td class="delete-row-cell">
+          <insert-row-before-chip @click="onInsertRowBefore(i)" /><br>
+          <delete-chip v-if="value.length > 1" @click="onDeleteRow(i)" /><br>
+          <insert-row-after-chip @click="onInsertRowAfter(i)" />
+        </td>
+        <td v-for="(cell, j) in row" :key="`${i}-${j}`">
+          <v-text-field :value="cell" filled @input="e => onCellUpdated(i, j, e)" />
+        </td>
+      </tr>
+    </tbody>
   </table>
 </template>
 
@@ -35,6 +43,14 @@ export default Vue.extend({
     prop: 'value'
   },
   props: {
+    deletableColumns: {
+      type: Boolean,
+      required: true
+    },
+    headers: {
+      type: Array,
+      required: false
+    },
     value: {
       type: Array,
       required: true

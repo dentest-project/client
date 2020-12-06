@@ -137,9 +137,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style scoped>
-.step-type-select {
-  flex-grow: 0;
-}
-</style>
