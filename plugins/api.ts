@@ -11,7 +11,7 @@ import {
   Project,
   ProjectList,
   Step,
-  UpdateFeature
+  UpdateFeature, UpdatePath, UpdateProject
 } from '~/types';
 
 declare module 'vue/types/vue' {
@@ -42,6 +42,8 @@ interface Api {
   getProjectSteps(id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>>,
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
+  updatePath(path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path>,
+  updateProject(project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project>
 }
 
 const Api = (context: any) => {
@@ -87,6 +89,8 @@ const Api = (context: any) => {
 
       return await get(`features/${feat.id}`, axios);
     },
+    updatePath: async (path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path> => put('paths', path, axios),
+    updateProject: async (project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project> => put('projects', project, axios),
   } as Api;
 };
 

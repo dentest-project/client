@@ -176,6 +176,16 @@ interface UpdateFeature{
 
 interface UpdateFeaturePath extends CreateFeaturePath {}
 
+interface UpdatePath {
+  id: string,
+  path: string
+}
+
+interface UpdateProject {
+  id: string,
+  title: string
+}
+
 type Breadcrumb = Array<BreadcrumbItem>
 type PathList = Array<Path>
 type ProjectList = Array<Project>
@@ -212,5 +222,7 @@ export {
   StepType,
   TableStepParam,
   UpdateFeature,
+  UpdatePath,
+  UpdateProject,
   isInlineStepParam
 };

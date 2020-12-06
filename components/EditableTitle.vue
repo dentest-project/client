@@ -36,8 +36,9 @@ export default Vue.extend({
     switchToEdit (): void {
       this.mode = Mode.Edit;
     },
-    onSubmit (): void {
+    onSubmit (e: InputEvent): void {
       this.mode = Mode.View
+      this.$emit('submit', (e.currentTarget as HTMLInputElement).value);
     },
     onChanged(e: InputEvent): void {
       this.$emit('input', (e.currentTarget as HTMLInputElement).value);

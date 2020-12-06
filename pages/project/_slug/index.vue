@@ -1,6 +1,6 @@
 <template>
   <main>
-    <h1>{{ title }}</h1>
+    <editable-title :value="title" label="Title" @submit="onTitleUpdated" />
     <breadcrumb :items="breadcrumbItems" />
     <actions-bar>
       <add-folder-button @click.stop="activateCreatePathDialog" />
@@ -43,10 +43,14 @@
     <v-snackbar v-model="pathCreatedSnackbarOpened" :color="$colors.success">Path created</v-snackbar>
     <v-snackbar v-model="featureCreatedSnackbarOpened" :color="$colors.success">Feature created</v-snackbar>
     <v-snackbar v-model="pathDeleteSnackbarOpened" :color="$colors.success">Path deleted</v-snackbar>
+    <v-snackbar v-model="pathUpdatedSnackbarOpened" :color="$colors.success">Path updated</v-snackbar>
     <v-snackbar v-model="projectDeleteSnackbarOpened" :color="$colors.success">Project deleted</v-snackbar>
+    <v-snackbar v-model="projectUpdatedSnackbarOpened" :color="$colors.success">Project updated</v-snackbar>
     <v-snackbar v-model="pathCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the path</v-snackbar>
     <v-snackbar v-model="featureCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the feature</v-snackbar>
+    <v-snackbar v-model="pathUpdateErrorSnackbarOpened" :color="$colors.error">An error occurred while updating the path</v-snackbar>
     <v-snackbar v-model="pathDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the path</v-snackbar>
+    <v-snackbar v-model="projectUpdateErrorSnackbarOpened" :color="$colors.error">An error occurred while updating the project</v-snackbar>
     <v-snackbar v-model="projectDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the project</v-snackbar>
   </main>
 </template>
@@ -62,6 +66,7 @@ import CreateFeatureDialog from '~/components/dialogs/CreateFeatureDialog.vue';
 import CreatePathDialog from '~/components/dialogs/CreatePathDialog.vue';
 import DeletePathDialog from '~/components/dialogs/DeletePathDialog.vue';
 import DeleteProjectDialog from '~/components/dialogs/DeleteProjectDialog.vue';
+import EditableTitle from '~/components/EditableTitle.vue';
 import Grid3 from '~/components/Grid3.vue';
 import PrimaryLinkButton from '~/components/buttons/PrimaryLinkButton.vue';
 import SecondaryLinkButton from '~/components/buttons/SecondaryLinkButton.vue';
@@ -79,11 +84,15 @@ interface Data extends InitialData {
   pathCreatedSnackbarOpened: boolean,
   featureCreatedSnackbarOpened: boolean,
   pathDeleteSnackbarOpened: boolean,
+  pathUpdatedSnackbarOpened: boolean,
   projectDeleteSnackbarOpened: boolean,
+  projectUpdatedSnackbarOpened: boolean,
   pathCreationErrorSnackbarOpened: boolean,
   featureCreationErrorSnackbarOpened: boolean,
   pathDeleteErrorSnackbarOpened: boolean,
-  projectDeleteErrorSnackbarOpened: boolean
+  pathUpdateErrorSnackbarOpened: boolean,
+  projectDeleteErrorSnackbarOpened: boolean,
+  projectUpdateErrorSnackbarOpened: boolean,
 }
 
 export default Vue.extend({
@@ -97,6 +106,7 @@ export default Vue.extend({
     DeleteButton,
     DeletePathDialog,
     DeleteProjectDialog,
+    EditableTitle,
     Grid3,
     PrimaryLinkButton,
     SecondaryLinkButton
@@ -125,11 +135,15 @@ export default Vue.extend({
       pathCreatedSnackbarOpened: false,
       featureCreatedSnackbarOpened: false,
       pathDeleteSnackbarOpened: false,
+      pathUpdatedSnackbarOpened: false,
       projectDeleteSnackbarOpened: false,
+      projectUpdatedSnackbarOpened: false,
       pathCreationErrorSnackbarOpened: false,
       featureCreationErrorSnackbarOpened: false,
       pathDeleteErrorSnackbarOpened: false,
-      projectDeleteErrorSnackbarOpened: false
+      pathUpdateErrorSnackbarOpened: false,
+      projectDeleteErrorSnackbarOpened: false,
+      projectUpdateErrorSnackbarOpened: false
     }
   },
   methods: {
@@ -206,6 +220,32 @@ export default Vue.extend({
     onProjectDeleteErrored(): void {
       this.deActivateDeleteProjectDialog();
       this.projectDeleteErrorSnackbarOpened = true;
+    },
+    async onTitleUpdated(e: string): Promise<void> {
+      if (this.path.project) {
+        try {
+          this.path.project.title = e;
+          await this.$api.updateProject({
+            id: this.path.project.id,
+            title: e
+          }, this.$axios);
+          this.projectUpdatedSnackbarOpened = true;
+        } catch (error) {
+          this.projectUpdateErrorSnackbarOpened = true;
+        }
+      } else {
+        try {
+          this.path.path = e;
+          await this.$api.updatePath({
+            id: this.path.id,
+            path: e
+          }, this.$axios);
+          this.pathUpdatedSnackbarOpened = true;
+        } catch (error) {
+          this.pathUpdateErrorSnackbarOpened = true;
+        }
+      }
+      await this.loadPath();
     }
   },
   computed: {

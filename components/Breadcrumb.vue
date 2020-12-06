@@ -1,5 +1,5 @@
 <template>
-  <div class="breadcrumb" :style="`background: linear-gradient(0deg, ${$colors.lightPrimary} 0%, #ffffff 20%, #ffffff 100%)`">
+  <div class="breadcrumb" :style="`border-bottom: 1px solid ${$colors.primary}`">
     <v-breadcrumbs :items="items" />
   </div>
 </template>
