@@ -50,7 +50,7 @@ p {
   white-space: pre;
 }
 p:hover {
-  background-color: #eeeeee;
+  background-color: rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 </style>
