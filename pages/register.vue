@@ -32,11 +32,6 @@ export default Vue.extend({
         await this.$api.register(data, this.$axios);
         this.registeredSnackbarOpened = true;
         await this.$auth.loginWith('local', { data: { username: data.username, password: data.password } });
-        // const loginResponse = await this.$api.login({
-        //   username: data.username,
-       //   password: data.password
-        // }, this.$axios);
-        // localStorage.setItem('token', loginResponse.token);
         setTimeout(() => { this.$router.push('/'); }, 2000);
       } catch (error) {
         if (error.response.status === 409) {
