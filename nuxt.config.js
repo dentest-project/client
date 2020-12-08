@@ -39,6 +39,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
   ],
@@ -50,6 +51,25 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+  },
+
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          property: 'token',
+          required: true,
+          type: 'Bearer'
+        },
+        user: {
+          property: 'user'
+        },
+        endpoints: {
+          login: { url: '/login', method: 'post' },
+          user: { url: '/me', method: 'get' }
+        }
+      }
+    }
   },
 
   vuetify: {

@@ -33,8 +33,8 @@ export default Vue.extend({
   },
   methods: {
     onUpdated(e: Array<Array<string>>): void {
-      const out = {};
-      const keys = Object.keys(this.examples);
+      const out: Record<string, Array<string>> = {};
+      const keys: Array<string> = Object.keys(this.examples);
 
       keys.forEach(k => {
         out[k] = [];
@@ -52,7 +52,8 @@ export default Vue.extend({
       return Object.keys((this as any).examples);
     },
     value(): Array<Array<string>> {
-      return Object.values((this as any).examples)[0].map((v, i) => Object.keys((this as any).examples).map(k => (this as any).examples[k][i]));
+      return (Object.values((this as any).examples) as Array<Array<string>>)[0]
+        .map((v, i) => Object.keys((this as any).examples).map(k => (this as any).examples[k][i]));
     }
   }
 });

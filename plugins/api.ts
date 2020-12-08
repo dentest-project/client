@@ -6,12 +6,12 @@ import {
   CreatePath,
   CreateProject,
   Feature,
-  FeatureRootProject,
+  FeatureRootProject, Login, LoginResponse,
   Path,
   Project,
-  ProjectList,
+  ProjectList, Register,
   Step,
-  UpdateFeature, UpdatePath, UpdateProject
+  UpdateFeature, UpdatePath, UpdateProject, User
 } from '~/types';
 
 declare module 'vue/types/vue' {
@@ -41,6 +41,8 @@ interface Api {
   getPath(id: string, axios?: NuxtAxiosInstance): Promise<Path>,
   getProjectSteps(id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>>,
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
+  login(user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse>,
+  register(user: Register, axios?: NuxtAxiosInstance): Promise<User>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
   updatePath(path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path>,
   updateProject(project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project>
@@ -84,6 +86,8 @@ const Api = (context: any) => {
     getPath: async (id: string, axios?: NuxtAxiosInstance): Promise<Path> => get(`paths/${id}`, axios),
     getProjectSteps: async (id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>> => get(`projects/${id}/steps`, axios),
     getProjects: async (axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`projects`, axios),
+    login: async (user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse> => post(`login`, user, axios),
+    register: async (user: Register, axios?: NuxtAxiosInstance): Promise<User> => post(`register`, user, axios),
     saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => {
       const feat = await put('features', feature, axios)
 

@@ -85,6 +85,15 @@ interface InlineStepParam extends StepParam {
   stepPart: StepPart
 }
 
+interface Login {
+  username: string,
+  password: string
+}
+
+interface LoginResponse {
+  token: string
+}
+
 interface MultilineStepParam extends StepParam {
   content: string
 }
@@ -114,6 +123,12 @@ interface Project extends PathProject {
 
 interface ProjectRootPath {
   id: string
+}
+
+interface Register {
+  username: string,
+  email: string,
+  password: string
 }
 
 interface Scenario {
@@ -186,9 +201,17 @@ interface UpdateProject {
   title: string
 }
 
+interface User {
+  id: string,
+  username: string,
+  email: string,
+  roles: RoleList
+}
+
 type Breadcrumb = Array<BreadcrumbItem>
 type PathList = Array<Path>
 type ProjectList = Array<Project>
+type RoleList = Array<string>
 
 function isInlineStepParam(param: StepParam): param is InlineStepParam {
   return 'content' in param && typeof 'content' === 'string' && 'stepPart' in param;
@@ -202,6 +225,8 @@ export {
   Feature,
   FeatureRootProject,
   InlineStepParam,
+  Login,
+  LoginResponse,
   Mode,
   MultilineStepParam,
   Path,
@@ -209,6 +234,7 @@ export {
   PathList,
   Project,
   ProjectList,
+  Register,
   Scenario,
   ScenarioStep,
   ScenarioType,
@@ -224,5 +250,6 @@ export {
   UpdateFeature,
   UpdatePath,
   UpdateProject,
+  User,
   isInlineStepParam
 };

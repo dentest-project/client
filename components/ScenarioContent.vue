@@ -89,26 +89,30 @@ export default Vue.extend({
     onTypeChanged(type: string): void {
       this.$emit('input', {
         ...this.scenario,
-        type: type === this.scenario.examples ? ScenarioType.Outline : type,
+        type: this.scenario.examples ? ScenarioType.Outline : type,
         title: type === ScenarioType.Background ? '' : 'Scenario title'
       });
     },
     updateExamples(steps: Array<ScenarioStep>): Record<string, Array<string>> | undefined {
-      const newExamples = {};
-      const keys = [];
+      const newExamples: Record<string, Array<string>> = {};
+      const keys: Array<string> = [];
       const re = new RegExp('<([^<>]+)>', 'g');
 
       steps.forEach((step: ScenarioStep) => {
         step.params.forEach(param => {
           if (typeof param.content === 'string') {
-            param.content.replace(re, function () {
+            param.content.replace(re, function (): string {
               keys.push(arguments[1]);
+
+              return arguments[1];
             });
           } else {
             param.content.forEach(row => {
               row.forEach(cell => {
-                cell.replace(re, function () {
+                cell.replace(re, function (): string {
                   keys.push(arguments[1]);
+
+                  return arguments[1];
                 });
               })
             })
