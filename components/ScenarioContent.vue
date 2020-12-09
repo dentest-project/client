@@ -1,8 +1,8 @@
 <template>
   <v-sheet class="scenario" :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary" shaped elevation="2">
-    <edit-button v-if="mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
-    <view-button v-else class="scenario-edit" @click="switchToViewMode" />
-    <delete-button class="scenario-delete" @click="onDeleteClick" />
+    <edit-button v-if="$auth.loggedIn && mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
+    <view-button v-else-if="$auth.loggedIn && mode === $modes.edit" class="scenario-edit" @click="switchToViewMode" />
+    <delete-button v-if="$auth.loggedIn" class="scenario-delete" @click="onDeleteClick" />
     <switch-scenario-type-chip v-if="shouldDisplayTypeSwitch" :value="scenario.type" :mode="mode" @input="onTypeChanged" />
     <editable-subtitle v-if="mode === $modes.edit" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>

@@ -1,7 +1,7 @@
 <template>
   <main>
     <h1>Projects list</h1>
-    <actions-bar>
+    <actions-bar v-if="$auth.loggedIn">
       <add-button @click.stop="activateCreateProjectDialog" />
     </actions-bar>
     <grid3>

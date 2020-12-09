@@ -1,8 +1,9 @@
 <template>
   <main>
-    <editable-title :value="title" label="Title" @submit="onTitleUpdated" />
+    <editable-title v-if="$auth.loggedIn" :value="title" label="Title" @submit="onTitleUpdated" />
+    <h1 v-else>{{ title }}</h1>
     <breadcrumb :items="breadcrumbItems" />
-    <actions-bar>
+    <actions-bar v-if="$auth.loggedIn">
       <add-folder-button @click.stop="activateCreatePathDialog" />
       <add-feature-button @click.stop="activateCreateFeatureDialog" />
       <v-spacer />

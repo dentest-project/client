@@ -17,3 +17,9 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style scoped>
+.breadcrumb {
+  margin-bottom: 1rem;
+}
+</style>

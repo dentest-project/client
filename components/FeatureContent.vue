@@ -1,7 +1,8 @@
 <template>
   <form>
     <v-sheet elevation="2" class="description" :style="`background-color: ${$colors.lightPrimary}`">
-      <editable-textarea :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
+      <editable-textarea v-if="$auth.loggedIn" :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
+      <p v-else class="feature-content-description">{{ feature.description }}</p>
     </v-sheet>
     <scenario-list :scenarios="feature.scenarios" :feature-root-project="featureRootProject" @input="onScenariosChanged" />
   </form>
@@ -49,7 +50,8 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.description {
-  border: 1px dashed #aaaaaa;
+.feature-content-description {
+  padding: 1rem;
+  white-space: pre;
 }
 </style>

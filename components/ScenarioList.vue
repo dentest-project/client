@@ -9,7 +9,7 @@
       @input="e => onUpdated(i, e)"
       @deleted="() => onDeleted(i)"
     />
-    <add-button @click="onAdd" title="Add scenario" />
+    <add-button v-if="$auth.loggedIn" @click="onAdd" title="Add scenario" />
   </div>
 </template>
 
