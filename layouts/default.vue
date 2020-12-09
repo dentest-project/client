@@ -9,9 +9,21 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  middleware: 'auth'
+}
+</script>
+
 <style>
+@font-face {
+  font-family: 'Raleway';
+  src: url("/Raleway-Medium.ttf") format("truetype");
+}
+
 html {
   font-family:
+    'Raleway',
     'Source Sans Pro',
     -apple-system,
     BlinkMacSystemFont,
@@ -44,10 +56,6 @@ h2 {
   padding: 0.5rem;
 }
 
-a {
-  color: inherit;
-}
-
 .v-textarea.v-text-field--enclosed textarea {
   line-height: initial;
   margin-top: 48px;
@@ -65,6 +73,14 @@ a {
 
 .theme--light.v-input input {
   color: inherit;
+}
+
+.v-application {
+  font-family: "Raleway", sans-serif;
+}
+
+.v-application a {
+  color: #4834d4;
 }
 
 </style>

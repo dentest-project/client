@@ -6,6 +6,12 @@
         Entest
       </nuxt-link>
     </v-toolbar-title>
+    <v-spacer />
+    <div v-if="$auth.loggedIn">
+      <span>{{ $auth.user.username }}</span>
+      <a class="menu-logout" href="#" @click.prevent="logout">Log out</a>
+    </div>
+    <nuxt-link v-else to="/login">Log in</nuxt-link>
   </v-app-bar>
 </template>
 
@@ -14,7 +20,12 @@ import Vue from 'vue';
 import Logo from '~/components/Logo.vue';
 
 export default Vue.extend({
-  components: { Logo }
+  components: { Logo },
+  methods: {
+    async logout() {
+      await this.$auth.logout();
+    },
+  }
 });
 </script>
 
@@ -22,5 +33,9 @@ export default Vue.extend({
 a {
   text-decoration: none;
   color: inherit;
+}
+
+.menu-logout {
+  font-weight: bold;
 }
 </style>

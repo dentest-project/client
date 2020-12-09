@@ -53,6 +53,10 @@ export default {
   build: {
   },
 
+  router: {
+    middleware: ['auth']
+  },
+
   auth: {
     strategies: {
       local: {
@@ -62,13 +66,18 @@ export default {
           type: 'Bearer'
         },
         user: {
-          property: 'user'
+          property: 'user',
+          autoFetch: true
         },
         endpoints: {
-          login: { url: '/login', method: 'post' },
-          user: { url: '/me', method: 'get' }
+          login: { url: 'login', method: 'post', propertyName: 'data.token' },
+          logout: false,
+          user: { url: 'me', method: 'get', propertyName: 'data.user' }
         }
       }
+    },
+    redirect: {
+      logout: false,
     }
   },
 

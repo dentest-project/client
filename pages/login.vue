@@ -13,10 +13,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import LoginForm from '~/components/LoginForm.vue';
-import { Register } from '~/types';
+import { Login, Register } from '~/types';
 
 export default Vue.extend({
-  auth: false,
   components: { LoginForm },
   data: function () {
     return {
@@ -25,10 +24,9 @@ export default Vue.extend({
     }
   },
   methods: {
-    async onSubmit(data: Register): Promise<void> {
+    async onSubmit(data: Login): Promise<void> {
       try {
-        await this.$auth.loginWith('local', { data: { username: data.username, password: data.password } });
-        await this.$router.push('/');
+        await this.$auth.loginWith('local', { data });
       } catch (error) {
         if (error.response.status === 401) {
           this.invalidCredentialsErrorSnackbarOpened = true;
