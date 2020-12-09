@@ -48,6 +48,7 @@ interface Data extends InitialData {
 }
 
 export default Vue.extend({
+  auth: false,
   components: {
     SaveButton,
     ActionsBar,

@@ -27,7 +27,7 @@ interface InitialData {
 }
 
 export default Vue.extend({
-  middleware: 'auth',
+  auth: false,
   components: { AddButton, ActionsBar, CreateProjectDialog, Grid3, PrimaryLinkButton },
   async asyncData({ $api }): Promise<InitialData> {
     const projects = await $api.getProjects();

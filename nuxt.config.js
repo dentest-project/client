@@ -58,6 +58,7 @@ export default {
   },
 
   auth: {
+    scopeKey: 'roles',
     strategies: {
       local: {
         token: {

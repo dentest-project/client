@@ -17,7 +17,7 @@ import RegisterForm from '~/components/RegisterForm.vue';
 import { Register } from '~/types';
 
 export default Vue.extend({
-  auth: false,
+  auth: 'guest',
   components: { RegisterForm },
   data: function () {
     return {

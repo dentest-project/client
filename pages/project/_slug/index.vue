@@ -96,6 +96,7 @@ interface Data extends InitialData {
 }
 
 export default Vue.extend({
+  auth: false,
   components: {
     AddFeatureButton,
     AddFolderButton,
