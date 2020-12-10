@@ -22,7 +22,7 @@ interface Colors {
 // palette: https://flatuicolors.com/palette/au
 Vue.prototype.$colors = {
   primary: '#686de0',
-  secondary: '#f0932b',
+  secondary: '#ff793f',
   add: '#4834d4',
   cut: '#22a6b3',
   success: '#6ab04c',

@@ -10,8 +10,8 @@
       <delete-button @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
-      <primary-link-button v-for="path in path.children" :key="path.id" :to="$routes.project(path.id)" :content="path.path" />
-      <secondary-link-button v-for="feature in path.features" :key="feature.id" :to="$routes.feature(feature.id)" :content="feature.title" />
+      <path-card v-for="path in path.children" :key="path.id" :path="path" />
+      <feature-card v-for="feature in path.features" :key="feature.id" :feature="feature" />
     </grid3>
     <create-path-dialog
       v-model="createPathDialog"
@@ -68,9 +68,9 @@ import CreatePathDialog from '~/components/dialogs/CreatePathDialog.vue';
 import DeletePathDialog from '~/components/dialogs/DeletePathDialog.vue';
 import DeleteProjectDialog from '~/components/dialogs/DeleteProjectDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
+import FeatureCard from '~/components/cards/FeatureCard.vue';
 import Grid3 from '~/components/Grid3.vue';
-import PrimaryLinkButton from '~/components/buttons/PrimaryLinkButton.vue';
-import SecondaryLinkButton from '~/components/buttons/SecondaryLinkButton.vue';
+import PathCard from '~/components/cards/PathCard.vue';
 import { Breadcrumb as BreadcrumbType, Path, PathFeature, PathList } from '~/types';
 
 interface InitialData {
@@ -109,9 +109,9 @@ export default Vue.extend({
     DeletePathDialog,
     DeleteProjectDialog,
     EditableTitle,
+    FeatureCard,
     Grid3,
-    PrimaryLinkButton,
-    SecondaryLinkButton
+    PathCard
   },
   async asyncData({ $api, params }): Promise<InitialData> {
     const path: Path = await $api.getPath(params.slug);

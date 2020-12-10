@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="grid3">
     <slot />
   </div>
 </template>
 
 <style scoped>
-div {
+.grid3 {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -13,13 +13,13 @@ div {
 }
 
 @media screen and (max-width: 640px) {
-  div {
+  .grid3 {
     grid-template-columns: repeat(1, 1fr);
   }
 }
 
 @media screen and (min-width: 641px) and (max-width: 768px) {
-  div {
+  .grid3 {
     grid-template-columns: repeat(2, 1fr);
   }
 }

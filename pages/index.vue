@@ -5,7 +5,7 @@
       <add-button @click.stop="activateCreateProjectDialog" />
     </actions-bar>
     <grid3>
-      <primary-link-button v-for="project in projects" :key="project.id" :to="$routes.project(project.rootPath.id)" :content="project.title" />
+      <project-card v-for="project in projects" :key="project.id" :project="project" />
     </grid3>
     <create-project-dialog v-model="createProjectDialog" @close="deActivateCreateProjectDialog" @created="onCreated" @errored="onErrored" />
     <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Project created</v-snackbar>
@@ -14,12 +14,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
 import ActionsBar from '~/components/ActionsBar.vue';
 import AddButton from '~/components/buttons/AddButton.vue';
 import CreateProjectDialog from '~/components/dialogs/CreateProjectDialog.vue';
 import Grid3 from '~/components/Grid3.vue';
 import PrimaryLinkButton from '~/components/buttons/PrimaryLinkButton.vue';
+import ProjectCard from '~/components/cards/ProjectCard.vue';
 import { ProjectList } from '~/types';
 
 interface InitialData {
@@ -28,7 +29,7 @@ interface InitialData {
 
 export default Vue.extend({
   auth: false,
-  components: { AddButton, ActionsBar, CreateProjectDialog, Grid3, PrimaryLinkButton },
+  components: { AddButton, ActionsBar, CreateProjectDialog, Grid3, PrimaryLinkButton, ProjectCard },
   async asyncData({ $api }): Promise<InitialData> {
     const projects = await $api.getProjects();
 
