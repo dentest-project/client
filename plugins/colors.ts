@@ -9,6 +9,8 @@ declare module 'vue/types/vue' {
 interface Colors {
   primary: string,
   secondary: string,
+  tertiary: string,
+  quaternary: string,
   add: string,
   cut: string,
   success: string,
@@ -23,6 +25,8 @@ interface Colors {
 Vue.prototype.$colors = {
   primary: '#686de0',
   secondary: '#ff793f',
+  tertiary: '#30336b',
+  quaternary: '#535c68',
   add: '#4834d4',
   cut: '#22a6b3',
   success: '#6ab04c',

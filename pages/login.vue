@@ -3,7 +3,7 @@
     <h1>Log in</h1>
     <login-form @submit="onSubmit" />
     <div class="login-switch-to-register">
-      <nuxt-link to="/register">Don't have an account yet? Register instead ;)</nuxt-link>
+      <nuxt-link :to="$routes.register()">Don't have an account yet? Register instead ;)</nuxt-link>
     </div>
     <v-snackbar v-model="loginErrorSnackbarOpened" :color="$colors.error">An error occurred</v-snackbar>
     <v-snackbar v-model="invalidCredentialsErrorSnackbarOpened" :color="$colors.error">Invalid credentials</v-snackbar>

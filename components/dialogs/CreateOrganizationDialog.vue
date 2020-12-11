@@ -3,24 +3,24 @@
     <form @submit.prevent="onSubmit">
       <v-card>
         <v-card-title class="headline">
-          Create project
+          Create organization
         </v-card-title>
         <v-card-text>
-          <v-text-field v-model="projectName" label="Project name" autofocus clearable />
+          <v-text-field v-model="organizationName" label="Organization name" autofocus clearable />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <submit-button>Create project</submit-button>
+          <submit-button>Create organization</submit-button>
         </v-card-actions>
       </v-card>
     </form>
+    <v-snackbar v-model="conflictSnackbarOpened" :color="$colors.error">This organization name is already taken</v-snackbar>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
+import Vue from 'vue';
 import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { CreateProject, Organization } from '~/types';
 
 export default Vue.extend({
   components: { SubmitButton },
@@ -28,38 +28,27 @@ export default Vue.extend({
     prop: 'value'
   },
   props: {
-    value: {
-      type: Boolean,
-      required: true
-    },
-    organization: {
-      type: Object,
-      required: false
-    } as PropOptions<Organization>
+    value: Boolean
   },
   data: function () {
     return {
-      projectName: ''
+      organizationName: '',
+      conflictSnackbarOpened: false
     }
   },
   methods: {
     async onSubmit (): Promise<void> {
-      const newProject = {
-        title: this.projectName,
-        rootPath: {
-          path: '/'
-        }
-      } as CreateProject;
-      if (this.organization && this.organization.id) {
-        newProject.organization = { id: this.organization.id };
-      }
-
       try {
-        await this.$api.createProject(newProject, this.$axios);
+        await this.$api.createOrganization({ name: this.organizationName }, this.$axios);
+
         this.$emit('created');
-        this.projectName = '';
+        this.organizationName = '';
       } catch (error) {
-        this.$emit('errored');
+        if (error.response.status === 409) {
+          this.conflictSnackbarOpened = true;
+        } else {
+          this.$emit('errored');
+        }
       }
     },
     onDialogStatusChanged(e: boolean) {

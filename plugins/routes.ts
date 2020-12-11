@@ -8,12 +8,18 @@ declare module 'vue/types/vue' {
 
 interface Routes {
   home(): string,
+  login(): string,
+  feature(slug: string): string,
+  organization(slug: string): string,
   project(slug: string): string,
-  feature(slug: string): string
+  register(): string
 }
 
 Vue.prototype.$routes = {
   home: (): string => '/',
+  login: (): string => '/login',
+  feature: (slug: string): string => `/feature/${slug}`,
+  organization: (slug: string): string => `/organization/${slug}`,
   project: (slug: string): string => `/project/${slug}`,
-  feature: (slug: string): string => `/feature/${slug}`
+  register: (): string => '/register'
 } as Routes;

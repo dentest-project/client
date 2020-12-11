@@ -61,7 +61,12 @@ interface CreatePathParent {
 
 interface CreateProject {
   title: string,
-  rootPath: CreateProjectRootPath
+  rootPath: CreateProjectRootPath,
+  organization?: CreateProjectOrganization
+}
+
+interface CreateProjectOrganization {
+  id: string
 }
 
 interface CreateProjectRootPath {
@@ -96,6 +101,11 @@ interface LoginResponse {
 
 interface MultilineStepParam extends StepParam {
   content: string
+}
+
+interface Organization {
+  id?: string,
+  name: string
 }
 
 interface Path {
@@ -209,6 +219,7 @@ interface User {
 }
 
 type Breadcrumb = Array<BreadcrumbItem>
+type OrganizationList = Array<Organization>
 type PathList = Array<Path>
 type ProjectList = Array<Project>
 type RoleList = Array<string>
@@ -229,6 +240,8 @@ export {
   LoginResponse,
   Mode,
   MultilineStepParam,
+  Organization,
+  OrganizationList,
   Path,
   PathFeature,
   PathList,

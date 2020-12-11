@@ -264,9 +264,17 @@ export default Vue.extend({
           href: path.id,
           disabled: path.id === this.path.id
         });
+
+        if (path.project && path.project.organization) {
+          out.push({
+            text: path.project.organization.name,
+            href: (this as any).$routes.organization(path.project.organization.id),
+            disabled: false
+          });
+        }
+
         path = path.parent;
       }
-      out.push({ text: 'Entest', href: '/', disabled: false });
 
       return out.reverse();
     }

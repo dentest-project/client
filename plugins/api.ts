@@ -6,7 +6,10 @@ import {
   CreatePath,
   CreateProject,
   Feature,
-  FeatureRootProject, Login, LoginResponse,
+  FeatureRootProject,
+  Login,
+  LoginResponse, Organization,
+  OrganizationList,
   Path,
   Project,
   ProjectList, Register,
@@ -30,6 +33,7 @@ declare module '@nuxt/types' {
 
 interface Api {
   createFeature(feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
+  createOrganization(organization: Organization, axios?: NuxtAxiosInstance): Promise<Organization>,
   createPath(path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path>,
   createProject(project: CreateProject, axios?: NuxtAxiosInstance): Promise<Project>,
   createStep(step: Step, axios?: NuxtAxiosInstance): Promise<Step>,
@@ -38,6 +42,9 @@ interface Api {
   deleteProject(id: string, axios?: NuxtAxiosInstance): Promise<void>,
   getFeature(id: string, axios?: NuxtAxiosInstance): Promise<Feature>,
   getFeatureRootProject(id: string, axios?: NuxtAxiosInstance): Promise<FeatureRootProject>,
+  getOrganizations(axios?: NuxtAxiosInstance): Promise<OrganizationList>,
+  getOrganization(id: string, axios?: NuxtAxiosInstance): Promise<Organization>,
+  getOrganizationProjects(id: string, axios?: NuxtAxiosInstance): Promise<ProjectList>,
   getPath(id: string, axios?: NuxtAxiosInstance): Promise<Path>,
   getProjectSteps(id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>>,
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
@@ -75,6 +82,7 @@ const Api = (context: any) => {
 
   context.$api = {
     createFeature: async (feature: CreateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => post('features', feature, axios),
+    createOrganization: async (organization: Organization, axios?: NuxtAxiosInstance): Promise<Organization> => post('organizations', organization, axios),
     createPath: async (path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path> => post('paths', path, axios),
     createProject: async (project: CreateProject, axios?: NuxtAxiosInstance): Promise<Project> => post('projects', project, axios),
     createStep: async (step: Step, axios?: NuxtAxiosInstance): Promise<Step> => post('steps', step, axios),
@@ -83,6 +91,9 @@ const Api = (context: any) => {
     deleteProject: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`projects/${id}`, axios),
     getFeature: async (id: string, axios?: NuxtAxiosInstance): Promise<Feature> => get(`features/${id}`, axios),
     getFeatureRootProject: async (id: string, axios?: NuxtAxiosInstance): Promise<FeatureRootProject> => get(`features/${id}/root-project`, axios),
+    getOrganizations: async (axios?: NuxtAxiosInstance): Promise<OrganizationList> => get(`organizations`, axios),
+    getOrganization: async (id: string, axios?: NuxtAxiosInstance): Promise<Organization> => get(`organizations/${id}`, axios),
+    getOrganizationProjects: async (id: string, axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`organizations/${id}/projects`, axios),
     getPath: async (id: string, axios?: NuxtAxiosInstance): Promise<Path> => get(`paths/${id}`, axios),
     getProjectSteps: async (id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>> => get(`projects/${id}/steps`, axios),
     getProjects: async (axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`projects`, axios),
