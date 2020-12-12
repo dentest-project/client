@@ -3,7 +3,7 @@
     <h1 v-if="!$auth.loggedIn">{{ organization.name }}</h1>
     <editable-title v-else label="Organization name" v-model="name" @submit="onNameUpdated" />
     <actions-bar v-if="$auth.loggedIn">
-      <add-button @click.stop="activateCreateProjectDialog" />
+      <add-project-button @click.stop="activateCreateProjectDialog" />
     </actions-bar>
     <grid3 v-if="projects.length > 0">
       <project-card v-for="project in projects" :key="project.id" :project="project" />
@@ -11,8 +11,8 @@
     <p v-else>This organization has no project.</p>
     <create-project-dialog v-model="createProjectDialog" :organization="organization" @close="deactivateCreateProjectDialog" @created="onCreated" @errored="onErrored" />
     <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Project created</v-snackbar>
-    <v-snackbar v-model="organizationUpdatedSnackbarOpened" :color="$colors.success">Organization updated</v-snackbar>
     <v-snackbar v-model="creationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the project</v-snackbar>
+    <v-snackbar v-model="organizationUpdatedSnackbarOpened" :color="$colors.success">Organization updated</v-snackbar>
     <v-snackbar v-model="organizationUpdateConflictErrorSnackbarOpened" :color="$colors.error">This organization name is already taken :/</v-snackbar>
     <v-snackbar v-model="organizationUpdateErrorSnackbarOpened" :color="$colors.error">An error occurred while updating the organization</v-snackbar>
   </v-main>
@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import ActionsBar from '~/components/ActionsBar.vue';
-import AddButton from '~/components/buttons/AddButton.vue';
+import AddProjectButton from '~/components/buttons/AddProjectButton.vue';
 import CreateProjectDialog from '~/components/dialogs/CreateProjectDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
 import Grid3 from '~/components/Grid3.vue';
@@ -37,7 +37,7 @@ interface InitialData {
 
 export default Vue.extend({
   auth: false,
-  components: { AddButton, ActionsBar, CreateProjectDialog, EditableTitle, Grid3, PrimaryLinkButton, ProjectCard },
+  components: { AddProjectButton, ActionsBar, CreateProjectDialog, EditableTitle, Grid3, PrimaryLinkButton, ProjectCard },
   async asyncData({ $api, params }): Promise<InitialData> {
     const [projects, organization] = await Promise.all([
       $api.getOrganizationProjects(params.slug),

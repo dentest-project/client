@@ -3,47 +3,62 @@
   <v-main class="home" v-else>
     <actions-bar>
       <add-organization-button @click.stop="activateCreateOrganizationDialog" />
+      <add-project-button @click.stop="activateCreateProjectDialog" />
     </actions-bar>
-    <grid3>
+    <grid3 class="home-cards">
       <organization-card v-for="organization in organizations" :key="organization.id" :organization="organization" />
     </grid3>
-    <create-organization-dialog v-model="createOrganizationDialog" @close="deactivateCreateOrganizationDialog" @created="onCreated" @errored="onErrored" />
-    <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Organization created</v-snackbar>
-    <v-snackbar v-model="creationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the organization</v-snackbar>
+    <grid3 class="home-cards">
+      <project-card v-for="project in projects" :key="project.id" :project="project" />
+    </grid3>
+    <create-organization-dialog v-model="createOrganizationDialog" @close="deactivateCreateOrganizationDialog" @created="onOrganizationCreated" @errored="onOrganizationErrored" />
+    <create-project-dialog v-model="createProjectDialog" @close="deactivateCreateProjectDialog" @created="onProjectCreated" @errored="onProjectErrored" />
+    <v-snackbar v-model="organizationCreatedSnackbarOpened" :color="$colors.success">Organization created</v-snackbar>
+    <v-snackbar v-model="organizationCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the organization</v-snackbar>
+    <v-snackbar v-model="projectCreatedSnackbarOpened" :color="$colors.success">Project created</v-snackbar>
+    <v-snackbar v-model="projectCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the project</v-snackbar>
   </v-main>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import ActionsBar from '~/components/ActionsBar.vue';
-import AddButton from '~/components/buttons/AddButton.vue';
 import AddOrganizationButton from '~/components/buttons/AddOrganizationButton.vue';
+import AddProjectButton from '~/components/buttons/AddProjectButton.vue';
 import CreateOrganizationDialog from '~/components/dialogs/CreateOrganizationDialog.vue';
+import CreateProjectDialog from '~/components/dialogs/CreateProjectDialog.vue';
 import Grid3 from '~/components/Grid3.vue';
-import OrganizationCard from '~/components/cards/OrganizationCard.vue';
 import HomeContent from '~/components/HomeContent.vue';
-import { OrganizationList } from '~/types';
+import OrganizationCard from '~/components/cards/OrganizationCard.vue';
+import ProjectCard from '~/components/cards/ProjectCard.vue';
+import { OrganizationList, ProjectList } from '~/types';
 
 interface InitialData {
   organizations: OrganizationList
+  projects: ProjectList
 }
 
 export default Vue.extend({
   auth: false,
-  components: { HomeContent, AddButton, AddOrganizationButton, ActionsBar, CreateOrganizationDialog, Grid3, OrganizationCard },
+  components: { HomeContent, AddProjectButton, AddOrganizationButton, ActionsBar, CreateOrganizationDialog, CreateProjectDialog, Grid3, OrganizationCard, ProjectCard },
   async asyncData({ $api }): Promise<InitialData> {
-    const organizations = await $api.getOrganizations();
+    const [organizations, projects] = await Promise.all([$api.getOrganizations(), $api.getProjects()]);
 
     return {
-      organizations
+      organizations,
+      projects
     };
   },
   data: function () {
     return {
       organizations: [] as OrganizationList,
+      projects: [] as ProjectList,
       createOrganizationDialog: false,
-      createdSnackbarOpened: false,
-      creationErrorSnackbarOpened: false
+      createProjectDialog: false,
+      organizationCreatedSnackbarOpened: false,
+      organizationCreationErrorSnackbarOpened: false,
+      projectCreatedSnackbarOpened: false,
+      projectCreationErrorSnackbarOpened: false,
     }
   },
   methods: {
@@ -53,24 +68,42 @@ export default Vue.extend({
     deactivateCreateOrganizationDialog(): void {
       this.createOrganizationDialog = false;
     },
+    activateCreateProjectDialog(): void {
+      this.createProjectDialog = true;
+    },
+    deactivateCreateProjectDialog(): void {
+      this.createProjectDialog = false;
+    },
     async loadOrganizations(): Promise<void> {
       this.organizations = await this.$api.getOrganizations(this.$axios);
     },
-    onCreated(): void {
+    async loadProjects(): Promise<void> {
+      this.projects = await this.$api.getProjects(this.$axios);
+    },
+    onOrganizationCreated(): void {
       this.deactivateCreateOrganizationDialog();
-      this.createdSnackbarOpened = true;
+      this.organizationCreatedSnackbarOpened = true;
       this.loadOrganizations();
     },
-    onErrored(): void {
+    onOrganizationErrored(): void {
       this.deactivateCreateOrganizationDialog();
-      this.creationErrorSnackbarOpened = true;
+      this.organizationCreationErrorSnackbarOpened = true;
+    },
+    onProjectCreated(): void {
+      this.deactivateCreateProjectDialog();
+      this.projectCreatedSnackbarOpened = true;
+      this.loadProjects();
+    },
+    onProjectErrored(): void {
+      this.deactivateCreateProjectDialog();
+      this.projectCreationErrorSnackbarOpened = true;
     }
   }
 });
 </script>
 
 <style scoped>
-main.home {
-  margin-top: 5rem;
+.home-cards {
+  margin-top: 2rem;
 }
 </style>
