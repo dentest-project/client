@@ -146,7 +146,7 @@ interface Scenario {
   type: ScenarioType,
   title: string,
   steps: Array<ScenarioStep>,
-  examples?: Record<string, Array<string>>
+  examples?: Record<string, Array<string>> | null
 }
 
 interface ScenarioStep {
@@ -200,6 +200,11 @@ interface UpdateFeature{
 }
 
 interface UpdateFeaturePath extends CreateFeaturePath {}
+
+interface UpdateOrganizationName {
+  id: string,
+  name: string
+}
 
 interface UpdatePath {
   id: string,
@@ -261,6 +266,7 @@ export {
   StepType,
   TableStepParam,
   UpdateFeature,
+  UpdateOrganizationName,
   UpdatePath,
   UpdateProject,
   User,

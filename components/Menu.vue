@@ -1,7 +1,7 @@
 <template>
-  <v-app-bar class="app-bar" :color="$colors.primary" dark app>
-    <Logo />
-    <v-toolbar-title>
+  <v-app-bar class="app-bar" :color="transparent ? 'transparent' : $colors.primary" :flat="transparent" dark app>
+    <logo />
+    <v-toolbar-title v-if="!transparent">
       <nuxt-link to="/">
         Entest
       </nuxt-link>
@@ -21,6 +21,12 @@ import Logo from '~/components/Logo.vue';
 
 export default Vue.extend({
   components: { Logo },
+  props: {
+    transparent: {
+      type: Boolean,
+      required: true
+    }
+  },
   methods: {
     async logout() {
       await this.$auth.logout();

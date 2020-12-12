@@ -93,7 +93,7 @@ export default Vue.extend({
         title: type === ScenarioType.Background ? '' : 'Scenario title'
       });
     },
-    updateExamples(steps: Array<ScenarioStep>): Record<string, Array<string>> | undefined {
+    updateExamples(steps: Array<ScenarioStep>): Record<string, Array<string>> | null {
       const newExamples: Record<string, Array<string>> = {};
       const keys: Array<string> = [];
       const re = new RegExp('<([^<>]+)>', 'g');
@@ -121,7 +121,7 @@ export default Vue.extend({
       });
 
       if (keys.length === 0) {
-        return;
+        return null;
       }
 
       const currentValues = this.scenario.examples ? Object.values(this.scenario.examples) : [];

@@ -1,6 +1,7 @@
 <template>
-  <v-main class="home">
-    <actions-bar v-if="$auth.loggedIn">
+  <home-content v-if="!$auth.loggedIn" />
+  <v-main class="home" v-else>
+    <actions-bar>
       <add-organization-button @click.stop="activateCreateOrganizationDialog" />
     </actions-bar>
     <grid3>
@@ -20,6 +21,7 @@ import AddOrganizationButton from '~/components/buttons/AddOrganizationButton.vu
 import CreateOrganizationDialog from '~/components/dialogs/CreateOrganizationDialog.vue';
 import Grid3 from '~/components/Grid3.vue';
 import OrganizationCard from '~/components/cards/OrganizationCard.vue';
+import HomeContent from '~/components/HomeContent.vue';
 import { OrganizationList } from '~/types';
 
 interface InitialData {
@@ -28,7 +30,7 @@ interface InitialData {
 
 export default Vue.extend({
   auth: false,
-  components: { AddButton, AddOrganizationButton, ActionsBar, CreateOrganizationDialog, Grid3, OrganizationCard },
+  components: { HomeContent, AddButton, AddOrganizationButton, ActionsBar, CreateOrganizationDialog, Grid3, OrganizationCard },
   async asyncData({ $api }): Promise<InitialData> {
     const organizations = await $api.getOrganizations();
 

@@ -14,7 +14,7 @@ import {
   Project,
   ProjectList, Register,
   Step,
-  UpdateFeature, UpdatePath, UpdateProject, User
+  UpdateFeature, UpdateOrganizationName, UpdatePath, UpdateProject, User
 } from '~/types';
 
 declare module 'vue/types/vue' {
@@ -51,6 +51,7 @@ interface Api {
   login(user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse>,
   register(user: Register, axios?: NuxtAxiosInstance): Promise<User>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
+  updateOrganization(organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization>,
   updatePath(path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path>,
   updateProject(project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project>
 }
@@ -104,6 +105,7 @@ const Api = (context: any) => {
 
       return await get(`features/${feat.id}`, axios);
     },
+    updateOrganization: async (organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization> => put(`organizations`, organization, axios),
     updatePath: async (path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path> => put('paths', path, axios),
     updateProject: async (project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project> => put('projects', project, axios),
   } as Api;

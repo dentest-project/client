@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <v-main>
     <h1>Register</h1>
     <register-form @submit="onSubmit" />
     <div class="register-switch-to-login">
@@ -8,7 +8,7 @@
     <v-snackbar v-model="registeredSnackbarOpened" :color="$colors.success">Welcome ;)</v-snackbar>
     <v-snackbar v-model="registrationConflictErrorSnackbarOpened" :color="$colors.error">This email or username is already existing. Try to login instead.</v-snackbar>
     <v-snackbar v-model="registrationErrorSnackbarOpened" :color="$colors.error">An error occurred while registering</v-snackbar>
-  </main>
+  </v-main>
 </template>
 
 <script lang="ts">

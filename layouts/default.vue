@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-app>
-      <Menu />
-      <v-container>
+      <Menu :transparent="isHomeAndLoggedOut" />
+      <v-container v-if="!isHomeAndLoggedOut">
         <Nuxt />
       </v-container>
+      <Nuxt v-else />
     </v-app>
   </div>
 </template>
@@ -16,6 +17,11 @@ export default {
   middleware: 'auth',
   components: {
     Menu
+  },
+  computed: {
+    isHomeAndLoggedOut(): boolean {
+      return (this as any).$route.name === 'index' && !(this as any).$auth.loggedIn
+    }
   }
 }
 </script>

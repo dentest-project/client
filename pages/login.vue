@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <v-main>
     <h1>Log in</h1>
     <login-form @submit="onSubmit" />
     <div class="login-switch-to-register">
@@ -7,7 +7,7 @@
     </div>
     <v-snackbar v-model="loginErrorSnackbarOpened" :color="$colors.error">An error occurred</v-snackbar>
     <v-snackbar v-model="invalidCredentialsErrorSnackbarOpened" :color="$colors.error">Invalid credentials</v-snackbar>
-  </main>
+  </v-main>
 </template>
 
 <script lang="ts">
