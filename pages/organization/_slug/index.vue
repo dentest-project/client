@@ -9,7 +9,7 @@
       <project-card v-for="project in projects" :key="project.id" :project="project" />
     </grid3>
     <p v-else>This organization has no project.</p>
-    <create-project-dialog v-model="createProjectDialog" :organization="organization" @close="deActivateCreateProjectDialog" @created="onCreated" @errored="onErrored" />
+    <create-project-dialog v-model="createProjectDialog" :organization="organization" @close="deactivateCreateProjectDialog" @created="onCreated" @errored="onErrored" />
     <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Project created</v-snackbar>
     <v-snackbar v-model="organizationUpdatedSnackbarOpened" :color="$colors.success">Organization updated</v-snackbar>
     <v-snackbar v-model="creationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the project</v-snackbar>

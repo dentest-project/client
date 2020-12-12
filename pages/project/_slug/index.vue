@@ -15,28 +15,28 @@
     </grid3>
     <create-path-dialog
       v-model="createPathDialog"
-      @close="deActivateCreatePathDialog"
+      @close="deactivateCreatePathDialog"
       @created="onPathCreated"
       @errored="onPathErrored"
       :path="path"
     />
     <create-feature-dialog
       v-model="createFeatureDialog"
-      @close="deActivateCreateFeatureDialog"
+      @close="deactivateCreateFeatureDialog"
       @created="onFeatureCreated"
       @errored="onFeatureErrored"
       :path="path"
     />
     <delete-path-dialog
       v-model="deletePathDialog"
-      @close="deActivateDeletePathDialog"
+      @close="deactivateDeletePathDialog"
       @deleted="onPathDeleted"
       @errored="onPathDeleteErrored"
       :path="path"
     />
     <delete-project-dialog
       v-model="deleteProjectDialog"
-      @close="deActivateDeleteProjectDialog"
+      @close="deactivateDeleteProjectDialog"
       @deleted="onProjectDeleted"
       @errored="onProjectDeleteErrored"
       :path="path"
@@ -161,16 +161,16 @@ export default Vue.extend({
     activateDeleteProjectDialog(): void {
       this.deleteProjectDialog = true;
     },
-    deActivateCreatePathDialog(): void {
+    deactivateCreatePathDialog(): void {
       this.createPathDialog = false;
     },
-    deActivateCreateFeatureDialog(): void {
+    deactivateCreateFeatureDialog(): void {
       this.createFeatureDialog = false;
     },
-    deActivateDeletePathDialog(): void {
+    deactivateDeletePathDialog(): void {
       this.deletePathDialog = false;
     },
-    deActivateDeleteProjectDialog(): void {
+    deactivateDeleteProjectDialog(): void {
       this.deleteProjectDialog = false;
     },
     async loadPath(): Promise<void> {
@@ -184,17 +184,17 @@ export default Vue.extend({
       }
     },
     onPathCreated(): void {
-      this.deActivateCreatePathDialog();
+      this.deactivateCreatePathDialog();
       this.pathCreatedSnackbarOpened = true;
       this.loadPath();
     },
     onFeatureCreated(): void {
-      this.deActivateCreateFeatureDialog();
+      this.deactivateCreateFeatureDialog();
       this.featureCreatedSnackbarOpened = true;
       this.loadPath();
     },
     onPathDeleted(): void {
-      this.deActivateDeletePathDialog();
+      this.deactivateDeletePathDialog();
       this.pathDeleteSnackbarOpened = true;
       setTimeout(() => {
         if (this.path.parent) {
@@ -203,24 +203,24 @@ export default Vue.extend({
       }, 2000);
     },
     onProjectDeleted(): void {
-      this.deActivateDeleteProjectDialog();
+      this.deactivateDeleteProjectDialog();
       this.projectDeleteSnackbarOpened = true;
       setTimeout(() => this.$router.push(this.$routes.home()), 2000);
     },
     onPathErrored(): void {
-      this.deActivateCreatePathDialog();
+      this.deactivateCreatePathDialog();
       this.pathCreationErrorSnackbarOpened = true;
     },
     onFeatureErrored(): void {
-      this.deActivateCreateFeatureDialog();
+      this.deactivateCreateFeatureDialog();
       this.featureCreationErrorSnackbarOpened = true;
     },
     onPathDeleteErrored(): void {
-      this.deActivateDeletePathDialog();
+      this.deactivateDeletePathDialog();
       this.pathDeleteErrorSnackbarOpened = true;
     },
     onProjectDeleteErrored(): void {
-      this.deActivateDeleteProjectDialog();
+      this.deactivateDeleteProjectDialog();
       this.projectDeleteErrorSnackbarOpened = true;
     },
     async onTitleUpdated(e: string): Promise<void> {
