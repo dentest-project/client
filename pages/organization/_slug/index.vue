@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <v-main>
     <h1>{{ organization.name }}</h1>
     <actions-bar v-if="$auth.loggedIn">
       <add-button @click.stop="activateCreateProjectDialog" />
@@ -11,7 +11,7 @@
     <create-project-dialog v-model="createProjectDialog" :organization="organization" @close="deActivateCreateProjectDialog" @created="onCreated" @errored="onErrored" />
     <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Project created</v-snackbar>
     <v-snackbar v-model="creationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the project</v-snackbar>
-  </main>
+  </v-main>
 </template>
 
 <script lang="ts">

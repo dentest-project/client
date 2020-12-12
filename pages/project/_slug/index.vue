@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <v-main>
     <editable-title v-if="$auth.loggedIn" :value="title" label="Title" @submit="onTitleUpdated" />
     <h1 v-else>{{ title }}</h1>
     <breadcrumb :items="breadcrumbItems" />
@@ -53,7 +53,7 @@
     <v-snackbar v-model="pathDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the path</v-snackbar>
     <v-snackbar v-model="projectUpdateErrorSnackbarOpened" :color="$colors.error">An error occurred while updating the project</v-snackbar>
     <v-snackbar v-model="projectDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the project</v-snackbar>
-  </main>
+  </v-main>
 </template>
 
 <script lang="ts">

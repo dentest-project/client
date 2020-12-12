@@ -1,5 +1,5 @@
 <template>
-  <main class="home">
+  <v-main class="home">
     <actions-bar v-if="$auth.loggedIn">
       <add-organization-button @click.stop="activateCreateOrganizationDialog" />
     </actions-bar>
@@ -9,7 +9,7 @@
     <create-organization-dialog v-model="createOrganizationDialog" @close="deactivateCreateOrganizationDialog" @created="onCreated" @errored="onErrored" />
     <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Organization created</v-snackbar>
     <v-snackbar v-model="creationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the organization</v-snackbar>
-  </main>
+  </v-main>
 </template>
 
 <script lang="ts">

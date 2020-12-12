@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar :color="$colors.primary" dark>
+  <v-app-bar class="app-bar" :color="$colors.primary" dark app>
     <Logo />
     <v-toolbar-title>
       <nuxt-link to="/">
@@ -30,9 +30,9 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-a {
+.app-bar a {
   text-decoration: none;
-  color: inherit;
+  color: #ffffff;
 }
 
 .menu-logout {

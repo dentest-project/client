@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <v-main>
     <editable-title v-if="$auth.loggedIn" label="Feature title" v-model="feature.title" @input="onChanged" />
     <h1 v-else>{{ feature.title }}</h1>
     <breadcrumb :items="breadcrumbItems" />
@@ -20,7 +20,7 @@
     <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the feature</v-snackbar>
     <v-snackbar v-model="savedSnackbarOpened" :color="$colors.success">Feature saved</v-snackbar>
     <v-snackbar v-model="saveErrorSnackbarOpened" :color="$colors.error">An error occurred while saving the feature</v-snackbar>
-  </main>
+  </v-main>
 </template>
 
 <script lang="ts">

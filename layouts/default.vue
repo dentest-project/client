@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Menu />
     <v-app>
+      <Menu />
       <v-container>
         <Nuxt />
       </v-container>
@@ -10,8 +10,13 @@
 </template>
 
 <script lang="ts">
+import Menu from '~/components/Menu.vue';
+
 export default {
-  middleware: 'auth'
+  middleware: 'auth',
+  components: {
+    Menu
+  }
 }
 </script>
 
