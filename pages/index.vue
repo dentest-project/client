@@ -11,6 +11,7 @@
     <grid3 class="home-cards">
       <project-card v-for="project in projects" :key="project.id" :project="project" />
     </grid3>
+    <p v-if="organizations.length === 0 && projects.length === 0">You don't have any project nor organization.</p>
     <create-organization-dialog v-model="createOrganizationDialog" @close="deactivateCreateOrganizationDialog" @created="onOrganizationCreated" @errored="onOrganizationErrored" />
     <create-project-dialog v-model="createProjectDialog" @close="deactivateCreateProjectDialog" @created="onProjectCreated" @errored="onProjectErrored" />
     <v-snackbar v-model="organizationCreatedSnackbarOpened" :color="$colors.success">Organization created</v-snackbar>
@@ -41,8 +42,8 @@ interface InitialData {
 export default Vue.extend({
   auth: false,
   components: { HomeContent, AddProjectButton, AddOrganizationButton, ActionsBar, CreateOrganizationDialog, CreateProjectDialog, Grid3, OrganizationCard, ProjectCard },
-  async asyncData({ $api }): Promise<InitialData> {
-    const [organizations, projects] = await Promise.all([$api.getOrganizations(), $api.getProjects()]);
+  async asyncData({ $api, $auth }): Promise<InitialData> {
+    const [organizations, projects] = $auth.loggedIn ? await Promise.all([$api.getOrganizations(), $api.getProjects()]) : [[], []];
 
     return {
       organizations,
