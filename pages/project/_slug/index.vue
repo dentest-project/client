@@ -268,7 +268,7 @@ export default Vue.extend({
         if (path.project && path.project.organization) {
           out.push({
             text: path.project.organization.name,
-            href: (this as any).$routes.organization(path.project.organization.id),
+            href: (this as any).$routes.organization(path.project.organization.slug),
             disabled: false
           });
         }

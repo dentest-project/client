@@ -105,6 +105,7 @@ interface MultilineStepParam extends StepParam {
 
 interface Organization {
   id?: string,
+  slug?: string,
   name: string
 }
 
