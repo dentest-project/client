@@ -38,6 +38,10 @@ export default Vue.extend({
   },
   methods: {
     async onSubmit (): Promise<void> {
+      if (this.organizationName.trim() === '') {
+        return;
+      }
+
       try {
         await this.$api.createOrganization({ name: this.organizationName }, this.$axios);
 

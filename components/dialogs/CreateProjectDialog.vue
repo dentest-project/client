@@ -46,6 +46,10 @@ export default Vue.extend({
   },
   methods: {
     async onSubmit (): Promise<void> {
+      if (this.projectName.trim() === '') {
+        return;
+      }
+
       const newProject = {
         title: this.projectName,
         visibility: this.projectVisibility,
@@ -76,8 +80,9 @@ export default Vue.extend({
         [ProjectVisibility.Internal]: 'Internal',
         [ProjectVisibility.Private]: 'Private'
       } as Record<ProjectVisibility, string>;
+      const availableVisibilities = this.organization && this.organization.id ? [ProjectVisibility.Public, ProjectVisibility.Internal, ProjectVisibility.Private] : [ProjectVisibility.Public, ProjectVisibility.Private];
 
-      return [ProjectVisibility.Public, ProjectVisibility.Internal, ProjectVisibility.Private].map((k: ProjectVisibility) => ({
+      return availableVisibilities.map((k: ProjectVisibility) => ({
         value: k,
         text: labels[k],
         disabled: false

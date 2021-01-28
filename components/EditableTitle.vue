@@ -37,6 +37,10 @@ export default Vue.extend({
       this.mode = Mode.Edit;
     },
     onSubmit (e: InputEvent): void {
+      if ((e.currentTarget as HTMLInputElement).value.trim() === '') {
+        return;
+      }
+
       this.mode = Mode.View
       this.$emit('submit', (e.currentTarget as HTMLInputElement).value);
     },
