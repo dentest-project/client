@@ -90,8 +90,8 @@ export default Vue.extend({
         }, this.$axios);
         this.organizationUpdatedSnackbarOpened = true;
         setTimeout(() => {
-          if (newOrganization.id) {
-            this.$router.push(this.$routes.organization(newOrganization.id));
+          if (newOrganization.slug) {
+            this.$router.push(this.$routes.organization(newOrganization.slug));
           }
         }, 2000);
       } catch (error) {

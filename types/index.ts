@@ -3,6 +3,12 @@ enum Mode {
   Edit
 }
 
+enum ProjectVisibility {
+  Internal = 'internal',
+  Private = 'private',
+  Public = 'public'
+}
+
 enum ScenarioType {
   Background = 'background',
   Outline = 'outline',
@@ -61,6 +67,7 @@ interface CreatePathParent {
 
 interface CreateProject {
   title: string,
+  visibility: ProjectVisibility,
   rootPath: CreateProjectRootPath,
   organization?: CreateProjectOrganization
 }
@@ -253,6 +260,7 @@ export {
   PathList,
   Project,
   ProjectList,
+  ProjectVisibility,
   Register,
   Scenario,
   ScenarioStep,

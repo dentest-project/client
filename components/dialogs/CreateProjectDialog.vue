@@ -7,6 +7,7 @@
         </v-card-title>
         <v-card-text>
           <v-text-field v-model="projectName" label="Project name" autofocus clearable />
+          <v-select :items="visibilities" v-model="projectVisibility" />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -20,7 +21,7 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue';
 import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { CreateProject, Organization } from '~/types';
+import { CreateProject, Organization, ProjectVisibility, SelectItem, StepType } from '~/types';
 
 export default Vue.extend({
   components: { SubmitButton },
@@ -39,13 +40,15 @@ export default Vue.extend({
   },
   data: function () {
     return {
-      projectName: ''
+      projectName: '',
+      projectVisibility: ProjectVisibility.Public
     }
   },
   methods: {
     async onSubmit (): Promise<void> {
       const newProject = {
         title: this.projectName,
+        visibility: this.projectVisibility,
         rootPath: {
           path: '/'
         }
@@ -64,6 +67,21 @@ export default Vue.extend({
     },
     onDialogStatusChanged(e: boolean) {
       this.$emit('input', e);
+    }
+  },
+  computed: {
+    visibilities(): Array<SelectItem> {
+      const labels = {
+        [ProjectVisibility.Public]: 'Public',
+        [ProjectVisibility.Internal]: 'Internal',
+        [ProjectVisibility.Private]: 'Private'
+      } as Record<ProjectVisibility, string>;
+
+      return [ProjectVisibility.Public, ProjectVisibility.Internal, ProjectVisibility.Private].map((k: ProjectVisibility) => ({
+        value: k,
+        text: labels[k],
+        disabled: false
+      }));
     }
   }
 });
