@@ -4,17 +4,22 @@
     <editable-title v-else label="Organization name" v-model="name" @submit="onNameUpdated" />
     <actions-bar v-if="$auth.loggedIn">
       <add-project-button @click.stop="activateCreateProjectDialog" />
+      <v-spacer />
+      <delete-button @click.stop="activateDeleteOrganizationDialog" />
     </actions-bar>
     <grid3 v-if="projects.length > 0">
       <project-card v-for="project in projects" :key="project.id" :project="project" />
     </grid3>
     <p v-else>This organization has no project.</p>
-    <create-project-dialog v-model="createProjectDialog" :organization="organization" @close="deactivateCreateProjectDialog" @created="onCreated" @errored="onErrored" />
+    <create-project-dialog v-model="createProjectDialog" :organization="organization" @close="deactivateCreateProjectDialog" @created="onCreated" @errored="onCreationErrored" />
+    <delete-organization-dialog v-model="deleteOrganizationDialog" :organization="organization" @close="deactivateDeleteOrganizationDialog" @deleted="onOrganizationDeleted" @errored="onOrganizationDeleteError" />
     <v-snackbar v-model="createdSnackbarOpened" :color="$colors.success">Project created</v-snackbar>
     <v-snackbar v-model="creationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the project</v-snackbar>
     <v-snackbar v-model="organizationUpdatedSnackbarOpened" :color="$colors.success">Organization updated</v-snackbar>
     <v-snackbar v-model="organizationUpdateConflictErrorSnackbarOpened" :color="$colors.error">This organization name is already taken :/</v-snackbar>
     <v-snackbar v-model="organizationUpdateErrorSnackbarOpened" :color="$colors.error">An error occurred while updating the organization</v-snackbar>
+    <v-snackbar v-model="deletedOrganizationSnackbarOpened" :color="$colors.success">Organization deleted</v-snackbar>
+    <v-snackbar v-model="deleteOrganizationErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the organization</v-snackbar>
   </v-main>
 </template>
 
@@ -58,6 +63,9 @@ export default Vue.extend({
       createProjectDialog: false,
       createdSnackbarOpened: false,
       creationErrorSnackbarOpened: false,
+      deleteOrganizationDialog: false,
+      deletedOrganizationSnackbarOpened: false,
+      deleteOrganizationErrorSnackbarOpened: false,
       organizationUpdatedSnackbarOpened: false,
       organizationUpdateConflictErrorSnackbarOpened: false,
       organizationUpdateErrorSnackbarOpened: false,
@@ -67,8 +75,14 @@ export default Vue.extend({
     activateCreateProjectDialog(): void {
       this.createProjectDialog = true;
     },
+    activateDeleteOrganizationDialog(): void {
+      this.deleteOrganizationDialog = true;
+    },
     deactivateCreateProjectDialog(): void {
       this.createProjectDialog = false;
+    },
+    deactivateDeleteOrganizationDialog(): void {
+      this.deleteOrganizationDialog = false;
     },
     async loadProjects(): Promise<void> {
       this.projects = await this.$api.getOrganizationProjects(this.$route.params.slug, this.$axios);
@@ -78,7 +92,7 @@ export default Vue.extend({
       this.createdSnackbarOpened = true;
       this.loadProjects();
     },
-    onErrored(): void {
+    onCreationErrored(): void {
       this.deactivateCreateProjectDialog();
       this.creationErrorSnackbarOpened = true;
     },
@@ -101,6 +115,15 @@ export default Vue.extend({
           this.organizationUpdateErrorSnackbarOpened = true;
         }
       }
+    },
+    onOrganizationDeleted(): void {
+      this.deactivateDeleteOrganizationDialog();
+      this.deletedOrganizationSnackbarOpened = true;
+      setTimeout(() => this.$router.push(this.$routes.home()), 2000);
+    },
+    onOrganizationDeleteError(): void {
+      this.deactivateDeleteOrganizationDialog();
+      this.deleteOrganizationErrorSnackbarOpened = true;
     }
   }
 });
