@@ -3,6 +3,17 @@ enum Mode {
   Edit
 }
 
+enum OrganizationPermission {
+  Admin = 'admin',
+  ProjectCreate = 'project_create',
+  ProjectWrite = 'project_write'
+}
+
+enum ProjectPermission {
+  Admin = 'admin',
+  Write = 'write'
+}
+
 enum ProjectVisibility {
   Internal = 'internal',
   Private = 'private',
@@ -113,7 +124,8 @@ interface MultilineStepParam extends StepParam {
 interface Organization {
   id?: string,
   slug?: string,
-  name: string
+  name: string,
+  permissions: Array<OrganizationPermission>
 }
 
 interface Path {
@@ -136,7 +148,8 @@ interface PathProject {
 }
 
 interface Project extends PathProject {
-  rootPath: ProjectRootPath
+  rootPath: ProjectRootPath,
+  permissions: Array<ProjectPermission>
 }
 
 interface ProjectRootPath {
@@ -255,11 +268,13 @@ export {
   MultilineStepParam,
   Organization,
   OrganizationList,
+  OrganizationPermission,
   Path,
   PathFeature,
   PathList,
   Project,
   ProjectList,
+  ProjectPermission,
   ProjectVisibility,
   Register,
   Scenario,

@@ -1,11 +1,11 @@
 <template>
   <v-main>
-    <h1 v-if="!$auth.loggedIn">{{ organization.name }}</h1>
+    <h1 v-if="!$auth.loggedIn || !canAdministrateOrganization">{{ organization.name }}</h1>
     <editable-title v-else label="Organization name" v-model="name" @submit="onNameUpdated" />
-    <actions-bar v-if="$auth.loggedIn">
-      <add-project-button @click.stop="activateCreateProjectDialog" />
+    <actions-bar v-if="$auth.loggedIn && (canCreateProject || canAdministrateOrganization)">
+      <add-project-button v-if="canCreateProject" @click.stop="activateCreateProjectDialog" />
       <v-spacer />
-      <delete-button @click.stop="activateDeleteOrganizationDialog" />
+      <delete-button v-if="canAdministrateOrganization" @click.stop="activateDeleteOrganizationDialog" />
     </actions-bar>
     <grid3 v-if="projects.length > 0">
       <project-card v-for="project in projects" :key="project.id" :project="project" />
@@ -32,7 +32,7 @@ import EditableTitle from '~/components/EditableTitle.vue';
 import Grid3 from '~/components/Grid3.vue';
 import PrimaryLinkButton from '~/components/buttons/PrimaryLinkButton.vue';
 import ProjectCard from '~/components/cards/ProjectCard.vue';
-import { Organization, ProjectList } from '~/types';
+import { Organization, OrganizationPermission, ProjectList } from '~/types';
 
 interface InitialData {
   organization: Organization,
@@ -124,6 +124,14 @@ export default Vue.extend({
     onOrganizationDeleteError(): void {
       this.deactivateDeleteOrganizationDialog();
       this.deleteOrganizationErrorSnackbarOpened = true;
+    }
+  },
+  computed: {
+    canAdministrateOrganization: function (): boolean {
+      return typeof ((this as any).organization as Organization).permissions.find(p => p === OrganizationPermission.Admin) !== 'undefined';
+    },
+    canCreateProject: function (): boolean {
+      return typeof ((this as any).organization as Organization).permissions.find(p => p === OrganizationPermission.Admin || p === OrganizationPermission.ProjectCreate) !== 'undefined';
     }
   }
 });
