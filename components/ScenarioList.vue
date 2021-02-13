@@ -2,6 +2,7 @@
   <div class="scenarios">
     <scenario-content
       v-for="(scenario, i) in scenarios"
+      :can-write="canWrite"
       :scenario="scenario"
       :backgroundable="i === 0"
       :feature-root-project="featureRootProject"
@@ -9,7 +10,7 @@
       @input="e => onUpdated(i, e)"
       @deleted="() => onDeleted(i)"
     />
-    <add-button v-if="$auth.loggedIn" @click="onAdd" title="Add scenario" />
+    <add-button v-if="canWrite" @click="onAdd" title="Add scenario" />
   </div>
 </template>
 
@@ -28,6 +29,10 @@ export default Vue.extend({
     prop: 'scenarios'
   },
   props: {
+    canWrite: {
+      type: Boolean,
+      required: true
+    },
     scenarios: {
       type: Array,
       required: true

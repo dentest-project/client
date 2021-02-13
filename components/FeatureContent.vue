@@ -1,10 +1,10 @@
 <template>
   <form>
     <v-sheet elevation="2" class="description" :style="`background-color: ${$colors.lightPrimary}`">
-      <editable-textarea v-if="$auth.loggedIn" :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
+      <editable-textarea v-if="canWrite" :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
       <p v-else class="feature-content-description">{{ feature.description }}</p>
     </v-sheet>
-    <scenario-list :scenarios="feature.scenarios" :feature-root-project="featureRootProject" @input="onScenariosChanged" />
+    <scenario-list :scenarios="feature.scenarios" :feature-root-project="featureRootProject" :can-write="canWrite" @input="onScenariosChanged" />
   </form>
 </template>
 
@@ -23,6 +23,10 @@ export default Vue.extend({
     prop: 'feature'
   },
   props: {
+    canWrite: {
+      type: Boolean,
+      required: true
+    },
     feature: {
       type: Object,
       required: true

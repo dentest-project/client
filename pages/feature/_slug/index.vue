@@ -1,14 +1,14 @@
 <template>
   <v-main>
-    <editable-title v-if="$auth.loggedIn" label="Feature title" v-model="feature.title" @input="onChanged" />
+    <editable-title v-if="$auth.loggedIn && canWrite" label="Feature title" v-model="feature.title" @input="onChanged" />
     <h1 v-else>{{ feature.title }}</h1>
     <breadcrumb :items="breadcrumbItems" />
-    <actions-bar v-if="$auth.loggedIn">
+    <actions-bar v-if="$auth.loggedIn && canWrite">
       <save-button :enabled="saveEnabled" @click="save" />
       <v-spacer />
       <delete-button @click.stop="activateDeleteDialog" />
     </actions-bar>
-    <feature-content v-model="feature" :feature-root-project="featureRootProject" @input="onChanged" />
+    <feature-content v-model="feature" :feature-root-project="featureRootProject" :can-write="$auth.loggedIn && canWrite" @input="onChanged" />
     <delete-feature-dialog
       v-model="deleteDialog"
       :feature="feature"
@@ -32,7 +32,15 @@ import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
 import FeatureContent from '~/components/FeatureContent.vue';
 import SaveButton from '~/components/buttons/SaveButton.vue';
-import { Breadcrumb as BreadcrumbType, Feature, FeatureRootProject, Scenario, UpdateFeature } from '~/types';
+import {
+  Breadcrumb as BreadcrumbType,
+  Feature,
+  FeatureRootProject, OrganizationPermission,
+  Project,
+  ProjectPermission,
+  Scenario,
+  UpdateFeature
+} from '~/types';
 
 interface InitialData {
   feature: Feature,
@@ -161,6 +169,18 @@ export default Vue.extend({
       }
 
       return out.reverse();
+    },
+    canWrite: function (): boolean {
+      const rootProject = (this as any).featureRootProject as Project;
+
+      if (typeof rootProject.permissions.find(p => p === ProjectPermission.Admin || p === ProjectPermission.Write) !== 'undefined') {
+        return true;
+      }
+      if (!rootProject.organization) {
+        return false;
+      }
+
+      return typeof rootProject.organization.permissions.find(p => p === OrganizationPermission.Admin || p === OrganizationPermission.ProjectWrite) !== 'undefined';
     }
   }
 });

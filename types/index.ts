@@ -149,6 +149,7 @@ interface PathProject {
 
 interface Project extends PathProject {
   rootPath: ProjectRootPath,
+  organization?: Organization,
   permissions: Array<ProjectPermission>
 }
 
