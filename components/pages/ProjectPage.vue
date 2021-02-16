@@ -3,11 +3,11 @@
     <editable-title v-if="$auth.loggedIn" :value="title" label="Title" @submit="onTitleUpdated" />
     <h1 v-else>{{ title }}</h1>
     <breadcrumb :items="breadcrumbItems" />
-    <actions-bar v-if="$auth.loggedIn">
-      <add-folder-button @click.stop="activateCreatePathDialog" />
-      <add-feature-button @click.stop="activateCreateFeatureDialog" />
+    <actions-bar v-if="$auth.loggedIn && canWrite">
+      <add-folder-button v-if="canWrite" @click.stop="activateCreatePathDialog" />
+      <add-feature-button v-if="canWrite" @click.stop="activateCreateFeatureDialog" />
       <v-spacer />
-      <delete-button @click.stop="onDeleteButtonClicked" />
+      <delete-button v-if="canAdministrate" @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
       <path-card v-for="subPath in path.children" :key="subPath.id" :path="subPath" />
@@ -71,7 +71,7 @@ import EditableTitle from '~/components/EditableTitle.vue';
 import FeatureCard from '~/components/cards/FeatureCard.vue';
 import Grid3 from '~/components/Grid3.vue';
 import PathCard from '~/components/cards/PathCard.vue';
-import { Breadcrumb as BreadcrumbType, Path } from '~/types';
+import { Breadcrumb as BreadcrumbType, OrganizationPermission, Path, ProjectPermission } from '~/types';
 
 interface Data {
   createPathDialog: boolean,
@@ -260,6 +260,31 @@ export default Vue.extend({
       }
 
       return out.reverse();
+    },
+    canAdministrate: function (): boolean {
+      const rootProject = ((this as any).path as Path).rootProject;
+
+      if (!rootProject) {
+        return false;
+      }
+
+      return typeof rootProject.permissions.find(p => p === ProjectPermission.Admin) !== 'undefined';
+    },
+    canWrite: function (): boolean {
+      const rootProject = ((this as any).path as Path).rootProject;
+
+      if (!rootProject) {
+        return false;
+      }
+
+      if (typeof rootProject.permissions.find(p => p === ProjectPermission.Admin || p === ProjectPermission.Write) !== 'undefined') {
+        return true;
+      }
+      if (!rootProject.organization) {
+        return false;
+      }
+
+      return typeof rootProject.organization.permissions.find(p => p === OrganizationPermission.Admin || p === OrganizationPermission.ProjectWrite) !== 'undefined';
     }
   }
 });
