@@ -2,13 +2,13 @@
   <v-dialog width="480" :value=value @input="onDialogStatusChanged">
     <form @submit.prevent="onSubmit">
       <v-card>
-        <v-card-title class="headline">Create new path</v-card-title>
+        <v-card-title class="headline">Create new folder</v-card-title>
         <v-card-text>
           <v-text-field v-model="pathName" label="Path name" autofocus clearable />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <submit-button>Create path</submit-button>
+          <submit-button>Create folder</submit-button>
         </v-card-actions>
       </v-card>
     </form>

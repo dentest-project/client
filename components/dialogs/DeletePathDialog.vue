@@ -1,14 +1,14 @@
 <template>
   <v-dialog width="480" :value=value @input="onDialogStatusChanged">
     <v-card>
-      <v-card-title class="headline">Delete path?</v-card-title>
+      <v-card-title class="headline">Delete folder?</v-card-title>
       <v-card-text>
-        Are you sure that you want to delete this path? All its content will be deleted.
+        Are you sure that you want to delete this folder? All its content will be deleted.
       </v-card-text>
       <v-card-actions>
         <v-btn :color="$colors.cancel" text @click.stop="cancel">Cancel</v-btn>
         <v-spacer></v-spacer>
-        <v-btn :color="$colors.error" text @click.stop="confirm">Delete path</v-btn>
+        <v-btn :color="$colors.error" text @click.stop="confirm">Delete folder</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
