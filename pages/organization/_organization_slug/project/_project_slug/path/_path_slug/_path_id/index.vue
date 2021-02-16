@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import ProjectPage from '~/components/pages/ProjectPage.vue';
-import { Path } from '~/types';
+import { Path, PathFeature, PathList } from '~/types';
 
 interface InitialData {
   path: Path
@@ -21,7 +21,7 @@ export default Vue.extend({
       path
     };
   },
-  data: function (): Data {
+  data: function (): InitialData {
     return {
       path: {
         id: this.$route.params.path_id,

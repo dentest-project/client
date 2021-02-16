@@ -43,7 +43,7 @@ export default Vue.extend({
       }
 
       try {
-        await this.$api.createOrganization({ name: this.organizationName }, this.$axios);
+        await this.$api.createOrganization({ name: this.organizationName, permissions: [] }, this.$axios);
 
         this.$emit('created');
         this.organizationName = '';
