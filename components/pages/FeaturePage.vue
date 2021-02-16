@@ -8,7 +8,7 @@
       <v-spacer />
       <delete-button @click.stop="activateDeleteDialog" />
     </actions-bar>
-    <feature-content v-model="feature" :feature-root-project="featureRootProject" :can-write="$auth.loggedIn && canWrite" @input="onChanged" />
+    <feature-content v-model="feature" :can-write="$auth.loggedIn && canWrite" @input="onChanged" />
     <delete-feature-dialog
       v-model="deleteDialog"
       :feature="feature"
@@ -35,7 +35,7 @@ import SaveButton from '~/components/buttons/SaveButton.vue';
 import {
   Breadcrumb as BreadcrumbType,
   Feature,
-  FeatureRootProject, OrganizationPermission,
+  OrganizationPermission,
   Project,
   ProjectPermission,
   UpdateFeature
@@ -64,11 +64,7 @@ export default Vue.extend({
     feature: {
       type: Object,
       required: true
-    } as PropOptions<Feature>,
-    featureRootProject: {
-      type: Object,
-      required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Feature>
   },
   data: function (): Data {
     return {
@@ -101,7 +97,7 @@ export default Vue.extend({
     onDeleted(): void {
       this.deactivateDeleteDialog();
       this.deletedSnackbarOpened = true;
-      setTimeout(() => this.$router.push(this.$routes.project(this.feature.path.id)), 2000);
+      setTimeout(() => this.$router.push(this.$routes.path(this.feature.path)), 2000);
     },
     onDeleteErrored(): void {
       this.deactivateDeleteDialog();
@@ -137,7 +133,7 @@ export default Vue.extend({
       while (path !== undefined) {
         out.push({
           text: path.project ? path.project.title : path.path,
-          href: (this as any).$routes.project(path.id),
+          href: (this as any).$routes.path(path),
           disabled: false
         });
 
@@ -155,7 +151,11 @@ export default Vue.extend({
       return out.reverse();
     },
     canWrite: function (): boolean {
-      const rootProject = (this as any).featureRootProject as Project;
+      const rootProject = ((this as any).feature as Feature).rootProject;
+
+      if (!rootProject) {
+        return false;
+      }
 
       if (typeof rootProject.permissions.find(p => p === ProjectPermission.Admin || p === ProjectPermission.Write) !== 'undefined') {
         return true;

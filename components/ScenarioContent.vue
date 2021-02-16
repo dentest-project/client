@@ -25,7 +25,7 @@ import ExamplesContent from '~/components/ExamplesContent.vue';
 import StepList from '~/components/StepList.vue';
 import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
 import ViewButton from '~/components/buttons/ViewButton.vue';
-import { FeatureRootProject, Mode, Scenario, ScenarioStep, ScenarioType } from '~/types';
+import { Mode, Project, Scenario, ScenarioStep, ScenarioType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -56,7 +56,7 @@ export default Vue.extend({
     featureRootProject: {
       type: Object,
       required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Project>
   },
   data() {
     return {

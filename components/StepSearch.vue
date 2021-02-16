@@ -43,7 +43,7 @@
 import Vue, { PropOptions } from 'vue'
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
 import DeletableRow from '~/components/DeletableRow.vue';
-import { FeatureRootProject, Step, StepPart, StepType } from '~/types';
+import { Project, Step, StepPart, StepType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -57,7 +57,7 @@ export default Vue.extend({
     featureRootProject: {
       type: Object,
       required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Project>
   },
   data() {
     return {

@@ -35,7 +35,7 @@
 import Vue, { PropOptions } from 'vue';
 import StepParamTypeSelector from '~/components/StepParamTypeSelector.vue';
 import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { FeatureRootProject, SelectItem, StepParamType, StepPartType, StepType } from '~/types';
+import { Project, SelectItem, StepParamType, StepPartType, StepType } from '~/types';
 
 export default Vue.extend({
   components: { StepParamTypeSelector, SubmitButton },
@@ -50,7 +50,7 @@ export default Vue.extend({
     featureRootProject: {
       type: Object,
       required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Project>
   },
   data: function () {
     return {

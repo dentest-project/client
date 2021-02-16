@@ -4,7 +4,7 @@
       <editable-textarea v-if="canWrite" :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
       <p v-else class="feature-content-description">{{ feature.description }}</p>
     </v-sheet>
-    <scenario-list :scenarios="feature.scenarios" :feature-root-project="featureRootProject" :can-write="canWrite" @input="onScenariosChanged" />
+    <scenario-list :scenarios="feature.scenarios" :feature-root-project="feature.rootProject" :can-write="canWrite" @input="onScenariosChanged" />
   </form>
 </template>
 
@@ -12,7 +12,7 @@
 import Vue, { PropOptions } from 'vue'
 import EditableTextarea from '~/components/EditableTextarea.vue';
 import ScenarioList from '~/components/ScenarioList.vue';
-import { Feature, FeatureRootProject, Scenario } from '~/types';
+import { Feature, Scenario } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -30,11 +30,7 @@ export default Vue.extend({
     feature: {
       type: Object,
       required: true
-    } as PropOptions<Feature>,
-    featureRootProject: {
-      type: Object,
-      required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Feature>
   },
   methods: {
     onDescriptionChanged(description: string): void {

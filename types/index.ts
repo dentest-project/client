@@ -93,14 +93,12 @@ interface CreateProjectRootPath {
 
 interface Feature {
   id: string,
+  slug?: string,
   path: Path,
   title: string,
   description: string,
-  scenarios: Array<Scenario>
-}
-
-interface FeatureRootProject {
-  id: string
+  scenarios: Array<Scenario>,
+  rootProject?: Project
 }
 
 interface InlineStepParam extends StepParam {
@@ -128,8 +126,7 @@ interface Organization {
   permissions: Array<OrganizationPermission>
 }
 
-interface Path {
-  id: string,
+interface Path extends ProjectRootPath {
   project?: PathProject,
   parent?: Path,
   path: string,
@@ -150,11 +147,14 @@ interface PathProject {
 interface Project extends PathProject {
   rootPath: ProjectRootPath,
   organization?: Organization,
-  permissions: Array<ProjectPermission>
+  permissions: Array<ProjectPermission>,
+  slug: string
 }
 
 interface ProjectRootPath {
-  id: string
+  id: string,
+  slug: string,
+  rootProject?: Project
 }
 
 interface Register {
@@ -261,7 +261,6 @@ export {
   CreatePath,
   CreateProject,
   Feature,
-  FeatureRootProject,
   InlineStepParam,
   Login,
   LoginResponse,
@@ -276,6 +275,7 @@ export {
   Project,
   ProjectList,
   ProjectPermission,
+  ProjectRootPath,
   ProjectVisibility,
   Register,
   Scenario,

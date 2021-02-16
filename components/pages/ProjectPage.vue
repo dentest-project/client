@@ -10,8 +10,8 @@
       <delete-button @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
-      <path-card v-for="path in path.children" :key="path.id" :path="path" />
-      <feature-card v-for="feature in path.features" :key="feature.id" :feature="feature" />
+      <path-card v-for="subPath in path.children" :key="subPath.id" :path="subPath" />
+      <feature-card v-for="feature in path.features" :key="feature.id" :feature="feature" :path="path" />
     </grid3>
     <create-path-dialog
       v-model="createPathDialog"
@@ -181,7 +181,7 @@ export default Vue.extend({
       this.pathDeleteSnackbarOpened = true;
       setTimeout(() => {
         if (this.path.parent) {
-          this.$router.push(this.$routes.project(this.path.parent?.id));
+          this.$router.push(this.$routes.path(this.path.parent));
         }
       }, 2000);
     },

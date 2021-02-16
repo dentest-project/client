@@ -15,7 +15,7 @@ export default Vue.extend({
   auth: false,
   components: { ProjectPage },
   async asyncData({ $api, params }): Promise<InitialData> {
-    const path: Path = await $api.getPath(params.slug);
+    const path: Path = await $api.getPath(params.path_id);
 
     return {
       path
@@ -24,7 +24,7 @@ export default Vue.extend({
   data: function (): Data {
     return {
       path: {
-        id: this.$route.params.slug,
+        id: this.$route.params.path_id,
         parent: undefined,
         project: undefined,
         path: '',
@@ -35,7 +35,7 @@ export default Vue.extend({
   },
   methods: {
     async onNeedReload(): Promise<void> {
-      this.path = await this.$api.getPath(this.$route.params.slug, this.$axios);
+      this.path = await this.$api.getPath(this.$route.params.path_id, this.$axios);
     },
   }
 });

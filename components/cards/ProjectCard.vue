@@ -3,7 +3,7 @@
     <v-card-title>{{ project.title }}</v-card-title>
     <v-card-actions>
       <v-spacer />
-      <primary-card-link-button :to="$routes.project(project.rootPath.id)">See project</primary-card-link-button>
+      <primary-card-link-button :to="$routes.project(project)">See project</primary-card-link-button>
     </v-card-actions>
   </v-card>
 </template>

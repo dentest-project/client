@@ -35,10 +35,10 @@ import Vue, { PropOptions } from 'vue';
 import AddButton from '~/components/buttons/AddButton.vue';
 import StepContent from '~/components/StepContent.vue';
 import {
-  FeatureRootProject,
   InlineStepParam,
   Mode,
   MultilineStepParam,
+  Project,
   ScenarioStep,
   StepAdverb,
   TableStepParam
@@ -64,7 +64,7 @@ export default Vue.extend({
     featureRootProject: {
       type: Object,
       required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Project>
   },
   data() {
     return {

@@ -17,11 +17,11 @@ import StepDisplay from '~/components/StepDisplay.vue';
 import StepForm from '~/components/StepForm.vue';
 import StepSearch from '~/components/StepSearch.vue';
 import {
-  FeatureRootProject,
   InlineStepParam,
   isInlineStepParam,
   Mode,
   MultilineStepParam,
+  Project,
   ScenarioStep,
   Step,
   StepAdverb,
@@ -54,7 +54,7 @@ export default Vue.extend({
     featureRootProject: {
       type: Object,
       required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Project>
   },
   data() {
     return {

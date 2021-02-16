@@ -18,7 +18,7 @@
 import Vue, { PropOptions } from 'vue';
 import AddButton from '~/components/buttons/AddButton.vue';
 import ScenarioContent from '~/components/ScenarioContent.vue';
-import { FeatureRootProject, Scenario, ScenarioStep, ScenarioType } from '~/types';
+import { Project, Scenario, ScenarioStep, ScenarioType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -40,7 +40,7 @@ export default Vue.extend({
     featureRootProject: {
       type: Object,
       required: true
-    } as PropOptions<FeatureRootProject>
+    } as PropOptions<Project>
   },
   methods: {
     onAdd(): void {

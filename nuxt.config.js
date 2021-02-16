@@ -54,7 +54,17 @@ export default {
   },
 
   router: {
-    middleware: ['auth']
+    middleware: ['auth'],
+    extendRoutes(routes, resolve) {
+      routes.push({
+        path: '/project/:project_slug/path/:path_slug/:path_id',
+        component: resolve(__dirname, 'pages/organization/_organization_slug/project/_project_slug/path/_path_slug/_path_id/index.vue')
+      });
+      routes.push({
+        path: '/project/:project_slug/path/:path_slug/:path_id/feature/:feature_slug',
+        component: resolve(__dirname, 'pages/organization/_organization_slug/project/_project_slug/path/_path_slug/_path_id/feature/_feature_slug/index.vue')
+      });
+    }
   },
 
   auth: {

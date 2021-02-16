@@ -6,7 +6,6 @@ import {
   CreatePath,
   CreateProject,
   Feature,
-  FeatureRootProject,
   Login,
   LoginResponse, Organization,
   OrganizationList,
@@ -41,8 +40,7 @@ interface Api {
   deleteOrganization(id: string, axios?: NuxtAxiosInstance): Promise<void>,
   deletePath(id:string, axios?: NuxtAxiosInstance): Promise<void>,
   deleteProject(id: string, axios?: NuxtAxiosInstance): Promise<void>,
-  getFeature(id: string, axios?: NuxtAxiosInstance): Promise<Feature>,
-  getFeatureRootProject(id: string, axios?: NuxtAxiosInstance): Promise<FeatureRootProject>,
+  getFeature(pathId: string, featureSlug: string, axios?: NuxtAxiosInstance): Promise<Feature>,
   getOrganizations(axios?: NuxtAxiosInstance): Promise<OrganizationList>,
   getOrganization(slug: string, axios?: NuxtAxiosInstance): Promise<Organization>,
   getOrganizationProjects(id: string, axios?: NuxtAxiosInstance): Promise<ProjectList>,
@@ -92,8 +90,7 @@ const Api = (context: any) => {
     deleteOrganization: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`organizations/${id}`, axios),
     deletePath: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`paths/${id}`, axios),
     deleteProject: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`projects/${id}`, axios),
-    getFeature: async (id: string, axios?: NuxtAxiosInstance): Promise<Feature> => get(`features/${id}`, axios),
-    getFeatureRootProject: async (id: string, axios?: NuxtAxiosInstance): Promise<FeatureRootProject> => get(`features/${id}/root-project`, axios),
+    getFeature: async (pathId: string, featureSlug: string, axios?: NuxtAxiosInstance): Promise<Feature> => get(`paths/${pathId}/features/${featureSlug}`, axios),
     getOrganizations: async (axios?: NuxtAxiosInstance): Promise<OrganizationList> => get(`organizations`, axios),
     getOrganization: async (slug: string, axios?: NuxtAxiosInstance): Promise<Organization> => get(`organizations/${slug}`, axios),
     getOrganizationProjects: async (id: string, axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`organizations/${id}/projects`, axios),
@@ -105,7 +102,7 @@ const Api = (context: any) => {
     saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => {
       const feat = await put('features', feature, axios)
 
-      return await get(`features/${feat.id}`, axios);
+      return await get(`paths/${feat.path.id}/features/${feat.slug}`, axios);
     },
     updateOrganization: async (organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization> => put(`organizations`, organization, axios),
     updatePath: async (path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path> => put('paths', path, axios),

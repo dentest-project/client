@@ -45,8 +45,8 @@ export default Vue.extend({
   components: { AddProjectButton, ActionsBar, CreateProjectDialog, EditableTitle, Grid3, PrimaryLinkButton, ProjectCard },
   async asyncData({ $api, params }): Promise<InitialData> {
     const [projects, organization] = await Promise.all([
-      $api.getOrganizationProjects(params.slug),
-      $api.getOrganization(params.slug)
+      $api.getOrganizationProjects(params.organization_slug),
+      $api.getOrganization(params.organization_slug)
     ]);
 
     return {
@@ -85,7 +85,7 @@ export default Vue.extend({
       this.deleteOrganizationDialog = false;
     },
     async loadProjects(): Promise<void> {
-      this.projects = await this.$api.getOrganizationProjects(this.$route.params.slug, this.$axios);
+      this.projects = await this.$api.getOrganizationProjects(this.$route.params.organization_slug, this.$axios);
     },
     onCreated(): void {
       this.deactivateCreateProjectDialog();
