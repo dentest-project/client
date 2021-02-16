@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <editable-title v-if="$auth.loggedIn" :value="title" label="Title" @submit="onTitleUpdated" />
+    <editable-title v-if="$auth.loggedIn && canAdministrate" :value="title" label="Title" @submit="onTitleUpdated" />
     <h1 v-else>{{ title }}</h1>
     <breadcrumb :items="breadcrumbItems" />
     <actions-bar v-if="$auth.loggedIn && canWrite">
@@ -262,13 +262,17 @@ export default Vue.extend({
       return out.reverse();
     },
     canAdministrate: function (): boolean {
-      const rootProject = ((this as any).path as Path).rootProject;
+      const path = (this as any).path as Path;
 
-      if (!rootProject) {
+      if (!path.project) {
+        return (this as any).canWrite;
+      }
+
+      if (!path.rootProject) {
         return false;
       }
 
-      return typeof rootProject.permissions.find(p => p === ProjectPermission.Admin) !== 'undefined';
+      return typeof path.rootProject.permissions.find(p => p === ProjectPermission.Admin) !== 'undefined';
     },
     canWrite: function (): boolean {
       const rootProject = ((this as any).path as Path).rootProject;
