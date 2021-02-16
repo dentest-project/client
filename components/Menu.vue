@@ -2,7 +2,7 @@
   <v-app-bar class="app-bar" :color="transparent ? 'transparent' : $colors.primary" :flat="transparent" dark app>
     <logo />
     <v-toolbar-title v-if="!transparent">
-      <nuxt-link to="/">
+      <nuxt-link :to="$routes.home()">
         Entest
       </nuxt-link>
     </v-toolbar-title>
@@ -11,7 +11,7 @@
       <span>{{ $auth.user.username }}</span>
       <a class="menu-logout" href="#" @click.prevent="logout">Log out</a>
     </div>
-    <nuxt-link v-else to="/login">Log in</nuxt-link>
+    <nuxt-link v-else :to="$routes.login()">Log in</nuxt-link>
   </v-app-bar>
 </template>
 
