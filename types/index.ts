@@ -11,7 +11,8 @@ enum OrganizationPermission {
 
 enum ProjectPermission {
   Admin = 'admin',
-  Write = 'write'
+  Write = 'write',
+  Pull = 'pull'
 }
 
 enum ProjectVisibility {
@@ -50,6 +51,11 @@ enum StepType {
   Given = 'given',
   When = 'when',
   Then = 'then'
+}
+
+interface BaseUser {
+  id: string,
+  username: string
 }
 
 interface BreadcrumbItem {
@@ -126,6 +132,11 @@ interface Organization {
   permissions: Array<OrganizationPermission>
 }
 
+interface OrganizationUser {
+  user: BaseUser,
+  permissions: Array<OrganizationPermission>
+}
+
 interface Path extends ProjectRootPath {
   project?: PathProject,
   parent?: Path,
@@ -155,6 +166,11 @@ interface ProjectRootPath {
   id: string,
   slug: string,
   rootProject?: Project
+}
+
+interface ProjectUser {
+  user: BaseUser,
+  permissions: Array<ProjectPermission>
 }
 
 interface Register {
@@ -238,17 +254,17 @@ interface UpdateProject {
   title: string
 }
 
-interface User {
-  id: string,
-  username: string,
+interface User extends BaseUser {
   email: string,
   roles: RoleList
 }
 
 type Breadcrumb = Array<BreadcrumbItem>
 type OrganizationList = Array<Organization>
+type OrganizationUserList = Array<OrganizationUser>
 type PathList = Array<Path>
 type ProjectList = Array<Project>
+type ProjectUserList = Array<ProjectUser>
 type RoleList = Array<string>
 
 function isInlineStepParam(param: StepParam): param is InlineStepParam {
@@ -269,6 +285,8 @@ export {
   Organization,
   OrganizationList,
   OrganizationPermission,
+  OrganizationUser,
+  OrganizationUserList,
   Path,
   PathFeature,
   PathList,
@@ -276,6 +294,8 @@ export {
   ProjectList,
   ProjectPermission,
   ProjectRootPath,
+  ProjectUser,
+  ProjectUserList,
   ProjectVisibility,
   Register,
   Scenario,

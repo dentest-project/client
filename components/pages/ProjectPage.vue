@@ -7,6 +7,7 @@
       <add-folder-button v-if="canWrite" @click.stop="activateCreatePathDialog" />
       <add-feature-button v-if="canWrite" @click.stop="activateCreateFeatureDialog" />
       <v-spacer />
+      <users-button v-if="canAdministrate" :to="usersLink" />
       <delete-button v-if="canAdministrate" @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
@@ -71,6 +72,7 @@ import EditableTitle from '~/components/EditableTitle.vue';
 import FeatureCard from '~/components/cards/FeatureCard.vue';
 import Grid3 from '~/components/Grid3.vue';
 import PathCard from '~/components/cards/PathCard.vue';
+import UsersButton from '~/components/buttons/UsersButton.vue';
 import { Breadcrumb as BreadcrumbType, OrganizationPermission, Path, ProjectPermission } from '~/types';
 
 interface Data {
@@ -106,7 +108,8 @@ export default Vue.extend({
     EditableTitle,
     FeatureCard,
     Grid3,
-    PathCard
+    PathCard,
+    UsersButton
   },
   props: {
     path: {
@@ -289,6 +292,15 @@ export default Vue.extend({
       }
 
       return typeof rootProject.organization.permissions.find(p => p === OrganizationPermission.Admin || p === OrganizationPermission.ProjectWrite) !== 'undefined';
+    },
+    usersLink: function (): string {
+      const routeParams = (this as any).$route.params;
+
+      if (routeParams.organization_slug) {
+        return `/organization/${routeParams.organization_slug}/project/${routeParams.project_slug}/users`;
+      }
+
+      return `/project/${routeParams.project_slug}/users`;
     }
   }
 });

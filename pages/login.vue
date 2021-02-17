@@ -13,7 +13,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import LoginForm from '~/components/LoginForm.vue';
-import { Login, Register } from '~/types';
+import { Login } from '~/types';
 
 export default Vue.extend({
   components: { LoginForm },

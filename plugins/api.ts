@@ -11,7 +11,7 @@ import {
   OrganizationList,
   Path,
   Project,
-  ProjectList, Register,
+  ProjectList, ProjectPermission, ProjectUser, ProjectUserList, Register,
   Step,
   UpdateFeature, UpdateOrganizationName, UpdatePath, UpdateProject, User
 } from '~/types';
@@ -46,13 +46,16 @@ interface Api {
   getOrganizationProjects(id: string, axios?: NuxtAxiosInstance): Promise<ProjectList>,
   getPath(id: string, axios?: NuxtAxiosInstance): Promise<Path>,
   getProjectSteps(id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>>,
+  getProject(projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<Project>,
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
+  getProjectUsers(projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<ProjectUserList>,
   login(user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse>,
   register(user: Register, axios?: NuxtAxiosInstance): Promise<User>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
   updateOrganization(organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization>,
   updatePath(path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path>,
-  updateProject(project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project>
+  updateProject(project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project>,
+  updateProjectUser(projectId: string, userId: string, permissions: Array<ProjectPermission>, axios?: NuxtAxiosInstance): Promise<ProjectUser>
 }
 
 const Api = (context: any) => {
@@ -96,7 +99,13 @@ const Api = (context: any) => {
     getOrganizationProjects: async (id: string, axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`organizations/${id}/projects`, axios),
     getPath: async (id: string, axios?: NuxtAxiosInstance): Promise<Path> => get(`paths/${id}`, axios),
     getProjectSteps: async (id: string, axios?: NuxtAxiosInstance): Promise<Array<Step>> => get(`projects/${id}/steps`, axios),
+    getProject: async (projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<Project> => {
+      return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}`, axios) : get(`projects/${projectSlug}`, axios);
+    },
     getProjects: async (axios?: NuxtAxiosInstance): Promise<ProjectList> => get(`projects`, axios),
+    getProjectUsers: async (projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<ProjectUserList> => {
+      return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}/users`, axios) : get(`projects/${projectSlug}/users`, axios);
+    },
     login: async (user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse> => post(`login`, user, axios),
     register: async (user: Register, axios?: NuxtAxiosInstance): Promise<User> => post(`register`, user, axios),
     saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => {
@@ -107,6 +116,7 @@ const Api = (context: any) => {
     updateOrganization: async (organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization> => put(`organizations`, organization, axios),
     updatePath: async (path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path> => put('paths', path, axios),
     updateProject: async (project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project> => put('projects', project, axios),
+    updateProjectUser: async (projectId: string, userId: string, permissions: Array<ProjectPermission>, axios?: NuxtAxiosInstance): Promise<ProjectUser> => put(`projects/${projectId}/users/${userId}`, { permissions }, axios),
   } as Api;
 };
 

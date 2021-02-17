@@ -64,6 +64,10 @@ export default {
         path: '/project/:project_slug/path/:path_slug/:path_id/feature/:feature_slug',
         component: resolve(__dirname, 'pages/organization/_organization_slug/project/_project_slug/path/_path_slug/_path_id/feature/_feature_slug/index.vue')
       });
+      routes.push({
+        path: '/project/:project_slug/users',
+        component: resolve(__dirname, 'pages/organization/_organization_slug/project/_project_slug/users/index.vue')
+      });
     }
   },
 
