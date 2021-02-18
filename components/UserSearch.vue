@@ -24,6 +24,10 @@ export default Vue.extend({
     label: {
       type: String,
       required: true
+    },
+    searchWithinOrganization: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
@@ -43,7 +47,11 @@ export default Vue.extend({
     },
     doSearch: async function (q: string) {
       this.isAutocompleteLoading = true;
-      this.items = await this.$api.searchUsers(q, this.$route.params.organization_slug, this.$axios);
+      this.items = await this.$api.searchUsers(
+        q,
+        this.searchWithinOrganization ? this.$route.params.organization_slug : null,
+        this.$axios
+      );
       this.isAutocompleteLoading = false;
     }
   },

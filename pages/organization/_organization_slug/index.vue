@@ -5,6 +5,7 @@
     <actions-bar v-if="$auth.loggedIn && (canCreateProject || canAdministrateOrganization)">
       <add-project-button v-if="canCreateProject" @click.stop="activateCreateProjectDialog" />
       <v-spacer />
+      <users-button v-if="canAdministrateOrganization" :to="usersLink" />
       <delete-button v-if="canAdministrateOrganization" @click.stop="activateDeleteOrganizationDialog" />
     </actions-bar>
     <grid3 v-if="projects.length > 0">
@@ -132,6 +133,9 @@ export default Vue.extend({
     },
     canCreateProject: function (): boolean {
       return typeof ((this as any).organization as Organization).permissions.find(p => p === OrganizationPermission.Admin || p === OrganizationPermission.ProjectCreate) !== 'undefined';
+    },
+    usersLink: function (): string {
+      return `/organization/${(this as any).$route.params.organization_slug}/users`;
     }
   }
 });

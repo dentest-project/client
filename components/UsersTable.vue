@@ -1,6 +1,6 @@
 <template>
   <div>
-    <user-search label="Add user..." @selected="onUserAdd" />
+    <user-search label="Add user..." :search-within-organization="searchUsersWithinOrganization" @selected="onUserAdd" />
     <v-simple-table dense>
       <template v-slot:default>
         <tbody>
@@ -47,7 +47,11 @@ export default Vue.extend({
     mode: {
       type: String,
       required: true
-    } as PropOptions<Mode>
+    } as PropOptions<Mode>,
+    searchUsersWithinOrganization: {
+      type: Boolean,
+      required: true
+    }
   },
   methods: {
     onUserAdd: function (user?: BaseUser) {
@@ -58,7 +62,7 @@ export default Vue.extend({
     onUserChanged: function (user: ProjectUser | OrganizationUser) {
       this.$emit('change', user);
     },
-    onUserDelete: function (user: BaseUser) {
+    onUserDelete: function (user: ProjectUser | OrganizationUser) {
       this.$emit('delete', user);
     }
   }
