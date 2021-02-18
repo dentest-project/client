@@ -13,7 +13,8 @@ interface Routes {
   feature(path: Path, feature: Feature): string,
   organization(slug: string): string,
   path(path: Path): string,
-  project(path: ProjectRootPath): string,
+  project(path: Project): string,
+  projectUsers(path: Project): string,
   register(): string
 }
 
@@ -35,6 +36,9 @@ Vue.prototype.$routes = {
     return project.organization
       ? `/organization/${project.organization.slug}/project/${project.slug}/path/${project.rootPath.slug}/${project.rootPath.id}`
       : `/project/${project.slug}/path/${project.rootPath.slug}/${project.rootPath.id}`
+  },
+  projectUsers: function (project: Project): string {
+    return `${this.project(project)}/users`;
   },
   register: (): string => '/register'
 } as Routes;

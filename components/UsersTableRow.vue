@@ -13,11 +13,15 @@
         @change="onChange"
       />
     </td>
+    <td>
+      <exit-button @click="onDelete" />
+    </td>
   </tr>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue';
+import ExitButton from '~/components/buttons/ExitButton.vue';
 import UserPermissionSwitch from '~/components/switches/UserPermissionSwitch.vue';
 import {
   OrganizationPermission,
@@ -38,6 +42,7 @@ interface ChangeEvent {
 
 export default Vue.extend({
   components: {
+    ExitButton,
     UserPermissionSwitch
   },
   props: {
@@ -51,6 +56,11 @@ export default Vue.extend({
     } as PropOptions<OrganizationUser | ProjectUser>
   },
   methods: {
+    onDelete: function () {
+      this.$emit('delete', {
+        ...this.user
+      });
+    },
     onChange: function (e: ChangeEvent) {
       const permissions = this.user.permissions as Array<ProjectPermission | OrganizationPermission>;
 

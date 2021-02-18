@@ -272,6 +272,7 @@ function isInlineStepParam(param: StepParam): param is InlineStepParam {
 }
 
 export {
+  BaseUser,
   Breadcrumb,
   CreateFeature,
   CreatePath,
