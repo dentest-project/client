@@ -1,7 +1,7 @@
 <template>
   <v-main>
-    <h1>Organization "{{ organization.name }}" users</h1>
     <breadcrumb :items="breadcrumbItems" />
+    <h1>Organization "{{ organization.name }}" users</h1>
     <users-table :users="users" mode="organization" :search-users-within-organization="false" @add="onUserAdd" @delete="onUserDelete" @change="onUserChanged" />
     <v-snackbar v-model="addSuccessSnackbarOpened" :color="$colors.success">User added</v-snackbar>
     <v-snackbar v-model="deleteSuccessSnackbarOpened" :color="$colors.success">User removed</v-snackbar>
@@ -109,6 +109,12 @@ export default Vue.extend({
         text: organization.name,
         href: (this as any).$routes.organization(organization.slug),
         disabled: false
+      });
+
+      out.push({
+        text: 'Users',
+        href: '',
+        disabled: true
       });
 
       return out;

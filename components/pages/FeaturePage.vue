@@ -1,8 +1,8 @@
 <template>
   <v-main>
+    <breadcrumb :items="breadcrumbItems" />
     <editable-title v-if="$auth.loggedIn && canWrite" label="Feature title" v-model="feature.title" @input="onChanged" />
     <h1 v-else>{{ feature.title }}</h1>
-    <breadcrumb :items="breadcrumbItems" />
     <actions-bar v-if="$auth.loggedIn && canWrite">
       <save-button :enabled="saveEnabled" @click="save" />
       <v-spacer />

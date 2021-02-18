@@ -1,7 +1,7 @@
 <template>
   <v-main>
-    <h1>Project "{{ project.title }}" users</h1>
     <breadcrumb :items="breadcrumbItems" />
+    <h1>Project "{{ project.title }}" users</h1>
     <users-table :users="users" mode="project" :search-users-within-organization="true" @add="onUserAdd" @delete="onUserDelete" @change="onUserChanged" />
     <v-snackbar v-model="addSuccessSnackbarOpened" :color="$colors.success">User added</v-snackbar>
     <v-snackbar v-model="deleteSuccessSnackbarOpened" :color="$colors.success">User removed</v-snackbar>
@@ -106,6 +106,11 @@ export default Vue.extend({
         text: project.title,
         href: (this as any).$routes.project(project),
         disabled: false
+      });
+      out.push({
+        text: 'Users',
+        href: '',
+        disabled: true
       });
 
       return out;
