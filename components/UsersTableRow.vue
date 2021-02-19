@@ -14,7 +14,7 @@
       />
     </td>
     <td>
-      <exit-button @click="onDelete" />
+      <exit-button label="Remove user" @click="onDelete" />
     </td>
   </tr>
 </template>

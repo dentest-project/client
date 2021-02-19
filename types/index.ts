@@ -6,13 +6,15 @@ enum Mode {
 enum OrganizationPermission {
   Admin = 'admin',
   ProjectCreate = 'project_create',
-  ProjectWrite = 'project_write'
+  ProjectWrite = 'project_write',
+  Read = 'read'
 }
 
 enum ProjectPermission {
   Admin = 'admin',
   Write = 'write',
-  Pull = 'pull'
+  Pull = 'pull',
+  Read = 'read'
 }
 
 enum ProjectVisibility {

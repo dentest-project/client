@@ -3,11 +3,12 @@
     <breadcrumb :items="breadcrumbItems" />
     <editable-title v-if="$auth.loggedIn && canAdministrate" :value="title" label="Title" @submit="onTitleUpdated" />
     <h1 v-else>{{ title }}</h1>
-    <actions-bar v-if="$auth.loggedIn && canWrite">
+    <actions-bar v-if="$auth.loggedIn && isProjectUser">
       <add-folder-button v-if="canWrite" @click.stop="activateCreatePathDialog" />
       <add-feature-button v-if="canWrite" @click.stop="activateCreateFeatureDialog" />
       <v-spacer />
       <users-button v-if="canAdministrate" :to="usersLink" />
+      <exit-button v-if="isProjectUser" label="Leave project" @click="activateLeaveProjectDialog" />
       <delete-button v-if="canAdministrate" @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
@@ -35,6 +36,13 @@
       @errored="onPathDeleteErrored"
       :path="path"
     />
+    <leave-project-dialog
+      v-model="leaveProjectDialog"
+      @close="deactivateLeaveProjectDialog"
+      @deleted="onProjectLeft"
+      @errored="onProjectLeaveErrored"
+      :path="path"
+    />
     <delete-project-dialog
       v-model="deleteProjectDialog"
       @close="deactivateDeleteProjectDialog"
@@ -47,6 +55,7 @@
     <v-snackbar v-model="pathDeleteSnackbarOpened" :color="$colors.success">Folder deleted</v-snackbar>
     <v-snackbar v-model="pathUpdatedSnackbarOpened" :color="$colors.success">Folder updated</v-snackbar>
     <v-snackbar v-model="projectDeleteSnackbarOpened" :color="$colors.success">Project deleted</v-snackbar>
+    <v-snackbar v-model="projectLeftSnackbarOpened" :color="$colors.success">Project left</v-snackbar>
     <v-snackbar v-model="projectUpdatedSnackbarOpened" :color="$colors.success">Project updated</v-snackbar>
     <v-snackbar v-model="pathCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the folder</v-snackbar>
     <v-snackbar v-model="featureCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the feature</v-snackbar>
@@ -54,6 +63,7 @@
     <v-snackbar v-model="pathDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the folder</v-snackbar>
     <v-snackbar v-model="projectUpdateErrorSnackbarOpened" :color="$colors.error">An error occurred while updating the project</v-snackbar>
     <v-snackbar v-model="projectDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the project</v-snackbar>
+    <v-snackbar v-model="projectLeaveErrorSnackbarOpened" :color="$colors.error">An error occurred while leaving the project</v-snackbar>
   </v-main>
 </template>
 
@@ -69,8 +79,10 @@ import CreatePathDialog from '~/components/dialogs/CreatePathDialog.vue';
 import DeletePathDialog from '~/components/dialogs/DeletePathDialog.vue';
 import DeleteProjectDialog from '~/components/dialogs/DeleteProjectDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
+import ExitButton from '~/components/buttons/ExitButton.vue';
 import FeatureCard from '~/components/cards/FeatureCard.vue';
 import Grid3 from '~/components/Grid3.vue';
+import LeaveProjectDialog from '~/components/dialogs/LeaveProjectDialog.vue';
 import PathCard from '~/components/cards/PathCard.vue';
 import UsersButton from '~/components/buttons/UsersButton.vue';
 import { Breadcrumb as BreadcrumbType, OrganizationPermission, Path, ProjectPermission } from '~/types';
@@ -80,17 +92,20 @@ interface Data {
   createFeatureDialog: boolean,
   deletePathDialog: boolean,
   deleteProjectDialog: boolean,
+  leaveProjectDialog: boolean,
   pathCreatedSnackbarOpened: boolean,
   featureCreatedSnackbarOpened: boolean,
   pathDeleteSnackbarOpened: boolean,
   pathUpdatedSnackbarOpened: boolean,
   projectDeleteSnackbarOpened: boolean,
+  projectLeftSnackbarOpened: boolean,
   projectUpdatedSnackbarOpened: boolean,
   pathCreationErrorSnackbarOpened: boolean,
   featureCreationErrorSnackbarOpened: boolean,
   pathDeleteErrorSnackbarOpened: boolean,
   pathUpdateErrorSnackbarOpened: boolean,
   projectDeleteErrorSnackbarOpened: boolean,
+  projectLeaveErrorSnackbarOpened: boolean,
   projectUpdateErrorSnackbarOpened: boolean,
 }
 
@@ -106,8 +121,10 @@ export default Vue.extend({
     DeletePathDialog,
     DeleteProjectDialog,
     EditableTitle,
+    ExitButton,
     FeatureCard,
     Grid3,
+    LeaveProjectDialog,
     PathCard,
     UsersButton
   },
@@ -123,17 +140,20 @@ export default Vue.extend({
       createFeatureDialog: false,
       deletePathDialog: false,
       deleteProjectDialog: false,
+      leaveProjectDialog: false,
       pathCreatedSnackbarOpened: false,
       featureCreatedSnackbarOpened: false,
       pathDeleteSnackbarOpened: false,
       pathUpdatedSnackbarOpened: false,
       projectDeleteSnackbarOpened: false,
+      projectLeftSnackbarOpened: false,
       projectUpdatedSnackbarOpened: false,
       pathCreationErrorSnackbarOpened: false,
       featureCreationErrorSnackbarOpened: false,
       pathDeleteErrorSnackbarOpened: false,
       pathUpdateErrorSnackbarOpened: false,
       projectDeleteErrorSnackbarOpened: false,
+      projectLeaveErrorSnackbarOpened: false,
       projectUpdateErrorSnackbarOpened: false
     }
   },
@@ -150,6 +170,9 @@ export default Vue.extend({
     activateDeleteProjectDialog(): void {
       this.deleteProjectDialog = true;
     },
+    activateLeaveProjectDialog(): void {
+      this.leaveProjectDialog = true;
+    },
     deactivateCreatePathDialog(): void {
       this.createPathDialog = false;
     },
@@ -161,6 +184,9 @@ export default Vue.extend({
     },
     deactivateDeleteProjectDialog(): void {
       this.deleteProjectDialog = false;
+    },
+    deactivateLeaveProjectDialog(): void {
+      this.leaveProjectDialog = false;
     },
     onDeleteButtonClicked(): void {
       if (this.path.project) {
@@ -193,6 +219,11 @@ export default Vue.extend({
       this.projectDeleteSnackbarOpened = true;
       setTimeout(() => this.$router.push(this.$routes.home()), 2000);
     },
+    onProjectLeft(): void {
+      this.deactivateLeaveProjectDialog();
+      this.projectLeftSnackbarOpened = true;
+      setTimeout(() => this.$router.push(this.$routes.home()), 2000);
+    },
     onPathErrored(): void {
       this.deactivateCreatePathDialog();
       this.pathCreationErrorSnackbarOpened = true;
@@ -208,6 +239,10 @@ export default Vue.extend({
     onProjectDeleteErrored(): void {
       this.deactivateDeleteProjectDialog();
       this.projectDeleteErrorSnackbarOpened = true;
+    },
+    onProjectLeaveErrored(): void {
+      this.deactivateLeaveProjectDialog();
+      this.projectLeaveErrorSnackbarOpened = true;
     },
     async onTitleUpdated(e: string): Promise<void> {
       if (this.path.project) {
@@ -292,6 +327,15 @@ export default Vue.extend({
       }
 
       return typeof rootProject.organization.permissions.find(p => p === OrganizationPermission.Admin || p === OrganizationPermission.ProjectWrite) !== 'undefined';
+    },
+    isProjectUser: function (): boolean {
+      const rootProject = ((this as any).path as Path).rootProject;
+
+      if (!rootProject) {
+        return false;
+      }
+
+      return typeof rootProject.permissions.find(p => p === ProjectPermission.Admin || p === ProjectPermission.Write || p === ProjectPermission.Read || p === ProjectPermission.Pull) !== 'undefined';
     },
     usersLink: function (): string {
       const routeParams = (this as any).$route.params;
