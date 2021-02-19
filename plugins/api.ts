@@ -12,7 +12,7 @@ import {
   OrganizationList, OrganizationPermission, OrganizationUser, OrganizationUserList,
   Path,
   Project,
-  ProjectList, ProjectPermission, ProjectUser, ProjectUserList, Register,
+  ProjectList, ProjectPermission, ProjectUser, ProjectUserList, ProjectUserToken, Register,
   Step,
   UpdateFeature, UpdateOrganizationName, UpdatePath, UpdateProject, User
 } from '~/types';
@@ -38,6 +38,7 @@ interface Api {
   createPath(path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path>,
   createProject(project: CreateProject, axios?: NuxtAxiosInstance): Promise<Project>,
   createProjectUser(project: Project, user: BaseUser, axios?: NuxtAxiosInstance): Promise<ProjectUser>,
+  createProjectUserToken(projectId: string, userId: string, axios?: NuxtAxiosInstance): Promise<ProjectUserToken>,
   createStep(step: Step, axios?: NuxtAxiosInstance): Promise<Step>,
   deleteFeature(id:string, axios?: NuxtAxiosInstance): Promise<void>,
   deleteOrganization(id: string, axios?: NuxtAxiosInstance): Promise<void>,
@@ -55,6 +56,7 @@ interface Api {
   getProject(projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<Project>,
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
   getProjectUsers(projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<ProjectUserList>,
+  getProjectUserToken(projectId: string, userId: string, axios?: NuxtAxiosInstance): Promise<ProjectUserToken>,
   login(user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse>,
   register(user: Register, axios?: NuxtAxiosInstance): Promise<User>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
@@ -98,6 +100,7 @@ const Api = (context: any) => {
     createPath: async (path: CreatePath, axios?: NuxtAxiosInstance): Promise<Path> => post('paths', path, axios),
     createProject: async (project: CreateProject, axios?: NuxtAxiosInstance): Promise<Project> => post('projects', project, axios),
     createProjectUser: async (project: Project, user: BaseUser, axios?: NuxtAxiosInstance): Promise<ProjectUser> => post(`projects/${project.id}/users/${user.id}`, {}, axios),
+    createProjectUserToken: async (projectId: string, userId: string, axios?: NuxtAxiosInstance): Promise<ProjectUserToken> => put(`projects/${projectId}/users/${userId}/token`, {}, axios),
     createStep: async (step: Step, axios?: NuxtAxiosInstance): Promise<Step> => post('steps', step, axios),
     deleteFeature: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`features/${id}`, axios),
     deleteOrganization: async (id: string, axios?: NuxtAxiosInstance): Promise<void> => del(`organizations/${id}`, axios),
@@ -119,6 +122,7 @@ const Api = (context: any) => {
     getProjectUsers: async (projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<ProjectUserList> => {
       return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}/users`, axios) : get(`projects/${projectSlug}/users`, axios);
     },
+    getProjectUserToken: async (projectId: string, userId: string, axios?: NuxtAxiosInstance): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`, axios),
     login: async (user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse> => post(`login`, user, axios),
     register: async (user: Register, axios?: NuxtAxiosInstance): Promise<User> => post(`register`, user, axios),
     saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => {

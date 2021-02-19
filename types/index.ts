@@ -175,6 +175,10 @@ interface ProjectUser {
   permissions: Array<ProjectPermission>
 }
 
+interface ProjectUserToken {
+  token: string
+}
+
 interface Register {
   username: string,
   email: string,
@@ -299,6 +303,7 @@ export {
   ProjectRootPath,
   ProjectUser,
   ProjectUserList,
+  ProjectUserToken,
   ProjectVisibility,
   Register,
   Scenario,

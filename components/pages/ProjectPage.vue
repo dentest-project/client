@@ -7,6 +7,7 @@
       <add-folder-button v-if="canWrite" @click.stop="activateCreatePathDialog" />
       <add-feature-button v-if="canWrite" @click.stop="activateCreateFeatureDialog" />
       <v-spacer />
+      <token-button v-if="canPull" @click.stop="activateGetTokenDialog" />
       <users-button v-if="canAdministrate" :to="usersLink" />
       <exit-button v-if="isProjectUser" label="Leave project" @click="activateLeaveProjectDialog" />
       <delete-button v-if="canAdministrate" @click.stop="onDeleteButtonClicked" />
@@ -28,6 +29,11 @@
       @created="onFeatureCreated"
       @errored="onFeatureErrored"
       :path="path"
+    />
+    <get-token-dialog
+      v-model="getTokenDialog"
+      @close="deactivateGetTokenDialog"
+      :project="path.rootProject"
     />
     <delete-path-dialog
       v-model="deletePathDialog"
@@ -70,21 +76,22 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import ActionsBar from '~/components/ActionsBar.vue';
+import Breadcrumb from '~/components/Breadcrumb.vue';
 import AddFeatureButton from '~/components/buttons/AddFeatureButton.vue';
 import AddFolderButton from '~/components/buttons/AddFolderButton.vue';
-import Breadcrumb from '~/components/Breadcrumb.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
+import ExitButton from '~/components/buttons/ExitButton.vue';
+import UsersButton from '~/components/buttons/UsersButton.vue';
+import FeatureCard from '~/components/cards/FeatureCard.vue';
+import PathCard from '~/components/cards/PathCard.vue';
 import CreateFeatureDialog from '~/components/dialogs/CreateFeatureDialog.vue';
 import CreatePathDialog from '~/components/dialogs/CreatePathDialog.vue';
 import DeletePathDialog from '~/components/dialogs/DeletePathDialog.vue';
 import DeleteProjectDialog from '~/components/dialogs/DeleteProjectDialog.vue';
-import EditableTitle from '~/components/EditableTitle.vue';
-import ExitButton from '~/components/buttons/ExitButton.vue';
-import FeatureCard from '~/components/cards/FeatureCard.vue';
-import Grid3 from '~/components/Grid3.vue';
+import GetTokenDialog from '~/components/dialogs/GetTokenDialog.vue';
 import LeaveProjectDialog from '~/components/dialogs/LeaveProjectDialog.vue';
-import PathCard from '~/components/cards/PathCard.vue';
-import UsersButton from '~/components/buttons/UsersButton.vue';
+import EditableTitle from '~/components/EditableTitle.vue';
+import Grid3 from '~/components/Grid3.vue';
 import { Breadcrumb as BreadcrumbType, OrganizationPermission, Path, ProjectPermission } from '~/types';
 
 interface Data {
@@ -92,6 +99,7 @@ interface Data {
   createFeatureDialog: boolean,
   deletePathDialog: boolean,
   deleteProjectDialog: boolean,
+  getTokenDialog: boolean,
   leaveProjectDialog: boolean,
   pathCreatedSnackbarOpened: boolean,
   featureCreatedSnackbarOpened: boolean,
@@ -123,6 +131,7 @@ export default Vue.extend({
     EditableTitle,
     ExitButton,
     FeatureCard,
+    GetTokenDialog,
     Grid3,
     LeaveProjectDialog,
     PathCard,
@@ -138,6 +147,7 @@ export default Vue.extend({
     return {
       createPathDialog: false,
       createFeatureDialog: false,
+      getTokenDialog: false,
       deletePathDialog: false,
       deleteProjectDialog: false,
       leaveProjectDialog: false,
@@ -164,6 +174,9 @@ export default Vue.extend({
     activateCreateFeatureDialog(): void {
       this.createFeatureDialog = true;
     },
+    activateGetTokenDialog(): void {
+      this.getTokenDialog = true;
+    },
     activateDeletePathDialog(): void {
       this.deletePathDialog = true;
     },
@@ -178,6 +191,9 @@ export default Vue.extend({
     },
     deactivateCreateFeatureDialog(): void {
       this.createFeatureDialog = false;
+    },
+    deactivateGetTokenDialog(): void {
+      this.getTokenDialog = false;
     },
     deactivateDeletePathDialog(): void {
       this.deletePathDialog = false;
@@ -311,6 +327,15 @@ export default Vue.extend({
       }
 
       return typeof path.rootProject.permissions.find(p => p === ProjectPermission.Admin) !== 'undefined';
+    },
+    canPull: function (): boolean {
+      const rootProject = ((this as any).path as Path).rootProject;
+
+      if (!rootProject) {
+        return false;
+      }
+
+      return rootProject.permissions.includes(ProjectPermission.Pull);
     },
     canWrite: function (): boolean {
       const rootProject = ((this as any).path as Path).rootProject;
