@@ -46,7 +46,11 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    this.token = (await this.$api.getProjectUserToken(this.project.id, this.$auth.user.id, this.$axios)).token;
+    try {
+      this.token = (await this.$api.getProjectUserToken(this.project.id, this.$auth.user.id, this.$axios)).token;
+    } catch (error) {
+      this.token = '';
+    }
   },
   methods: {
     onDialogStatusChanged(e: boolean) {
