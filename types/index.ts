@@ -161,7 +161,8 @@ interface Project extends PathProject {
   rootPath: ProjectRootPath,
   organization?: Organization,
   permissions: Array<ProjectPermission>,
-  slug: string
+  slug: string,
+  visibility: ProjectVisibility
 }
 
 interface ProjectRootPath {
@@ -257,7 +258,8 @@ interface UpdatePath {
 
 interface UpdateProject {
   id: string,
-  title: string
+  title?: string,
+  visibility?: ProjectVisibility
 }
 
 interface User extends BaseUser {

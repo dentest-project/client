@@ -9,6 +9,7 @@
       <v-spacer />
       <token-button v-if="canPull" @click.stop="activateGetTokenDialog" />
       <users-button v-if="canAdministrate" :to="usersLink" />
+      <visibility-button v-if="canAdministrate" :visibility="path.rootProject.visibility" @click.stop="onVisibilityUpdated" />
       <exit-button v-if="isProjectUser" label="Leave project" @click="activateLeaveProjectDialog" />
       <delete-button v-if="canAdministrate" @click.stop="onDeleteButtonClicked" />
     </actions-bar>
@@ -82,6 +83,7 @@ import AddFolderButton from '~/components/buttons/AddFolderButton.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
 import ExitButton from '~/components/buttons/ExitButton.vue';
 import UsersButton from '~/components/buttons/UsersButton.vue';
+import VisibilityButton from '~/components/buttons/VisibilityButton.vue';
 import FeatureCard from '~/components/cards/FeatureCard.vue';
 import PathCard from '~/components/cards/PathCard.vue';
 import CreateFeatureDialog from '~/components/dialogs/CreateFeatureDialog.vue';
@@ -92,7 +94,14 @@ import GetTokenDialog from '~/components/dialogs/GetTokenDialog.vue';
 import LeaveProjectDialog from '~/components/dialogs/LeaveProjectDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
 import Grid3 from '~/components/Grid3.vue';
-import { Breadcrumb as BreadcrumbType, OrganizationPermission, Path, ProjectPermission } from '~/types';
+import {
+  Breadcrumb as BreadcrumbType,
+  OrganizationPermission,
+  Path,
+  Project,
+  ProjectPermission,
+  ProjectVisibility
+} from '~/types';
 
 interface Data {
   createPathDialog: boolean,
@@ -135,7 +144,8 @@ export default Vue.extend({
     Grid3,
     LeaveProjectDialog,
     PathCard,
-    UsersButton
+    UsersButton,
+    VisibilityButton
   },
   props: {
     path: {
@@ -285,6 +295,22 @@ export default Vue.extend({
         }
       }
       this.$emit('needReload');
+    },
+    async onVisibilityUpdated(): Promise<void> {
+      if (!this.path.rootProject || !this.path.rootProject.id) {
+        return;
+      }
+
+      try {
+        await this.$api.updateProject({
+          id: this.path.rootProject.id,
+          visibility: this.nextVisibility
+        }, this.$axios);
+        this.projectUpdatedSnackbarOpened = true;
+      } catch (error) {
+        this.projectUpdateErrorSnackbarOpened = true;
+      }
+      this.$emit('needReload');
     }
   },
   computed: {
@@ -361,6 +387,18 @@ export default Vue.extend({
       }
 
       return typeof rootProject.permissions.find(p => p === ProjectPermission.Admin || p === ProjectPermission.Write || p === ProjectPermission.Read || p === ProjectPermission.Pull) !== 'undefined';
+    },
+    nextVisibility: function (): ProjectVisibility {
+      const project = (this as any).path.rootProject as Project;
+
+      switch (project?.visibility) {
+        case ProjectVisibility.Public:
+          return project.organization ? ProjectVisibility.Internal : ProjectVisibility.Private;
+        case ProjectVisibility.Internal:
+          return ProjectVisibility.Private;
+        default:
+          return ProjectVisibility.Public;
+      }
     },
     usersLink: function (): string {
       const routeParams = (this as any).$route.params;
