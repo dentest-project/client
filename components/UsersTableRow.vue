@@ -96,14 +96,14 @@ export default Vue.extend({
           {
             label: 'Create projects',
             message: 'User is able to create projects and become admin of them',
-            value: permissions.includes(OrganizationPermission.ProjectCreate) && !permissions.includes(OrganizationPermission.Admin),
+            value: permissions.includes(OrganizationPermission.ProjectCreate) || permissions.includes(OrganizationPermission.Admin),
             permission: OrganizationPermission.ProjectCreate,
             disabled: permissions.includes(OrganizationPermission.Admin)
           },
           {
             label: 'Write projects',
             message: 'User is able to create paths and write features in organization projects',
-            value: permissions.includes(OrganizationPermission.ProjectWrite) && !permissions.includes(OrganizationPermission.Admin),
+            value: permissions.includes(OrganizationPermission.ProjectWrite) || permissions.includes(OrganizationPermission.Admin),
             permission: OrganizationPermission.ProjectWrite,
             disabled: permissions.includes(OrganizationPermission.Admin)
           }
@@ -123,7 +123,7 @@ export default Vue.extend({
         {
           label: 'Write',
           message: 'User is able to create paths and write features but not to edit/delete the project',
-          value: permissions.includes(ProjectPermission.Write) && !permissions.includes(ProjectPermission.Admin),
+          value: permissions.includes(ProjectPermission.Write) || permissions.includes(ProjectPermission.Admin),
           permission: ProjectPermission.Write,
           disabled: permissions.includes(ProjectPermission.Admin)
         },
