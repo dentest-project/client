@@ -36,7 +36,6 @@ import {
   Breadcrumb as BreadcrumbType,
   Feature,
   OrganizationPermission,
-  Project,
   ProjectPermission,
   UpdateFeature
 } from '~/types';

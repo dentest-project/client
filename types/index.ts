@@ -106,7 +106,8 @@ interface Feature {
   title: string,
   description: string,
   scenarios: Array<Scenario>,
-  rootProject?: Project
+  rootProject?: Project,
+  priority: number
 }
 
 interface InlineStepParam extends StepParam {

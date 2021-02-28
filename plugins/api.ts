@@ -126,7 +126,18 @@ const Api = (context: any) => {
     login: async (user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse> => post(`login`, user, axios),
     register: async (user: Register, axios?: NuxtAxiosInstance): Promise<User> => post(`register`, user, axios),
     saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => {
-      const feat = await put('features', feature, axios)
+      const toSave = {
+        ...feature,
+        scenarios: feature.scenarios.map((s, sId) => ({
+          ...s,
+          steps: s.steps.map((st, stId) => ({
+            ...st,
+            priority: stId
+          })),
+          priority: sId,
+        }))
+      }
+      const feat = await put('features', toSave, axios)
 
       return await get(`paths/${feat.path.id}/features/${feat.slug}`, axios);
     },
