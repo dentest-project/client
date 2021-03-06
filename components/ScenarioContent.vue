@@ -1,10 +1,12 @@
 <template>
   <v-sheet class="scenario" :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary" shaped elevation="2">
+    <up-button v-if="canWrite && canMoveUp" class="scenario-up" @click="$emit('up')" />
+    <down-button v-if="canWrite && canMoveDown" class="scenario-down" @click="$emit('down')" />
     <edit-button v-if="canWrite && mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
     <view-button v-else-if="canWrite && mode === $modes.edit" class="scenario-edit" @click="switchToViewMode" />
     <delete-button v-if="canWrite" class="scenario-delete" @click="onDeleteClick" />
     <switch-scenario-type-chip v-if="shouldDisplayTypeSwitch" :value="scenario.type" :mode="mode" @input="onTypeChanged" />
-    <editable-subtitle v-if="mode === $modes.edit" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
+    <editable-subtitle v-if="mode === $modes.edit && scenario.type !== 'background'" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>
     <step-list
       :mode="mode"
@@ -19,11 +21,13 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
+import DownButton from '~/components/buttons/DownButton.vue';
 import EditableSubtitle from '~/components/EditableSubtitle.vue';
 import EditButton from '~/components/buttons/EditButton.vue';
 import ExamplesContent from '~/components/ExamplesContent.vue';
 import StepList from '~/components/StepList.vue';
 import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
+import UpButton from '~/components/buttons/UpButton.vue';
 import ViewButton from '~/components/buttons/ViewButton.vue';
 import { Mode, Project, Scenario, ScenarioStep, ScenarioType } from '~/types';
 
@@ -31,16 +35,26 @@ export default Vue.extend({
   components: {
     ViewButton,
     DeleteButton,
+    DownButton,
     EditButton,
     EditableSubtitle,
     ExamplesContent,
     StepList,
-    SwitchScenarioTypeChip
+    SwitchScenarioTypeChip,
+    UpButton
   },
   model: {
     prop: 'scenario'
   },
   props: {
+    canMoveUp: {
+      type: Boolean,
+      required: true
+    },
+    canMoveDown: {
+      type: Boolean,
+      required: true
+    },
     backgroundable: {
       type: Boolean,
       required: true
@@ -163,6 +177,18 @@ export default Vue.extend({
   margin: 2rem 0;
   width: 100%;
   position: relative;
+}
+
+.scenario .scenario-up {
+  position: absolute;
+  right: 128px;
+  top: -16px;
+}
+
+.scenario .scenario-down {
+  position: absolute;
+  right: 80px;
+  top: -16px;
 }
 
 .scenario .scenario-edit {
