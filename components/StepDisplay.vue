@@ -1,5 +1,5 @@
 <template>
-  <div class="step-display">
+  <div v-if="step.step" class="step-display">
     <div class="step-display-sentence">
       <span class="step-display-adverb">{{ adverb }}</span>
       <span v-for="(part, id) in step.step.parts">
