@@ -3,7 +3,7 @@
     <h3>Examples</h3>
     <table v-if="mode === $modes.view">
       <thead><tr><th v-for="(key, i) in headers" :key="i">{{ key }}</th></tr></thead>
-      <tbody><tr v-for="(row, i) in value" :key="i"><td v-for="(cell, j) in row" :key="i">{{ cell }}</td></tr></tbody>
+      <tbody><tr v-for="(row, i) in value" :key="i"><td v-for="(cell, j) in row" :key="`${i}${j}`">{{ cell }}</td></tr></tbody>
     </table>
     <table-form v-else :headers="headers" :deletable-columns="false" :value="value" @input="onUpdated" />
   </div>

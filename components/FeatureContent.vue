@@ -19,9 +19,6 @@ export default Vue.extend({
     EditableTextarea,
     ScenarioList
   },
-  model: {
-    prop: 'feature'
-  },
   props: {
     canWrite: {
       type: Boolean,

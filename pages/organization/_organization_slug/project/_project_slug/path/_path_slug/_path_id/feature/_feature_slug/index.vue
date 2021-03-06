@@ -1,5 +1,5 @@
 <template>
-  <feature-page :feature="feature" @saved="onSaved" />
+  <feature-page :feature="feature" @saved="onSaved" @needUpdate="onNeedUpdate" />
 </template>
 
 <script lang="ts">
@@ -34,6 +34,9 @@ export default Vue.extend({
     };
   },
   methods: {
+    onNeedUpdate: function (feature: Feature) {
+      this.feature = feature;
+    },
     onSaved: function (feature: Feature) {
       this.feature = feature;
     }

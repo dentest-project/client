@@ -12,7 +12,7 @@
     <view-button v-else-if="canWrite && mode === $modes.edit" class="scenario-edit" @click="switchToViewMode" />
     <delete-button v-if="canWrite" class="scenario-delete" @click="onDeleteClick" />
     <switch-scenario-type-chip v-if="shouldDisplayTypeSwitch" :value="scenario.type" :mode="mode" @input="onTypeChanged" />
-    <editable-subtitle v-if="mode === $modes.edit && isBackground" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
+    <editable-subtitle v-if="mode === $modes.edit && !isBackground" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>
     <step-list
       :mode="mode"

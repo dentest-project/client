@@ -8,7 +8,7 @@
       <v-spacer />
       <delete-button @click.stop="activateDeleteDialog" />
     </actions-bar>
-    <feature-content v-model="feature" :can-write="$auth.loggedIn && canWrite" @input="onChanged" />
+    <feature-content :feature="feature" :can-write="$auth.loggedIn && canWrite" @input="onChanged" />
     <delete-feature-dialog
       v-model="deleteDialog"
       :feature="feature"
@@ -90,8 +90,9 @@ export default Vue.extend({
         }
       };
     },
-    onChanged(): void {
+    onChanged(feature: Feature): void {
       this.saveEnabled = true;
+      this.$emit('needUpdate', feature);
     },
     onDeleted(): void {
       this.deactivateDeleteDialog();
