@@ -2,7 +2,7 @@
   <div>
     <div v-for="(step, i) in steps" :key="i">
       <div
-        v-if="mode === $modes.edit"
+        v-if="mode === $modes.edit && draggedElement && draggedElementId !== i && draggedElementId !== i - 1"
         class="step-list-drop-target"
         :class="{ 'step-list-drop-target--over': i === hoveredTargetId }"
         @dragover.prevent="onDragOver(i)"
@@ -19,7 +19,7 @@
         @deleted="() => onDeleted(i)"
       />
       <div
-        v-if="i === steps.length - 1 && mode === $modes.edit"
+        v-if="i === steps.length - 1 && mode === $modes.edit && draggedElement && draggedElementId !== i"
         class="step-list-drop-target"
         :class="{ 'step-list-drop-target--over': i + 1 === hoveredTargetId }"
         @dragover.prevent="onDragOver(i + 1)"
@@ -138,12 +138,17 @@ export default Vue.extend({
 <style scoped>
 .step-list-drop-target {
   width: 100%;
-  height: 1.5rem;
-}
-.step-list-drop-target.step-list-drop-target--over {
+  height: 3rem;
   border: 2px dashed rgba(150, 150, 150, 0.1);
   background-color: rgba(150, 150, 150, 0.3);
-  height: 3rem;
   margin: 1rem 0;
+  box-sizing: border-box;
+}
+.step-list-drop-target.step-list-drop-target--over {
+  border: 3px dashed rgba(150, 150, 150, 0.1);
+  background-color: rgba(0, 150, 0, 0.3);
+}
+.step {
+  margin-top: 1rem;
 }
 </style>

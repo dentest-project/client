@@ -1,5 +1,5 @@
 <template>
-  <div class="step" :draggable="mode === $modes.edit" @dragstart="$emit('dragstart', step)" @dragend="$emit('dragend')">
+  <div class="step" :draggable="mode === $modes.edit" @dragstart.stop="$emit('dragstart', step)" @dragend.stop="$emit('dragend')">
     <deletable-row v-if="mode === $modes.edit" @delete="onDeleteClick">
       <step-form v-if="step.step" :step="step" :available-adverbs="availableAdverbs" @input="onUpdated" />
       <step-search v-else :feature-root-project="featureRootProject" @selected="onStepSelected" />
