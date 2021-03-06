@@ -1,12 +1,18 @@
 <template>
-  <v-sheet class="scenario" :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary" shaped elevation="2">
+  <v-sheet
+    class="scenario"
+    :class="{ 'scenario--background': isBackground }"
+    :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
+    shaped
+    elevation="2"
+  >
     <up-button v-if="canWrite && canMoveUp" class="scenario-up" @click="$emit('up')" />
     <down-button v-if="canWrite && canMoveDown" class="scenario-down" @click="$emit('down')" />
     <edit-button v-if="canWrite && mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
     <view-button v-else-if="canWrite && mode === $modes.edit" class="scenario-edit" @click="switchToViewMode" />
     <delete-button v-if="canWrite" class="scenario-delete" @click="onDeleteClick" />
     <switch-scenario-type-chip v-if="shouldDisplayTypeSwitch" :value="scenario.type" :mode="mode" @input="onTypeChanged" />
-    <editable-subtitle v-if="mode === $modes.edit && scenario.type !== 'background'" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
+    <editable-subtitle v-if="mode === $modes.edit && isBackground" label="Scenario title" :value="scenario.title" @input="onTitleChanged" />
     <h2 v-else>{{ scenario.title }}</h2>
     <step-list
       :mode="mode"
@@ -162,6 +168,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    isBackground(): boolean {
+      return (this as any).scenario.type === ScenarioType.Background;
+    },
     shouldDisplayTypeSwitch(): boolean {
       return (this as any).scenario.examples === undefined &&
         (this as any).backgroundable &&
@@ -177,6 +186,10 @@ export default Vue.extend({
   margin: 2rem 0;
   width: 100%;
   position: relative;
+}
+
+.scenario.scenario--background {
+  background-color: #DADADA !important;
 }
 
 .scenario .scenario-up {
