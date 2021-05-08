@@ -4,7 +4,12 @@
       <editable-textarea v-if="canWrite" :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
       <p v-else class="feature-content-description">{{ feature.description }}</p>
     </v-sheet>
+    <v-row class="feature-content-drawer-row">
+      <v-spacer />
+      <steps-button @click.prevent="activateDrawer" />
+    </v-row>
     <scenario-list :scenarios="feature.scenarios" :feature-root-project="feature.rootProject" :can-write="canWrite" @input="onScenariosChanged" />
+    <steps-drawer v-if="canWrite" v-model="stepsDrawer" :project="feature.rootProject" />
   </form>
 </template>
 
@@ -12,12 +17,16 @@
 import Vue, { PropOptions } from 'vue'
 import EditableTextarea from '~/components/EditableTextarea.vue';
 import ScenarioList from '~/components/ScenarioList.vue';
+import StepsButton from '~/components/buttons/StepsButton.vue';
+import StepsDrawer from '~/components/StepsDrawer.vue';
 import { Feature, Scenario } from '~/types';
 
 export default Vue.extend({
   components: {
     EditableTextarea,
-    ScenarioList
+    ScenarioList,
+    StepsButton,
+    StepsDrawer
   },
   props: {
     canWrite: {
@@ -29,7 +38,15 @@ export default Vue.extend({
       required: true
     } as PropOptions<Feature>
   },
+  data() {
+    return {
+      stepsDrawer: false
+    }
+  },
   methods: {
+    activateDrawer(): void {
+      this.stepsDrawer = true;
+    },
     onDescriptionChanged(description: string): void {
       this.$emit('input', {
         ...this.feature,
@@ -50,5 +67,10 @@ export default Vue.extend({
 .feature-content-description {
   padding: 1rem;
   white-space: pre;
+}
+
+.feature-content-drawer-row {
+  margin-right: 0;
+  margin-left: 0;
 }
 </style>

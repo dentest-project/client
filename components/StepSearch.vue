@@ -43,6 +43,7 @@
 import Vue, { PropOptions } from 'vue'
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
 import DeletableRow from '~/components/DeletableRow.vue';
+import translateStepType from '~/helpers/translateType';
 import { Project, Step, StepPart, StepType } from '~/types';
 
 export default Vue.extend({
@@ -95,14 +96,7 @@ export default Vue.extend({
       this.stepCreationErrorSnackbarOpened = true;
     },
     translateStepType(type: StepType): string {
-      switch (type) {
-        case StepType.Given:
-          return 'Given';
-        case StepType.When:
-          return 'When';
-        case StepType.Then:
-          return 'Then'
-      }
+      return translateStepType(type);
     }
   },
   watch: {

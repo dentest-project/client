@@ -194,25 +194,25 @@ export default Vue.extend({
 
 .scenario .scenario-up {
   position: absolute;
-  right: 128px;
+  right: 144px;
   top: -16px;
 }
 
 .scenario .scenario-down {
   position: absolute;
-  right: 80px;
+  right: 96px;
   top: -16px;
 }
 
 .scenario .scenario-edit {
   position: absolute;
-  right: 32px;
+  right: 48px;
   top: -16px;
 }
 
 .scenario .scenario-delete {
   position: absolute;
-  right: -16px;
+  right: 0;
   top: -16px;
 }
 
