@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer hide-overlay absolute temporary right v-model="drawer">
+  <v-navigation-drawer :style="`background-color: ${$colors.primary}`" dark hide-overlay fixed floating temporary right v-model="drawer">
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="title">Steps</v-list-item-title>
@@ -13,10 +13,12 @@
       dense
       nav
     >
-      <v-list-item v-for="step in steps" :key="step.id" link>
+      <v-list-item v-for="step in steps" :key="step.id" link draggable="true">
         <v-list-item-content>
           <v-list-item-title>{{ translateStepType(step.type) }}</v-list-item-title>
-          <span v-for="part in step.parts" :key="part.id" :class="`step-drawer-step-type--${part.type}`">{{ part.content }}</span>
+          <div>
+            <span v-for="part in step.parts" :key="part.id" :class="`step-drawer-step-type--${part.type}`">{{ part.content }}</span>
+          </div>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -70,11 +72,15 @@ export default Vue.extend({
 
 <style scoped>
 .step-drawer-step-type--param:before {
-  content: ":";
+  content: " :";
+}
+
+.step-drawer-step-type--param:after {
+  content: " ";
 }
 
 .step-drawer-step-type--param {
-  color: #eb4d4b;
+  color: #2814B4;
   font-weight: bold;
 }
 </style>

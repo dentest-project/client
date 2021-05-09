@@ -16,19 +16,15 @@ import DeletableRow from '~/components/DeletableRow.vue';
 import StepDisplay from '~/components/StepDisplay.vue';
 import StepForm from '~/components/StepForm.vue';
 import StepSearch from '~/components/StepSearch.vue';
+import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep';
+import getCorrespondingAdverb from '~/helpers/getCorrespondingAdverb';
 import {
-  InlineStepParam,
   isInlineStepParam,
   Mode,
-  MultilineStepParam,
   Project,
   ScenarioStep,
   Step,
-  StepAdverb,
-  StepParam,
-  StepParamType,
-  StepPartType,
-  StepType, TableStepParam
+  StepAdverb
 } from '~/types';
 
 export default Vue.extend({
@@ -62,44 +58,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    generateParams(step: Step): Array<StepParam> {
-      const params: Array<InlineStepParam | MultilineStepParam | TableStepParam> = step
-        .parts
-        .filter(p => p.type === StepPartType.Param)
-        .map(stepPart => ({
-          type: StepParamType.Inline,
-          content: stepPart.content ,
-          stepPart
-        } as InlineStepParam));
-
-      if (!step.extraParamType || step.extraParamType === StepParamType.None) {
-        return params;
-      }
-      if (step.extraParamType === StepParamType.Multiline) {
-        params.push({
-          type: step.extraParamType,
-          content: ''
-        });
-      } else {
-        params.push({
-          type: step.extraParamType,
-          content: [] as Array<Array<string>>
-        });
-        this.createTableStepParamDialog = true;
-      }
-
-      return params;
-    },
-    getCorrespondingAdverb(type: StepType): StepAdverb {
-      switch (type) {
-        case StepType.Given:
-          return StepAdverb.Given;
-        case StepType.When:
-          return StepAdverb.When;
-        case StepType.Then:
-          return StepAdverb.Then;
-      }
-    },
     onDeleteClick(): void {
       this.$emit('deleted');
     },
@@ -107,12 +65,10 @@ export default Vue.extend({
       this.$emit('input', e);
     },
     onStepSelected(step: Step): void {
-      this.$emit('input', {
-        ...this.step,
-        adverb: this.getCorrespondingAdverb(step.type),
-        step,
-        params: this.generateParams(step)
-      });
+      const scenarioStep = createScenarioStepFromStep(this.step.priority, step);
+
+      this.createTableStepParamDialog = scenarioStep.withTableParam;
+      this.$emit('input', scenarioStep.scenarioStep);
     },
     onTableStepParamDimensionsSelected(width: number, height: number) {
       const params = [...this.step.params];
@@ -129,7 +85,7 @@ export default Vue.extend({
   computed: {
     availableAdverbs(): Array<StepAdverb> {
       return [
-        (this as any).getCorrespondingAdverb((this as any).step.step.type),
+        getCorrespondingAdverb((this as any).step.step.type),
         StepAdverb.And,
         StepAdverb.But
       ];
