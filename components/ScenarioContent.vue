@@ -1,11 +1,13 @@
 <template>
   <v-sheet
     class="scenario"
-    :class="{ 'scenario--background': isBackground }"
+    :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
     shaped
     elevation="2"
+    @dragover.prevent="onDragEnter"
   >
+    <div v-if="draggedOver" class="scenario-mask" @dragleave="onDragLeave" @drop="onDrop" />
     <up-button v-if="canWrite && canMoveUp" class="scenario-up" @click="$emit('up')" />
     <down-button v-if="canWrite && canMoveDown" class="scenario-down" @click="$emit('down')" />
     <edit-button v-if="canWrite && mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
@@ -28,14 +30,15 @@
 import Vue, { PropOptions } from 'vue'
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
 import DownButton from '~/components/buttons/DownButton.vue';
-import EditableSubtitle from '~/components/EditableSubtitle.vue';
 import EditButton from '~/components/buttons/EditButton.vue';
-import ExamplesContent from '~/components/ExamplesContent.vue';
-import StepList from '~/components/StepList.vue';
-import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
 import UpButton from '~/components/buttons/UpButton.vue';
 import ViewButton from '~/components/buttons/ViewButton.vue';
-import { Mode, Project, Scenario, ScenarioStep, ScenarioType } from '~/types';
+import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
+import EditableSubtitle from '~/components/EditableSubtitle.vue';
+import ExamplesContent from '~/components/ExamplesContent.vue';
+import StepList from '~/components/StepList.vue';
+import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep';
+import { Mode, Project, Scenario, ScenarioStep, ScenarioType, StepParamType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -80,12 +83,38 @@ export default Vue.extend({
   },
   data() {
     return {
-      mode: Mode.View
+      mode: Mode.View,
+      draggedOver: false
     };
   },
   methods: {
     onDeleteClick(): void {
       this.$emit('deleted');
+    },
+    onDragEnter(): void {
+      if (this.$store.state.stepsDrawer.draggedStep !== null) {
+        this.draggedOver = true;
+      }
+    },
+    onDragLeave(): void {
+      this.draggedOver = false;
+    },
+    onDrop(): void {
+      const droppedStep = this.$store.state.stepsDrawer.draggedStep;
+      const steps = this.scenario.steps;
+      const step = createScenarioStepFromStep(steps.length, droppedStep);
+      this.draggedOver = false;
+
+      if (step.withTableParam) {
+        const tableParamIndex = step.scenarioStep.params.findIndex(s => s.type === StepParamType.Table);
+
+        if (tableParamIndex !== -1) {
+          step.scenarioStep.params[tableParamIndex].content = [['', ''], ['', '']];
+        }
+      }
+
+      steps.push(step.scenarioStep);
+      this.onStepsChanged(steps);
     },
     onExamplesChanged(examples: Record<string, Array<string>>): void {
       this.$emit('input', {
@@ -94,8 +123,13 @@ export default Vue.extend({
       });
     },
     onStepsChanged(steps: Array<ScenarioStep>): void {
-      const examples = this.updateExamples(steps);
-      const type = examples ? ScenarioType.Outline : ScenarioType.Regular;
+      let examples = null;
+      let type = this.scenario.type;
+
+      if (this.scenario.type !== ScenarioType.Background) {
+        examples = this.updateExamples(steps);
+        type = examples ? ScenarioType.Outline : ScenarioType.Regular;
+      }
 
       this.$emit('input', {
         ...this.scenario,
@@ -172,7 +206,7 @@ export default Vue.extend({
       return (this as any).scenario.type === ScenarioType.Background;
     },
     shouldDisplayTypeSwitch(): boolean {
-      return (this as any).scenario.examples === undefined &&
+      return ((this as any).scenario.examples === undefined || (this as any).scenario.examples === null) &&
         (this as any).backgroundable &&
         (this.mode === Mode.Edit || this.scenario.type === ScenarioType.Background);
     }
@@ -190,6 +224,16 @@ export default Vue.extend({
 
 .scenario.scenario--background {
   background-color: #DADADA !important;
+}
+
+.scenario-mask {
+  opacity: 0.2;
+  background-color: #badc58;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
 .scenario .scenario-up {

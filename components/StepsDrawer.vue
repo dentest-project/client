@@ -13,7 +13,7 @@
       dense
       nav
     >
-      <v-list-item v-for="step in steps" :key="step.id" link draggable="true">
+      <v-list-item v-for="step in steps" :key="step.id" link draggable="true" @dragstart="addToStore(step)" @dragend="removeFromStore">
         <v-list-item-content>
           <v-list-item-title>{{ translateStepType(step.type) }}</v-list-item-title>
           <div>
@@ -26,7 +26,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue'
+import Vue, { PropOptions } from 'vue';
+import { mapMutations } from 'vuex';
 import translateStepType from '~/helpers/translateType';
 import { Project, Step, StepType } from '~/types';
 
@@ -55,7 +56,11 @@ export default Vue.extend({
   methods: {
     translateStepType(type: StepType): string {
       return translateStepType(type);
-    }
+    },
+    ...mapMutations({
+      addToStore: 'stepsDrawer/dragStep',
+      removeFromStore: 'stepsDrawer/clearDraggedStep'
+    })
   },
   computed: {
     drawer: {
