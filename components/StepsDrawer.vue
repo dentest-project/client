@@ -26,7 +26,7 @@
         </template>
         <v-list-item v-for="step in group.steps" :key="step.id" link draggable="true" @dragstart="addToStore(step)" @dragend="removeFromStore" dense>
           <v-list-item-icon>
-            <v-icon color="#CCCCCC">{{ group.icon }}</v-icon>
+            <v-icon color="#CCCCCC">{{ iconForStepParamType(step.extraParamType) }}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <div class="step-drawer-step">
@@ -51,8 +51,7 @@
 import Vue, { PropOptions } from 'vue';
 import { mapMutations } from 'vuex';
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
-import translateStepType from '~/helpers/translateType';
-import { Project, Step, StepType } from '~/types';
+import { Project, Step, StepParamType, StepType } from '~/types';
 
 interface DisplayableStepsGroup {
   title: string,
@@ -105,9 +104,6 @@ export default Vue.extend({
       this.deactivateStepCreationDialog();
       this.stepCreationErrorSnackbarOpened = true;
     },
-    translateStepType(type: StepType): string {
-      return translateStepType(type);
-    },
     async loadSteps(): Promise<void> {
       const steps = await this.$api.getProjectSteps(this.project.id, this.$axios);
 
@@ -121,6 +117,18 @@ export default Vue.extend({
         steps: steps.filter((step: Step) => step.type === type),
         active: false
       }));
+    },
+    iconForStepParamType(type: StepParamType): string {
+      switch (type) {
+        case StepParamType.None:
+          return 'mdi-circle-off-outline';
+        case StepParamType.Multiline:
+          return 'mdi-text-box';
+        case StepParamType.Table:
+          return 'mdi-table-large';
+        default:
+          return '';
+      }
     },
     ...mapMutations({
       addToStore: 'stepsDrawer/dragStep',
