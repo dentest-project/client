@@ -59,18 +59,7 @@ export default Vue.extend({
     }
   },
   async beforeMount() {
-    const steps = await this.$api.getProjectSteps(this.project.id, this.$axios);
-
-    this.steps = [
-      ['Givens', 'mdi-ray-start', StepType.Given],
-      ['Whens', 'mdi-ray-vertex', StepType.When],
-      ['Thens', 'mdi-ray-end', StepType.Then]
-    ].map(([title, icon, type]) => ({
-      title,
-      icon,
-      steps: steps.filter((step: Step) => step.type === type),
-      active: false
-    }));
+    await this.loadSteps();
   },
   data() {
     return {
@@ -80,6 +69,20 @@ export default Vue.extend({
   methods: {
     translateStepType(type: StepType): string {
       return translateStepType(type);
+    },
+    async loadSteps(): Promise<void> {
+      const steps = await this.$api.getProjectSteps(this.project.id, this.$axios);
+
+      this.steps = [
+        ['Givens', 'mdi-ray-start', StepType.Given],
+        ['Whens', 'mdi-ray-vertex', StepType.When],
+        ['Thens', 'mdi-ray-end', StepType.Then]
+      ].map(([title, icon, type]) => ({
+        title,
+        icon,
+        steps: steps.filter((step: Step) => step.type === type),
+        active: false
+      }));
     },
     ...mapMutations({
       addToStore: 'stepsDrawer/dragStep',

@@ -1,7 +1,7 @@
 <template>
   <v-sheet
     class="scenario"
-    :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver }"
+    :class="{ 'scenario--background': isBackground }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
     shaped
     elevation="2"
@@ -23,6 +23,7 @@
       @input="onStepsChanged"
     />
     <examples-content v-if="scenario.examples" class="scenario-examples" :examples="scenario.examples" :mode="mode" @input="onExamplesChanged" />
+    <create-table-step-param-dialog v-model="createTableStepParamDialog" @selected="onTableStepParamDimensionsSelected" />
   </v-sheet>
 </template>
 
@@ -34,14 +35,16 @@ import EditButton from '~/components/buttons/EditButton.vue';
 import UpButton from '~/components/buttons/UpButton.vue';
 import ViewButton from '~/components/buttons/ViewButton.vue';
 import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue';
+import CreateTableStepParamDialog from '~/components/dialogs/CreateTableStepParamDialog.vue';
 import EditableSubtitle from '~/components/EditableSubtitle.vue';
 import ExamplesContent from '~/components/ExamplesContent.vue';
 import StepList from '~/components/StepList.vue';
 import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep';
-import { Mode, Project, Scenario, ScenarioStep, ScenarioType, StepParamType } from '~/types';
+import { isInlineStepParam, Mode, Project, Scenario, ScenarioStep, ScenarioType, StepParamType } from '~/types';
 
 export default Vue.extend({
   components: {
+    CreateTableStepParamDialog,
     ViewButton,
     DeleteButton,
     DownButton,
@@ -84,7 +87,9 @@ export default Vue.extend({
   data() {
     return {
       mode: Mode.View,
-      draggedOver: false
+      draggedOver: false,
+      createTableStepParamDialog: false,
+      tableParamStepIndex: null as number|null
     };
   },
   methods: {
@@ -109,7 +114,9 @@ export default Vue.extend({
         const tableParamIndex = step.scenarioStep.params.findIndex(s => s.type === StepParamType.Table);
 
         if (tableParamIndex !== -1) {
-          step.scenarioStep.params[tableParamIndex].content = [['', ''], ['', '']];
+          step.scenarioStep.params[tableParamIndex].content = [];
+          this.createTableStepParamDialog = true;
+          this.tableParamStepIndex = steps.length;
         }
       }
 
@@ -137,6 +144,22 @@ export default Vue.extend({
         steps,
         examples
       });
+    },
+    onTableStepParamDimensionsSelected(width: number, height: number) {
+      if (!this.tableParamStepIndex) {
+        return;
+      }
+
+      const steps = [...this.scenario.steps];
+      const params = [...steps[this.tableParamStepIndex].params];
+
+      params[params.findIndex(p => !isInlineStepParam(p))].content = new Array(height + 1).fill(null).map(() => new Array(width + 1).fill(''));
+      steps[this.tableParamStepIndex].params = params;
+
+      this.createTableStepParamDialog = false;
+      this.tableParamStepIndex = null;
+
+      this.onStepsChanged(steps);
     },
     onTitleChanged(title: string): void {
       this.$emit('input', {
