@@ -47,7 +47,7 @@ export default Vue.extend({
       type: Boolean,
       required: true
     },
-    featureRootProject: {
+    project: {
       type: Object,
       required: true
     } as PropOptions<Project>
@@ -141,7 +141,7 @@ export default Vue.extend({
         await this.$api.createStep({
           type: this.type,
           project: {
-            id: this.featureRootProject.id
+            id: this.project.id
           },
           extraParamType: this.extraParamType,
           parts: this.parts

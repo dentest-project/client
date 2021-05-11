@@ -7,7 +7,6 @@
       :can-write="canWrite"
       :scenario="scenario"
       :backgroundable="i === 0"
-      :feature-root-project="featureRootProject"
       :key="i"
       @input="e => onUpdated(i, e)"
       @deleted="() => onDeleted(i)"
@@ -22,7 +21,7 @@
 import Vue, { PropOptions } from 'vue';
 import AddButton from '~/components/buttons/AddButton.vue';
 import ScenarioContent from '~/components/ScenarioContent.vue';
-import { Project, Scenario, ScenarioStep, ScenarioType } from '~/types';
+import { Scenario, ScenarioStep, ScenarioType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -40,11 +39,7 @@ export default Vue.extend({
     scenarios: {
       type: Array,
       required: true
-    } as PropOptions<Array<Scenario>>,
-    featureRootProject: {
-      type: Object,
-      required: true
-    } as PropOptions<Project>
+    } as PropOptions<Array<Scenario>>
   },
   methods: {
     isBackground(scenario: Scenario): boolean {

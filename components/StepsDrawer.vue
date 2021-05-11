@@ -9,6 +9,14 @@
       </v-list-item-content>
     </v-list-item>
     <v-divider />
+    <v-list-item>
+      <v-list-item-title>
+        <v-btn small @mousedown="activateStepCreationDialog">
+          <strong>Create a new step</strong>
+        </v-btn>
+      </v-list-item-title>
+    </v-list-item>
+    <v-divider />
     <v-list>
       <v-list-group v-for="group in steps" v-model="group.active" :key="group.title" :prepend-icon="group.icon">
         <template v-slot:activator>
@@ -28,12 +36,21 @@
         </v-list-item>
       </v-list-group>
     </v-list>
+    <create-step-dialog
+      v-model="stepCreationDialog"
+      :project="project"
+      @created="onStepCreated"
+      @errored="onStepCreationError"
+    />
+    <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success">Step created</v-snackbar>
+    <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the step</v-snackbar>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue';
 import { mapMutations } from 'vuex';
+import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
 import translateStepType from '~/helpers/translateType';
 import { Project, Step, StepType } from '~/types';
 
@@ -47,6 +64,9 @@ interface DisplayableStepsGroup {
 export default Vue.extend({
   model: {
     prop: 'value'
+  },
+  components: {
+    CreateStepDialog
   },
   props: {
     project: {
@@ -63,10 +83,28 @@ export default Vue.extend({
   },
   data() {
     return {
-      steps: [] as Array<DisplayableStepsGroup>
+      steps: [] as Array<DisplayableStepsGroup>,
+      stepCreationDialog: false,
+      stepCreatedSnackbarOpened: false,
+      stepCreationErrorSnackbarOpened: false
     };
   },
   methods: {
+    activateStepCreationDialog(): void {
+      this.stepCreationDialog = true;
+    },
+    deactivateStepCreationDialog(): void {
+      this.stepCreationDialog = false;
+    },
+    async onStepCreated(): Promise<void> {
+      this.deactivateStepCreationDialog();
+      this.stepCreatedSnackbarOpened = true;
+      await this.loadSteps();
+    },
+    onStepCreationError(): void {
+      this.deactivateStepCreationDialog();
+      this.stepCreationErrorSnackbarOpened = true;
+    },
     translateStepType(type: StepType): string {
       return translateStepType(type);
     },

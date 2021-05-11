@@ -8,7 +8,7 @@
       <v-spacer />
       <steps-button @click.prevent="activateDrawer" />
     </v-row>
-    <scenario-list :scenarios="feature.scenarios" :feature-root-project="feature.rootProject" :can-write="canWrite" @input="onScenariosChanged" />
+    <scenario-list :scenarios="feature.scenarios" :can-write="canWrite" @input="onScenariosChanged" />
     <steps-drawer v-if="canWrite" v-model="stepsDrawer" :project="feature.rootProject" />
   </form>
 </template>

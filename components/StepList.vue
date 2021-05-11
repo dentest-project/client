@@ -12,7 +12,6 @@
       <step-content
         :step="step"
         :mode="mode"
-        :feature-root-project="featureRootProject"
         @dragstart="e => onDragStepStart(i, e)"
         @dragend="onDragStepEnd"
         @input="e => onUpdated(i, e)"
@@ -26,7 +25,6 @@
         @drop="onDrop(i + 1)"
       />
     </div>
-    <add-button v-if="mode === $modes.edit" @click="onAdd" title="Add step" />
   </div>
 </template>
 
@@ -38,7 +36,6 @@ import {
   InlineStepParam,
   Mode,
   MultilineStepParam,
-  Project,
   ScenarioStep,
   StepAdverb,
   TableStepParam
@@ -60,11 +57,7 @@ export default Vue.extend({
     steps: {
       type: Array,
       required: true
-    } as PropOptions<Array<ScenarioStep>>,
-    featureRootProject: {
-      type: Object,
-      required: true
-    } as PropOptions<Project>
+    } as PropOptions<Array<ScenarioStep>>
   },
   data() {
     return {
@@ -76,18 +69,6 @@ export default Vue.extend({
   methods: {
     fixPriorities(steps: Array<ScenarioStep>): Array<ScenarioStep> {
       return steps.map((step, i) => ({ ...step, priority: i }));
-    },
-    onAdd(): void {
-      const steps = [
-        ...this.steps,
-        {
-          adverb: StepAdverb.Given,
-          params: [] as Array<InlineStepParam | MultilineStepParam | TableStepParam>,
-          priority: this.steps.length
-        }
-      ];
-
-      this.$emit('input', this.fixPriorities(steps));
     },
     onDeleted(i: number) {
       const steps = [...this.steps];

@@ -19,7 +19,6 @@
     <step-list
       :mode="mode"
       :steps="scenario.steps"
-      :feature-root-project="featureRootProject"
       @input="onStepsChanged"
     />
     <examples-content v-if="scenario.examples" class="scenario-examples" :examples="scenario.examples" :mode="mode" @input="onExamplesChanged" />
@@ -40,7 +39,7 @@ import EditableSubtitle from '~/components/EditableSubtitle.vue';
 import ExamplesContent from '~/components/ExamplesContent.vue';
 import StepList from '~/components/StepList.vue';
 import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep';
-import { isInlineStepParam, Mode, Project, Scenario, ScenarioStep, ScenarioType, StepParamType } from '~/types';
+import { isInlineStepParam, Mode, Scenario, ScenarioStep, ScenarioType, StepParamType } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -78,11 +77,7 @@ export default Vue.extend({
     scenario: {
       type: Object,
       required: true
-    } as PropOptions<Scenario>,
-    featureRootProject: {
-      type: Object,
-      required: true
-    } as PropOptions<Project>
+    } as PropOptions<Scenario>
   },
   data() {
     return {
