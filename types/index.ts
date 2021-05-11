@@ -188,7 +188,7 @@ interface Register {
 }
 
 interface Scenario {
-  id: number,
+  id?: number,
   type: ScenarioType,
   title: string,
   steps: Array<ScenarioStep>,

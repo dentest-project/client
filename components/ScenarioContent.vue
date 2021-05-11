@@ -10,6 +10,7 @@
     <div v-if="draggedOver" class="scenario-mask" @dragleave="onDragLeave" @drop="onDrop" />
     <up-button v-if="canWrite && canMoveUp" class="scenario-up" @click="$emit('up')" />
     <down-button v-if="canWrite && canMoveDown" class="scenario-down" @click="$emit('down')" />
+    <copy-button v-if="canWrite && !isBackground" class="scenario-copy" @click="$emit('copy')" />
     <edit-button v-if="canWrite && mode === $modes.view" class="scenario-edit" @click="switchToEditMode" />
     <view-button v-else-if="canWrite && mode === $modes.edit" class="scenario-edit" @click="switchToViewMode" />
     <delete-button v-if="canWrite" class="scenario-delete" @click="onDeleteClick" />
@@ -27,7 +28,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue'
+import Vue, { PropOptions } from 'vue';
+import CopyButton from '~/components/buttons/CopyButton.vue';
 import DeleteButton from '~/components/buttons/DeleteButton.vue';
 import DownButton from '~/components/buttons/DownButton.vue';
 import EditButton from '~/components/buttons/EditButton.vue';
@@ -44,7 +46,7 @@ import { isInlineStepParam, Mode, Scenario, ScenarioStep, ScenarioType, StepPara
 export default Vue.extend({
   components: {
     CreateTableStepParamDialog,
-    ViewButton,
+    CopyButton,
     DeleteButton,
     DownButton,
     EditButton,
@@ -52,7 +54,8 @@ export default Vue.extend({
     ExamplesContent,
     StepList,
     SwitchScenarioTypeChip,
-    UpButton
+    UpButton,
+    ViewButton
   },
   model: {
     prop: 'scenario'
@@ -256,11 +259,17 @@ export default Vue.extend({
 
 .scenario .scenario-up {
   position: absolute;
-  right: 144px;
+  right: 192px;
   top: -16px;
 }
 
 .scenario .scenario-down {
+  position: absolute;
+  right: 144px;
+  top: -16px;
+}
+
+.scenario .scenario-copy {
   position: absolute;
   right: 96px;
   top: -16px;

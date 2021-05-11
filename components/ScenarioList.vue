@@ -9,6 +9,7 @@
       :backgroundable="i === 0"
       :key="i"
       @input="e => onUpdated(i, e)"
+      @copy="() => onCopy(i)"
       @deleted="() => onDeleted(i)"
       @up="() => onUp(i)"
       @down="() => onDown(i)"
@@ -21,7 +22,7 @@
 import Vue, { PropOptions } from 'vue';
 import AddButton from '~/components/buttons/AddButton.vue';
 import ScenarioContent from '~/components/ScenarioContent.vue';
-import { Scenario, ScenarioStep, ScenarioType } from '~/types';
+import { InlineStepParam, MultilineStepParam, Scenario, ScenarioStep, ScenarioType, TableStepParam } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -65,6 +66,37 @@ export default Vue.extend({
       const scenarios = [...this.scenarios];
 
       scenarios[i] = scenario;
+      this.$emit('input', scenarios);
+    },
+    onCopy(i: number) {
+      const scenarios = [...this.scenarios];
+      const toCopy = { ...scenarios[i] };
+
+      scenarios.push({
+        type: toCopy.type,
+        title: toCopy.title,
+        steps: [...toCopy.steps.map((s: ScenarioStep) => ({
+          adverb: s.adverb,
+          step: s.step,
+          priority: s.priority,
+          params: [...s.params.map(p => {
+            if ('stepPart' in p) {
+              return {
+                content: p.content,
+                type: p.type,
+                stepPart: p.stepPart
+              } as InlineStepParam;
+            }
+
+            return {
+              content: typeof p.content === 'string' ? p.content : p.content.map(row => [...row]),
+              type: p.type
+            } as MultilineStepParam|TableStepParam;
+          })]
+        }))],
+        examples: toCopy.examples
+      });
+
       this.$emit('input', scenarios);
     },
     onUp(i: number) {
