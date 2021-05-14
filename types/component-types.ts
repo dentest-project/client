@@ -2,7 +2,7 @@ interface TreeElement {
   id: string,
   name: string,
   disabled: boolean,
-  children: Array<Element>
+  children: Array<TreeElement>
 }
 
 export {

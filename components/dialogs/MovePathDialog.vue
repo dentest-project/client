@@ -16,14 +16,8 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue';
 import PathsTree from '~/components/PathsTree.vue';
+import buildTree from '~/helpers/buildTree';
 import { Path } from '~/types';
-
-interface Element {
-  id: string,
-  name: string,
-  disabled: boolean,
-  children: Array<Element>
-}
 
 export default Vue.extend({
   components: {
@@ -53,14 +47,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    buildTree(path: Path, disabled: boolean): Element {
-      return {
-        id: path.id,
-        name: path.path,
-        children: path.children.map(child => this.buildTree(child, disabled || path.id === this.path.id)),
-        disabled: disabled || path.id === this.path.id
-      };
-    },
     async onDialogStatusChanged(e) {
       this.$emit('input', e);
     },
@@ -77,7 +63,7 @@ export default Vue.extend({
         return [];
       }
 
-      let root = (this as any).buildTree((this as any).rootPath, false);
+      let root = buildTree((this as any).rootPath, false, (this as any).path.id);
 
       return [root];
     }
