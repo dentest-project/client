@@ -245,6 +245,11 @@ interface UpdateFeature{
   scenarios: Array<Scenario>
 }
 
+interface UpdateFeaturePath {
+  id: string,
+  newParentId: string
+}
+
 interface UpdateFeaturePath extends CreateFeaturePath {}
 
 interface UpdateOrganizationName {
@@ -327,6 +332,7 @@ export {
   StepType,
   TableStepParam,
   UpdateFeature,
+  UpdateFeaturePath,
   UpdateOrganizationName,
   UpdatePath,
   UpdatePathParent,
