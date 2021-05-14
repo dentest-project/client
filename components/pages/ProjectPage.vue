@@ -14,7 +14,7 @@
       <delete-button v-if="canAdministrate" @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
-      <path-card v-for="subPath in path.children" :key="subPath.id" :path="subPath" />
+      <path-card v-for="subPath in path.children" :key="subPath.id" :path="subPath" :parent="path" :can-write="canWrite" @moved="onPathMoved" />
       <feature-card v-for="feature in path.features" :key="feature.id" :feature="feature" :path="path" />
     </grid3>
     <create-path-dialog
@@ -100,7 +100,7 @@ import {
   Path,
   Project,
   ProjectPermission,
-  ProjectVisibility
+  ProjectVisibility, UpdatePathParent
 } from '~/types';
 
 interface Data {
@@ -269,6 +269,15 @@ export default Vue.extend({
     onProjectLeaveErrored(): void {
       this.deactivateLeaveProjectDialog();
       this.projectLeaveErrorSnackbarOpened = true;
+    },
+    async onPathMoved(newPath: UpdatePathParent) {
+      try {
+        await this.$api.updatePathParent(newPath, this.$axios);
+        this.pathUpdatedSnackbarOpened = true;
+        this.$emit('needReload');
+      } catch {
+        this.pathUpdateErrorSnackbarOpened = true;
+      }
     },
     async onTitleUpdated(e: string): Promise<void> {
       if (this.path.project) {

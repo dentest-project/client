@@ -257,6 +257,11 @@ interface UpdatePath {
   path: string
 }
 
+interface UpdatePathParent {
+  id: string,
+  newParentId: string
+}
+
 interface UpdateProject {
   id: string,
   title?: string,
@@ -324,6 +329,7 @@ export {
   UpdateFeature,
   UpdateOrganizationName,
   UpdatePath,
+  UpdatePathParent,
   UpdateProject,
   User,
   isInlineStepParam

@@ -1,5 +1,5 @@
 <template>
-  <v-btn :to="to" text small block outlined dark>
+  <v-btn :to="to" small outlined dark>
     <slot />
   </v-btn>
 </template>
