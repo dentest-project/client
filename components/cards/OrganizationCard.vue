@@ -2,7 +2,6 @@
   <v-card elevation="3" :color="$colors.tertiary" dark>
     <v-card-title>{{ organization.name }}</v-card-title>
     <v-card-actions>
-      <v-spacer />
       <primary-card-link-button :to="$routes.organization(organization.slug)">See organization</primary-card-link-button>
     </v-card-actions>
   </v-card>
