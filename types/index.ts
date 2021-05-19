@@ -245,7 +245,7 @@ interface UpdateFeature{
   scenarios: Array<Scenario>
 }
 
-interface UpdateFeaturePath {
+interface UpdateFeatureParentPath {
   id: string,
   newParentId: string
 }
@@ -271,6 +271,11 @@ interface UpdateProject {
   id: string,
   title?: string,
   visibility?: ProjectVisibility
+}
+
+interface UpdateStep {
+  id: number,
+  parts: Array<StepPart>
 }
 
 interface User extends BaseUser {
@@ -333,10 +338,12 @@ export {
   TableStepParam,
   UpdateFeature,
   UpdateFeaturePath,
+  UpdateFeatureParentPath,
   UpdateOrganizationName,
   UpdatePath,
   UpdatePathParent,
   UpdateProject,
+  UpdateStep,
   User,
   isInlineStepParam
 };

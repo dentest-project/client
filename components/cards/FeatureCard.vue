@@ -13,7 +13,7 @@
 import Vue, { PropOptions } from 'vue';
 import SecondaryCardLinkButton from '~/components/buttons/SecondaryCardLinkButton.vue';
 import MoveFeatureDialog from '~/components/dialogs/MoveFeatureDialog.vue';
-import { Feature, Path, UpdateFeaturePath } from '~/types';
+import { Feature, Path, UpdateFeatureParentPath } from '~/types';
 
 export default Vue.extend({
   components: {
@@ -43,7 +43,7 @@ export default Vue.extend({
     activateMoveDialog() {
       this.moveDialogOpened = true;
     },
-    onMoveDialogSubmit(newPath: UpdateFeaturePath) {
+    onMoveDialogSubmit(newPath: UpdateFeatureParentPath) {
       this.$emit('moved', newPath);
       this.moveDialogOpened = false;
     }

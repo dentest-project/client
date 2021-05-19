@@ -47,7 +47,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    async onDialogStatusChanged(e) {
+    async onDialogStatusChanged(e: boolean) {
       this.$emit('input', e);
     },
     onNewParentChanged(newParent: string) {

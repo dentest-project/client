@@ -32,7 +32,11 @@
 import Vue from 'vue';
 import ActionsBar from '~/components/ActionsBar.vue';
 import AddProjectButton from '~/components/buttons/AddProjectButton.vue';
+import DeleteButton from '~/components/buttons/DeleteButton.vue';
+import ExitButton from '~/components/buttons/ExitButton.vue';
+import UsersButton from '~/components/buttons/UsersButton.vue';
 import CreateProjectDialog from '~/components/dialogs/CreateProjectDialog.vue';
+import DeleteOrganizationDialog from '~/components/dialogs/DeleteOrganizationDialog.vue';
 import LeaveOrganizationDialog from '~/components/dialogs/LeaveOrganizationDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
 import Grid3 from '~/components/Grid3.vue';
@@ -48,7 +52,7 @@ interface InitialData {
 
 export default Vue.extend({
   auth: false,
-  components: { AddProjectButton, ActionsBar, CreateProjectDialog, EditableTitle, Grid3, LeaveOrganizationDialog, PrimaryLinkButton, ProjectCard },
+  components: { AddProjectButton, ActionsBar, CreateProjectDialog, DeleteButton, DeleteOrganizationDialog, EditableTitle, ExitButton, Grid3, LeaveOrganizationDialog, PrimaryLinkButton, ProjectCard, UsersButton },
   async asyncData({ $api, params }): Promise<InitialData> {
     const [projects, organization] = await Promise.all([
       $api.getOrganizationProjects(params.organization_slug),

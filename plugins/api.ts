@@ -8,13 +8,29 @@ import {
   CreateProject,
   Feature,
   Login,
-  LoginResponse, Organization,
-  OrganizationList, OrganizationPermission, OrganizationUser, OrganizationUserList,
+  LoginResponse,
+  Organization,
+  OrganizationList,
+  OrganizationPermission,
+  OrganizationUser,
+  OrganizationUserList,
   Path,
   Project,
-  ProjectList, ProjectPermission, ProjectUser, ProjectUserList, ProjectUserToken, Register,
+  ProjectList,
+  ProjectPermission,
+  ProjectUser,
+  ProjectUserList,
+  ProjectUserToken,
+  Register,
   Step,
-  UpdateFeature, UpdateFeaturePath, UpdateOrganizationName, UpdatePath, UpdatePathParent, UpdateProject, User
+  UpdateFeature, UpdateFeatureParentPath,
+  UpdateFeaturePath,
+  UpdateOrganizationName,
+  UpdatePath,
+  UpdatePathParent,
+  UpdateProject,
+  UpdateStep,
+  User
 } from '~/types';
 
 declare module 'vue/types/vue' {
@@ -62,13 +78,14 @@ interface Api {
   register(user: Register, axios?: NuxtAxiosInstance): Promise<User>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
   searchUsers(query: string, organizationSlug?: string | null, axios?: NuxtAxiosInstance): Promise<Array<BaseUser>>,
-  updateFeaturePath(featurePath: UpdateFeaturePath, axios?: NuxtAxiosInstance): Promise<Path>,
+  updateFeaturePath(featurePath: UpdateFeatureParentPath, axios?: NuxtAxiosInstance): Promise<Path>,
   updateOrganization(organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization>,
   updateOrganizationUser(organizationId: string, userId: string, permissions: Array<OrganizationPermission>, axios?: NuxtAxiosInstance): Promise<OrganizationUser>
   updatePath(path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path>,
   updatePathParent(path: UpdatePathParent, axios?: NuxtAxiosInstance): Promise<Path>,
   updateProject(project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project>,
-  updateProjectUser(projectId: string, userId: string, permissions: Array<ProjectPermission>, axios?: NuxtAxiosInstance): Promise<ProjectUser>
+  updateProjectUser(projectId: string, userId: string, permissions: Array<ProjectPermission>, axios?: NuxtAxiosInstance): Promise<ProjectUser>,
+  updateStep(step: UpdateStep, axios?: NuxtAxiosInstance): Promise<Step>
 }
 
 const Api = (context: any) => {
@@ -148,13 +165,14 @@ const Api = (context: any) => {
     searchUsers: async (query: string, organizationSlug?: string | null, axios?: NuxtAxiosInstance): Promise<Array<BaseUser>> => {
       return await get(`users?q=${query}${organizationSlug ? `&organization=${organizationSlug}` : ''}`, axios);
     },
-    updateFeaturePath: async (featurePath: UpdateFeaturePath, axios?: NuxtAxiosInstance): Promise<Path> => put('features', { id: featurePath.id, path: { id: featurePath.newParentId } }, axios),
+    updateFeaturePath: async (featurePath: UpdateFeatureParentPath, axios?: NuxtAxiosInstance): Promise<Path> => put('features', { id: featurePath.id, path: { id: featurePath.newParentId } }, axios),
     updateOrganization: async (organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization> => put(`organizations`, organization, axios),
     updateOrganizationUser: async (organizationId: string, userId: string, permissions: Array<OrganizationPermission>, axios?: NuxtAxiosInstance): Promise<OrganizationUser> => put(`organizations/${organizationId}/users/${userId}`, { permissions }, axios),
     updatePath: async (path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path> => put('paths', path, axios),
     updatePathParent: async (path: UpdatePathParent, axios?: NuxtAxiosInstance): Promise<Path> => put('paths', { id: path.id, parent: { id: path.newParentId } }, axios),
     updateProject: async (project: UpdateProject, axios?: NuxtAxiosInstance): Promise<Project> => put('projects', project, axios),
     updateProjectUser: async (projectId: string, userId: string, permissions: Array<ProjectPermission>, axios?: NuxtAxiosInstance): Promise<ProjectUser> => put(`projects/${projectId}/users/${userId}`, { permissions }, axios),
+    updateStep: async (step: UpdateStep, axios?: NuxtAxiosInstance): Promise<Step> => put('steps', step, axios)
   } as Api;
 };
 

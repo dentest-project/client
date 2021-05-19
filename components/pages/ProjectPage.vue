@@ -96,13 +96,14 @@ import GetTokenDialog from '~/components/dialogs/GetTokenDialog.vue';
 import LeaveProjectDialog from '~/components/dialogs/LeaveProjectDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
 import Grid3 from '~/components/Grid3.vue';
+import TokenButton from '~/components/buttons/TokenButton.vue';
 import {
   Breadcrumb as BreadcrumbType,
   OrganizationPermission,
   Path,
   Project,
   ProjectPermission,
-  ProjectVisibility, UpdateFeaturePath, UpdatePathParent
+  ProjectVisibility, UpdateFeatureParentPath, UpdateFeaturePath, UpdatePathParent
 } from '~/types';
 
 interface Data {
@@ -149,7 +150,8 @@ export default Vue.extend({
     LeaveProjectDialog,
     PathCard,
     UsersButton,
-    VisibilityButton
+    VisibilityButton,
+    TokenButton
   },
   props: {
     path: {
@@ -237,7 +239,7 @@ export default Vue.extend({
       this.featureCreatedSnackbarOpened = true;
       this.$emit('needReload');
     },
-    async onFeatureMoved(newPath: UpdateFeaturePath) {
+    async onFeatureMoved(newPath: UpdateFeatureParentPath) {
       try {
         await this.$api.updateFeaturePath(newPath, this.$axios);
         this.featureUpdatedSnackbarOpened = true;

@@ -4,7 +4,7 @@
       <editable-textarea v-if="canWrite" :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
       <p v-else class="feature-content-description">{{ feature.description }}</p>
     </v-sheet>
-    <steps-button @click.prevent="activateDrawer" />
+    <steps-button v-if="canWrite" @click.prevent="activateDrawer" />
     <scenario-list :scenarios="feature.scenarios" :can-write="canWrite" @input="onScenariosChanged" />
     <steps-drawer v-if="canWrite" v-model="stepsDrawer" :project="feature.rootProject" />
   </form>

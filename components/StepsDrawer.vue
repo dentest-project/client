@@ -24,7 +24,16 @@
             <v-list-item-title v-text="group.title"></v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item v-for="step in group.steps" :key="step.id" link draggable="true" @dragstart="addToStore(step)" @dragend="removeFromStore" dense>
+        <v-list-item
+          v-for="step in group.steps"
+          :key="step.id"
+          draggable="true"
+          link
+          dense
+          @click="activateStepUpdateDialog(step)"
+          @dragstart="addToStore(step)"
+          @dragend="removeFromStore"
+        >
           <v-list-item-icon>
             <v-icon color="#CCCCCC">{{ iconForStepParamType(step.extraParamType) }}</v-icon>
           </v-list-item-icon>
@@ -42,8 +51,17 @@
       @created="onStepCreated"
       @errored="onStepCreationError"
     />
-    <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success">Step created</v-snackbar>
-    <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the step</v-snackbar>
+    <update-step-dialog
+      v-if="updateStep"
+      v-model="stepUpdateDialog"
+      :step="updateStep"
+      @updated="onStepUpdated"
+      @errored="onStepUpdateError"
+    />
+    <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success" absolute>Step created</v-snackbar>
+    <v-snackbar v-model="stepUpdatedSnackbarOpened" :color="$colors.success" absolute>Step updated</v-snackbar>
+    <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while creating the step</v-snackbar>
+    <v-snackbar v-model="stepUpdateErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while updating the step</v-snackbar>
   </v-navigation-drawer>
 </template>
 
@@ -51,6 +69,7 @@
 import Vue, { PropOptions } from 'vue';
 import { mapMutations } from 'vuex';
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
+import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue';
 import { Project, Step, StepParamType, StepType } from '~/types';
 
 interface DisplayableStepsGroup {
@@ -65,7 +84,8 @@ export default Vue.extend({
     prop: 'value'
   },
   components: {
-    CreateStepDialog
+    CreateStepDialog,
+    UpdateStepDialog
   },
   props: {
     project: {
@@ -83,9 +103,13 @@ export default Vue.extend({
   data() {
     return {
       steps: [] as Array<DisplayableStepsGroup>,
+      updateStep: null as Step|null,
       stepCreationDialog: false,
+      stepUpdateDialog: false,
       stepCreatedSnackbarOpened: false,
-      stepCreationErrorSnackbarOpened: false
+      stepUpdatedSnackbarOpened: false,
+      stepCreationErrorSnackbarOpened: false,
+      stepUpdateErrorSnackbarOpened: false
     };
   },
   methods: {
@@ -95,14 +119,32 @@ export default Vue.extend({
     deactivateStepCreationDialog(): void {
       this.stepCreationDialog = false;
     },
+    activateStepUpdateDialog(step: Step): void {
+      this.stepUpdateDialog = true;
+      this.updateStep = step;
+    },
+    deactivateStepUpdateDialog(): void {
+      this.stepUpdateDialog = false;
+    },
     async onStepCreated(): Promise<void> {
       this.deactivateStepCreationDialog();
       this.stepCreatedSnackbarOpened = true;
       await this.loadSteps();
     },
+    async onStepUpdated(): Promise<void> {
+      this.deactivateStepUpdateDialog();
+      this.updateStep = null;
+      this.stepUpdatedSnackbarOpened = true;
+      await this.loadSteps();
+    },
     onStepCreationError(): void {
       this.deactivateStepCreationDialog();
       this.stepCreationErrorSnackbarOpened = true;
+    },
+    onStepUpdateError(): void {
+      this.deactivateStepUpdateDialog();
+      this.updateStep = null;
+      this.stepUpdateErrorSnackbarOpened = true;
     },
     async loadSteps(): Promise<void> {
       const steps = await this.$api.getProjectSteps(this.project.id, this.$axios);
