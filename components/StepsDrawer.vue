@@ -56,12 +56,23 @@
       v-model="stepUpdateDialog"
       :step="updateStep"
       @updated="onStepUpdated"
+      @delete-request="onStepDeleteRequest"
       @errored="onStepUpdateError"
+    />
+    <delete-step-dialog
+      v-if="deletingStepId"
+      v-model="stepDeleteDialog"
+      :step-id="deletingStepId"
+      @input="onStepDeleteDialogChanged"
+      @deleted="onStepDeleted"
+      @errored="onStepDeleteError"
     />
     <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success" absolute>Step created</v-snackbar>
     <v-snackbar v-model="stepUpdatedSnackbarOpened" :color="$colors.success" absolute>Step updated</v-snackbar>
+    <v-snackbar v-model="stepDeletedSnackbarOpened" :color="$colors.success" absolute>Step deleted</v-snackbar>
     <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while creating the step</v-snackbar>
     <v-snackbar v-model="stepUpdateErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while updating the step</v-snackbar>
+    <v-snackbar v-model="stepDeleteErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while deleting the step</v-snackbar>
   </v-navigation-drawer>
 </template>
 
@@ -69,6 +80,7 @@
 import Vue, { PropOptions } from 'vue';
 import { mapMutations } from 'vuex';
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
+import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue';
 import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue';
 import { Project, Step, StepParamType, StepType } from '~/types';
 
@@ -85,6 +97,7 @@ export default Vue.extend({
   },
   components: {
     CreateStepDialog,
+    DeleteStepDialog,
     UpdateStepDialog
   },
   props: {
@@ -104,11 +117,15 @@ export default Vue.extend({
     return {
       steps: [] as Array<DisplayableStepsGroup>,
       updateStep: null as Step|null,
+      deletingStepId: null as number|null,
       stepCreationDialog: false,
       stepUpdateDialog: false,
+      stepDeleteDialog: false,
       stepCreatedSnackbarOpened: false,
+      stepDeletedSnackbarOpened: false,
       stepUpdatedSnackbarOpened: false,
       stepCreationErrorSnackbarOpened: false,
+      stepDeleteErrorSnackbarOpened: false,
       stepUpdateErrorSnackbarOpened: false
     };
   },
@@ -125,6 +142,14 @@ export default Vue.extend({
     },
     deactivateStepUpdateDialog(): void {
       this.stepUpdateDialog = false;
+      this.updateStep = null;
+    },
+    activateStepDeleteDialog(): void {
+      this.stepDeleteDialog = true;
+    },
+    deactivateStepDeleteDialog(): void {
+      this.stepDeleteDialog = false;
+      this.deletingStepId = null;
     },
     async onStepCreated(): Promise<void> {
       this.deactivateStepCreationDialog();
@@ -133,17 +158,34 @@ export default Vue.extend({
     },
     async onStepUpdated(): Promise<void> {
       this.deactivateStepUpdateDialog();
-      this.updateStep = null;
       this.stepUpdatedSnackbarOpened = true;
       await this.loadSteps();
+    },
+    async onStepDeleted(): Promise<void> {
+      this.deactivateStepDeleteDialog();
+      this.stepDeletedSnackbarOpened = true;
+      await this.loadSteps();
+    },
+    onStepDeleteDialogChanged(status: boolean): void {
+      if (!status) {
+        this.deactivateStepDeleteDialog();
+      }
+    },
+    onStepDeleteRequest(stepId: number): void {
+      this.deactivateStepUpdateDialog();
+      this.deletingStepId = stepId;
+      this.activateStepDeleteDialog();
     },
     onStepCreationError(): void {
       this.deactivateStepCreationDialog();
       this.stepCreationErrorSnackbarOpened = true;
     },
+    onStepDeleteError(): void {
+      this.deactivateStepDeleteDialog();
+      this.stepDeleteErrorSnackbarOpened = true;
+    },
     onStepUpdateError(): void {
       this.deactivateStepUpdateDialog();
-      this.updateStep = null;
       this.stepUpdateErrorSnackbarOpened = true;
     },
     async loadSteps(): Promise<void> {

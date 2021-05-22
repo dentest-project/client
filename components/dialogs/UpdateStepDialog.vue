@@ -1,5 +1,5 @@
 <template>
-  <v-dialog width="75%" :value=value @input="onDialogStatusChanged">
+  <v-dialog width="75%" :value="value && step && step.parts.length > 0" @input="onDialogStatusChanged">
     <form @submit.prevent="onSubmit">
       <v-card>
         <v-card-title class="headline">Update step</v-card-title>
@@ -17,6 +17,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <error-action-button @click="onDeleteSubmit">Delete step</error-action-button>
           <submit-button>Update step</submit-button>
         </v-card-actions>
       </v-card>
@@ -26,11 +27,12 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue';
+import ErrorActionButton from '~/components/buttons/ErrorActionButton.vue'
 import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { Step, StepPart } from '~/types';
+import { Step } from '~/types';
 
 export default Vue.extend({
-  components: { SubmitButton },
+  components: { ErrorActionButton, SubmitButton },
   model: {
     prop: 'value'
   },
@@ -46,11 +48,14 @@ export default Vue.extend({
   },
   data: function () {
     return {
-      parts: [] as Array<StepPart>
+      parts: this.step.parts
     }
   },
   methods: {
-    async onSubmit (): Promise<void> {
+    onDeleteSubmit(): void {
+      this.$emit('delete-request', this.step.id);
+    },
+    async onSubmit(): Promise<void> {
       if (!this.step.id) {
         return;
       }
@@ -71,7 +76,6 @@ export default Vue.extend({
   },
   watch: {
     step(s: Step) {
-      console.log(s);
       this.parts = s.parts;
     }
   }
