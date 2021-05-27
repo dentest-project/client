@@ -1,7 +1,8 @@
 <template>
   <main class="home-hero">
     <h1>Dentest</h1>
-    <h2>A Behavior Driven Development platform<br>Specify, validate and document at the same place</h2>
+    <h2>A Behavior Driven Development platform</h2>
+    <h4>Specify, validate and document at the same place</h4>
   </main>
 </template>
 

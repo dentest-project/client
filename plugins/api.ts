@@ -23,8 +23,7 @@ import {
   ProjectUserToken,
   Register,
   Step,
-  UpdateFeature, UpdateFeatureParentPath,
-  UpdateFeaturePath,
+  UpdateFeature, UpdateFeatureParentPath, UpdateFeatureStatus,
   UpdateOrganizationName,
   UpdatePath,
   UpdatePathParent,
@@ -80,6 +79,7 @@ interface Api {
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
   searchUsers(query: string, organizationSlug?: string | null, axios?: NuxtAxiosInstance): Promise<Array<BaseUser>>,
   updateFeaturePath(featurePath: UpdateFeatureParentPath, axios?: NuxtAxiosInstance): Promise<Path>,
+  updateFeatureStatus(featureStatus: UpdateFeatureStatus, axios?: NuxtAxiosInstance): Promise<Path>,
   updateOrganization(organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization>,
   updateOrganizationUser(organizationId: string, userId: string, permissions: Array<OrganizationPermission>, axios?: NuxtAxiosInstance): Promise<OrganizationUser>
   updatePath(path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path>,
@@ -168,6 +168,7 @@ const Api = (context: any) => {
       return await get(`users?q=${query}${organizationSlug ? `&organization=${organizationSlug}` : ''}`, axios);
     },
     updateFeaturePath: async (featurePath: UpdateFeatureParentPath, axios?: NuxtAxiosInstance): Promise<Path> => put('features', { id: featurePath.id, path: { id: featurePath.newParentId } }, axios),
+    updateFeatureStatus: async (featureStatus: UpdateFeatureStatus, axios?: NuxtAxiosInstance): Promise<Path> => put('features', { id: featureStatus.id, status: featureStatus.status }, axios),
     updateOrganization: async (organization: UpdateOrganizationName, axios?: NuxtAxiosInstance): Promise<Organization> => put(`organizations`, organization, axios),
     updateOrganizationUser: async (organizationId: string, userId: string, permissions: Array<OrganizationPermission>, axios?: NuxtAxiosInstance): Promise<OrganizationUser> => put(`organizations/${organizationId}/users/${userId}`, { permissions }, axios),
     updatePath: async (path: UpdatePath, axios?: NuxtAxiosInstance): Promise<Path> => put('paths', path, axios),

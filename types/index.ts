@@ -1,3 +1,9 @@
+enum FeatureStatus {
+  Draft = 'draft',
+  ReadyToDev = 'ready_to_dev',
+  Live = 'live'
+}
+
 enum Mode {
   View,
   Edit
@@ -102,6 +108,7 @@ interface CreateProjectRootPath {
 interface Feature {
   id: string,
   slug?: string,
+  status: FeatureStatus,
   path: Path,
   title: string,
   description: string,
@@ -237,7 +244,7 @@ interface TableStepParam extends StepParam {
   content: Array<Array<string>>
 }
 
-interface UpdateFeature{
+interface UpdateFeature {
   id: string,
   path: UpdateFeaturePath,
   title: string,
@@ -248,6 +255,11 @@ interface UpdateFeature{
 interface UpdateFeatureParentPath {
   id: string,
   newParentId: string
+}
+
+interface UpdateFeatureStatus {
+  id: string,
+  status: FeatureStatus
 }
 
 interface UpdateFeaturePath extends CreateFeaturePath {}
@@ -302,6 +314,7 @@ export {
   CreatePath,
   CreateProject,
   Feature,
+  FeatureStatus,
   InlineStepParam,
   Login,
   LoginResponse,
@@ -339,6 +352,7 @@ export {
   UpdateFeature,
   UpdateFeaturePath,
   UpdateFeatureParentPath,
+  UpdateFeatureStatus,
   UpdateOrganizationName,
   UpdatePath,
   UpdatePathParent,

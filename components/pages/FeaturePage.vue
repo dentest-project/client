@@ -1,14 +1,15 @@
 <template>
   <v-main>
     <breadcrumb :items="breadcrumbItems" />
-    <editable-title v-if="$auth.loggedIn && canWrite" label="Feature title" v-model="feature.title" @input="onChanged" />
+    <editable-title v-if="canWrite" label="Feature title" v-model="feature.title" @input="onChanged" />
     <h1 v-else>{{ feature.title }}</h1>
-    <actions-bar v-if="$auth.loggedIn && canWrite">
-      <save-button :enabled="saveEnabled" @click="save" />
+    <actions-bar>
+      <feature-status-chip :feature="feature" :can-select="canWrite" @selected="onFeatureStatusSelected" />
+      <save-button v-if="canWrite" :enabled="saveEnabled" @click="save" />
       <v-spacer />
-      <delete-button @click.stop="activateDeleteDialog" />
+      <delete-button v-if="canWrite" @click.stop="activateDeleteDialog" />
     </actions-bar>
-    <feature-content :feature="feature" :can-write="$auth.loggedIn && canWrite" @input="onChanged" />
+    <feature-content :feature="feature" :can-write="canWrite" @input="onChanged" />
     <delete-feature-dialog
       v-model="deleteDialog"
       :feature="feature"
@@ -31,10 +32,11 @@ import DeleteButton from '~/components/buttons/DeleteButton.vue';
 import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
 import EditableTitle from '~/components/EditableTitle.vue';
 import FeatureContent from '~/components/FeatureContent.vue';
+import FeatureStatusChip from '~/components/chips/FeatureStatusChip.vue';
 import SaveButton from '~/components/buttons/SaveButton.vue';
 import {
   Breadcrumb as BreadcrumbType,
-  Feature,
+  Feature, FeatureStatus,
   OrganizationPermission,
   ProjectPermission,
   UpdateFeature
@@ -57,7 +59,8 @@ export default Vue.extend({
     DeleteButton,
     DeleteFeatureDialog,
     EditableTitle,
-    FeatureContent
+    FeatureContent,
+    FeatureStatusChip
   },
   props: {
     feature: {
@@ -102,6 +105,18 @@ export default Vue.extend({
     onDeleteErrored(): void {
       this.deactivateDeleteDialog();
       this.deleteErrorSnackbarOpened = true;
+    },
+    async onFeatureStatusSelected(status: FeatureStatus): Promise<void> {
+      try {
+        await this.$api.updateFeatureStatus({
+          id: this.feature.id,
+          status
+        }, this.$axios);
+        this.feature.status = status;
+        this.savedSnackbarOpened = true;
+      } catch (error) {
+        this.onSaveErrored();
+      }
     },
     onSaved(): void {
       this.savedSnackbarOpened = true;
@@ -152,6 +167,10 @@ export default Vue.extend({
     },
     canWrite: function (): boolean {
       const rootProject = ((this as any).feature as Feature).rootProject;
+
+      if (!(this as any).$auth.loggedIn) {
+        return false;
+      }
 
       if (!rootProject) {
         return false;

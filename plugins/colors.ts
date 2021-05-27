@@ -19,7 +19,10 @@ interface Colors {
   lightPrimary: string,
   lightSecondary: string,
   cancel: string,
-  disabled: string
+  disabled: string,
+  live: string,
+  ready: string,
+  draft: string
 }
 
 // palette: https://flatuicolors.com/palette/au
@@ -36,5 +39,8 @@ Vue.prototype.$colors = {
   lightPrimary: '#E2E7FF',
   lightSecondary: '#f7d794',
   cancel: '#777777',
-  disabled: '#777777'
+  disabled: '#777777',
+  live: '#6ab04c',
+  ready: '#f1c40f',
+  draft: '#777777',
 } as Colors;
