@@ -1,9 +1,10 @@
 <template>
   <v-app-bar class="app-bar" :color="transparent ? 'transparent' : $colors.primary" :flat="transparent" dark app>
-    <logo />
-    <v-toolbar-title v-if="!transparent">
+    <logo v-if="transparent" />
+    <bar-logo v-else />
+    <v-toolbar-title>
       <nuxt-link :to="$routes.home()">
-        Entest
+        Dentest
       </nuxt-link>
     </v-toolbar-title>
     <v-spacer />
@@ -17,10 +18,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Logo from '~/components/Logo.vue';
+import BarLogo from '~/components/logos/BarLogo.vue';
+import Logo from '~/components/logos/Logo.vue';
 
 export default Vue.extend({
-  components: { Logo },
+  components: { BarLogo, Logo },
   props: {
     transparent: {
       type: Boolean,

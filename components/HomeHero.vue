@@ -1,9 +1,17 @@
 <template>
   <main class="home-hero">
-    <h1>Entest</h1>
-    <h2>Automated testing for humans.</h2>
+    <h1>Dentest</h1>
+    <h2>A Behavior Driven Development platform<br>Specify, validate and document at the same place</h2>
   </main>
 </template>
+
+<script>
+import Logo from '~/components/logos/Logo';
+
+export default {
+  components: { Logo }
+}
+</script>
 
 <style scoped>
 .home-hero {
@@ -17,11 +25,8 @@
   align-items: center;
   flex-direction: column;
 }
-</style>
-<script>
-import Logo from '~/components/Logo';
 
-export default {
-  components: { Logo }
+.home-hero h2 {
+  text-align: center;
 }
-</script>
+</style>
