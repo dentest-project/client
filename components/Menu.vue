@@ -3,9 +3,8 @@
     <logo v-if="transparent" />
     <bar-logo v-else />
     <v-toolbar-title>
-      <nuxt-link :to="$routes.home()">
-        Dentest
-      </nuxt-link>
+      <nuxt-link v-if="$route.path !== '/'" :to="$routes.home()">Dentest</nuxt-link>
+      <h1 v-else>Dentest</h1>
     </v-toolbar-title>
     <v-spacer />
     <div v-if="$auth.loggedIn">
@@ -38,9 +37,11 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.app-bar a {
+.app-bar a, .app-bar h1 {
   text-decoration: none;
   color: #ffffff;
+  font-size: 1.25rem;
+  padding: 0;
 }
 
 .menu-logout {

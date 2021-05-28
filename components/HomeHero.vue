@@ -1,6 +1,5 @@
 <template>
   <section class="home-hero">
-    <h1>Dentest</h1>
     <h2>A Behavior Driven Development platform</h2>
     <h4>Specify, validate and document at the same place</h4>
     <div class="home-hero-extra">
