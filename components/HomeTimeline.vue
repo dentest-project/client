@@ -2,7 +2,7 @@
   <section class="home-timeline">
     <h2>How does it work?</h2>
     <div class="home-timeline-wrapper">
-      <v-timeline class="home-timeline-timeline" align-top>
+      <v-timeline class="home-timeline-timeline" align-top :dense="$vuetify.breakpoint.smAndDown">
         <v-timeline-item
           v-for="(item, i) in items"
           :key="i"
@@ -34,7 +34,7 @@ export default {
       {
         color: 'red lighten-2',
         icon: 'mdi-lead-pencil',
-        title: 'Product owners write the features',
+        title: 'Product owners write the specs',
         content: 'By using a handy interface, you can specify all your features and respect the Gherkin syntax. With a bank of reusable steps and a clear presentation, you will avoid encountering the main Gherkin pain points'
       },
       {
@@ -63,7 +63,7 @@ export default {
 
 <style scoped>
 .home-timeline {
-  background-color: #CCCCCC;
+  background-color: #AAAAAA;
 }
 
 .home-timeline h2 {
@@ -77,7 +77,8 @@ export default {
 }
 
 .home-timeline-wrapper .home-timeline-timeline {
-  max-width: 640px;
+  width: 640px;
+  max-width: 75%;
 }
 
 .home-timeline-card-title {
