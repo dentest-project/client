@@ -1,16 +1,21 @@
 <template>
-  <main class="home-hero">
+  <section class="home-hero">
     <h1>Dentest</h1>
     <h2>A Behavior Driven Development platform</h2>
     <h4>Specify, validate and document at the same place</h4>
-  </main>
+    <div class="home-hero-extra">
+      <cucumber-logo />
+      <span>Uses Gherkin to adapt to any project</span>
+    </div>
+  </section>
 </template>
 
 <script>
+import CucumberLogo from '~/components/logos/CucumberLogo.vue';
 import Logo from '~/components/logos/Logo';
 
 export default {
-  components: { Logo }
+  components: { CucumberLogo, Logo }
 }
 </script>
 
@@ -25,9 +30,22 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  position: relative;
 }
 
 .home-hero h2 {
   text-align: center;
+}
+
+.home-hero h4 {
+  text-align: center;
+}
+
+.home-hero .home-hero-extra {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
