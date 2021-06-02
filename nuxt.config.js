@@ -100,5 +100,9 @@ export default {
     icons: {
       iconfont: 'mdi'
     }
+  },
+
+  server: {
+    port: process.env.PORT || 3000
   }
 }

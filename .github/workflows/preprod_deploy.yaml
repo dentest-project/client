@@ -1,0 +1,16 @@
+name: Preprod deploy
+on: workflow_dispatch
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy
+        env:
+          DEPLOYER_AGENT_PRIVATE_KEY: ${{ secrets.PREPROD_DEPLOYER_AGENT_PRIVATE_KEY }}
+          DEPLOY_TO: ${{ secrets.PREPROD_SERVER }}
+          DEPLOY_DIR: ${{ secrets.PREPROD_DEPLOY_TO }}
+          PORT: 3002
+        run: sudo gem install capistrano && eval `ssh-agent -s` && ssh-add <(echo "$DEPLOYER_AGENT_PRIVATE_KEY") && cap preprod deploy
