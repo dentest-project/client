@@ -49,6 +49,7 @@ export default Vue.extend({
       this.y = y;
     },
     onSquareSelection (): void {
+      console.log('selection', this.x, this.y);
       this.$emit('selected', this.x, this.y);
     },
     onDialogStatusChanged(e: boolean) {
