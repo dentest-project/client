@@ -78,7 +78,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.feature-status-chip {
+.feature-status-chip.v-chip {
   color: #FFFFFF;
   margin: 0.2rem;
 }
