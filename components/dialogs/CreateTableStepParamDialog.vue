@@ -10,13 +10,13 @@
       <v-card-text>
         <div class="create-table-step-param">
           <div class="create-table-step-param-wrapper">
-            <div v-for="(i, ik) in Array(10).fill()" :key="ik">
+            <div v-for="(i, ik) in Array(10)" :key="ik">
               <button
                 v-for="(j, jk) in Array(10)"
                 :class="{ selected: x >= jk && y >= ik }"
-                :key="jk"
+                :key="`${ik}-${jk}`"
                 @mouseover="onSquareHover(jk, ik)"
-                @click="onSquareSelection"
+                @click.prevent="onSquareSelection"
               />
             </div>
           </div>
