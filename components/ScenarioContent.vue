@@ -149,17 +149,13 @@ export default Vue.extend({
       });
     },
     onTableStepParamDimensionsSelected(dimensions: Dimensions) {
-      console.log(this.tableParamStepIndex);
-      console.log(dimensions);
-      if (!this.tableParamStepIndex) {
+      if (null === this.tableParamStepIndex) {
         return;
       }
 
       const steps = [...this.scenario.steps];
       const params = [...steps[this.tableParamStepIndex].params];
-      console.log(params);
       params[params.findIndex(p => !isInlineStepParam(p))].content = new Array(dimensions.height + 1).fill(null).map(() => new Array(dimensions.width + 1).fill(''));
-      console.log(params);
       steps[this.tableParamStepIndex].params = params;
 
       this.createTableStepParamDialog = false;

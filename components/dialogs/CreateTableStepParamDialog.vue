@@ -73,13 +73,13 @@ export default Vue.extend({
 
 .create-table-step-param-wrapper .create-table-step-param-button {
   width: 1rem;
-  height: 1rem;
+  height: 1rem !important;
   display: inline-block;
   background-color: transparent;
   border: 1px solid #333333;
   margin: 0.1rem;
-  padding: 0;
-  min-width: 1rem;
+  padding: 0 !important;
+  min-width: 1rem !important;
 }
 
 .create-table-step-param-wrapper .create-table-step-param-button.selected {
