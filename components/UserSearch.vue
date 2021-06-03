@@ -11,54 +11,56 @@
     hide-no-data
     hide-details
     clearable
-    @input="user => $emit('selected', user)"
+    @input="(user) => $emit('selected', user)"
   />
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { BaseUser } from '~/types';
+import { BaseUser } from '~/types'
 
 export default Vue.extend({
   props: {
     label: {
       type: String,
-      required: true
+      required: true,
     },
     searchWithinOrganization: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       isAutocompleteLoading: false,
       items: [] as Array<BaseUser>,
       search: null,
-      select: null
+      select: null,
     }
   },
   methods: {
     getItemText: function (user: BaseUser): string {
-      return user.username;
+      return user.username
     },
     getItemValue: function (user: BaseUser): BaseUser {
-      return user;
+      return user
     },
     doSearch: async function (q: string) {
-      this.isAutocompleteLoading = true;
+      this.isAutocompleteLoading = true
       this.items = await this.$api.searchUsers(
         q,
-        this.searchWithinOrganization ? this.$route.params.organization_slug : null,
+        this.searchWithinOrganization
+          ? this.$route.params.organization_slug
+          : null,
         this.$axios
-      );
-      this.isAutocompleteLoading = false;
-    }
+      )
+      this.isAutocompleteLoading = false
+    },
   },
   watch: {
     search: function (val) {
-      val && val !== this.select && this.doSearch(val);
-    }
-  }
-});
+      val && val !== this.select && this.doSearch(val)
+    },
+  },
+})
 </script>

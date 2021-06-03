@@ -1,10 +1,15 @@
 <template>
-  <v-dialog width="480" :value=value @input="onDialogStatusChanged">
+  <v-dialog width="480" :value="value" @input="onDialogStatusChanged">
     <form @submit.prevent="onSubmit">
       <v-card>
         <v-card-title class="headline">Create new feature</v-card-title>
         <v-card-text>
-          <v-text-field v-model="featureTitle" label="Feature title" autofocus clearable />
+          <v-text-field
+            v-model="featureTitle"
+            label="Feature title"
+            autofocus
+            clearable
+          />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -16,49 +21,52 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { Path } from '~/types';
+import Vue, { PropOptions } from 'vue'
+import SubmitButton from '~/components/buttons/SubmitButton.vue'
+import { Path } from '~/types'
 
 export default Vue.extend({
   components: { SubmitButton },
   model: {
-    prop: 'value'
+    prop: 'value',
   },
   props: {
     value: {
       type: Boolean,
-      required: true
+      required: true,
     },
     path: {
       type: Object,
-      required: true
-    } as PropOptions<Path>
+      required: true,
+    } as PropOptions<Path>,
   },
   data: function () {
     return {
-      featureTitle: ''
+      featureTitle: '',
     }
   },
   methods: {
-    async onSubmit (): Promise<void> {
+    async onSubmit(): Promise<void> {
       try {
-        await this.$api.createFeature({
-          path: {
-            id: this.path.id
+        await this.$api.createFeature(
+          {
+            path: {
+              id: this.path.id,
+            },
+            title: this.featureTitle,
           },
-          title: this.featureTitle
-        }, this.$axios);
+          this.$axios
+        )
 
-        this.$emit('created');
-        this.featureTitle = '';
+        this.$emit('created')
+        this.featureTitle = ''
       } catch (error) {
-        this.$emit('errored');
+        this.$emit('errored')
       }
     },
     onDialogStatusChanged(e: boolean) {
-      this.$emit('input', e);
-    }
-  }
-});
+      this.$emit('input', e)
+    },
+  },
+})
 </script>

@@ -4,25 +4,25 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import { InlineStepParam } from '~/types';
+import { InlineStepParam } from '~/types'
 
 export default Vue.extend({
   model: {
-    prop: 'param'
+    prop: 'param',
   },
   props: {
     param: {
       type: Object,
-      required: true
-    } as PropOptions<InlineStepParam>
+      required: true,
+    } as PropOptions<InlineStepParam>,
   },
   methods: {
     onUpdated(content: string): void {
       this.$emit('input', {
         ...this.param,
-        content
-      });
-    }
-  }
-});
+        content,
+      })
+    },
+  },
+})
 </script>

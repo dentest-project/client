@@ -1,19 +1,19 @@
 <template>
   <div class="deletable-row">
     <slot />
-    <delete-button @click="e => $emit('delete', e)" />
+    <delete-button @click="(e) => $emit('delete', e)" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import DeleteButton from '~/components/buttons/DeleteButton.vue';
+import DeleteButton from '~/components/buttons/DeleteButton.vue'
 
 export default Vue.extend({
   components: {
     DeleteButton,
-  }
-});
+  },
+})
 </script>
 
 <style scoped>

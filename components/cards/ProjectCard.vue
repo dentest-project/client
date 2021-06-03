@@ -2,25 +2,27 @@
   <v-card elevation="3" :color="$colors.primary" dark>
     <v-card-title>{{ project.title }}</v-card-title>
     <v-card-actions>
-      <primary-card-link-button :to="$routes.project(project)">See project</primary-card-link-button>
+      <primary-card-link-button :to="$routes.project(project)"
+        >See project</primary-card-link-button
+      >
     </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import PrimaryCardLinkButton from '~/components/buttons/PrimaryCardLinkButton.vue';
-import { Project } from '~/types';
+import Vue, { PropOptions } from 'vue'
+import PrimaryCardLinkButton from '~/components/buttons/PrimaryCardLinkButton.vue'
+import { Project } from '~/types'
 
 export default Vue.extend({
   components: {
-    PrimaryCardLinkButton
+    PrimaryCardLinkButton,
   },
   props: {
     project: {
       type: Object,
-      required: true
+      required: true,
     } as PropOptions<Project>,
-  }
-});
+  },
+})
 </script>

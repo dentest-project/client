@@ -1,5 +1,5 @@
 <template>
-  <v-dialog width="480" :value=value @input="onDialogStatusChanged">
+  <v-dialog width="480" :value="value" @input="onDialogStatusChanged">
     <v-card>
       <v-card-title class="headline">Pull token</v-card-title>
       <v-card-text>
@@ -15,61 +15,77 @@
         />
       </v-card-text>
     </v-card>
-    <v-snackbar v-model="copiedSnackbarOpened" :color="$colors.success">Token copied</v-snackbar>
+    <v-snackbar v-model="copiedSnackbarOpened" :color="$colors.success"
+      >Token copied</v-snackbar
+    >
   </v-dialog>
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import SubmitButton from '~/components/buttons/SubmitButton.vue';
-import { Project } from '~/types';
+import Vue, { PropOptions } from 'vue'
+import SubmitButton from '~/components/buttons/SubmitButton.vue'
+import { Project } from '~/types'
 
 export default Vue.extend({
   components: { SubmitButton },
   model: {
-    prop: 'value'
+    prop: 'value',
   },
   props: {
     value: {
       type: Boolean,
-      required: true
+      required: true,
     },
     project: {
       type: Object,
-      required: true
-    } as PropOptions<Project>
+      required: true,
+    } as PropOptions<Project>,
   },
   data: function () {
     return {
       token: '',
-      copiedSnackbarOpened: false
+      copiedSnackbarOpened: false,
     }
   },
   async mounted() {
     try {
-      this.token = (await this.$api.getProjectUserToken(this.project.id, this.$auth.user.id, this.$axios)).token;
+      this.token = (
+        await this.$api.getProjectUserToken(
+          this.project.id,
+          this.$auth.user.id,
+          this.$axios
+        )
+      ).token
     } catch (error) {
-      this.token = '';
+      this.token = ''
     }
   },
   methods: {
     onDialogStatusChanged(e: boolean) {
-      this.$emit('input', e);
+      this.$emit('input', e)
     },
     onCopyClicked() {
-      const input = document.querySelector('.getTokenDialog-input input') as HTMLInputElement;
+      const input = document.querySelector(
+        '.getTokenDialog-input input'
+      ) as HTMLInputElement
 
       if (!input) {
-        return;
+        return
       }
 
-      input.select();
-      document.execCommand('copy');
-      this.copiedSnackbarOpened = true;
+      input.select()
+      document.execCommand('copy')
+      this.copiedSnackbarOpened = true
     },
     async onRefreshClicked() {
-      this.token = (await this.$api.createProjectUserToken(this.project.id, this.$auth.user.id, this.$axios)).token;
-    }
-  }
-});
+      this.token = (
+        await this.$api.createProjectUserToken(
+          this.project.id,
+          this.$auth.user.id,
+          this.$axios
+        )
+      ).token
+    },
+  },
+})
 </script>

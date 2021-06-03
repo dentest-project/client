@@ -4,7 +4,7 @@
     :color="$colors.primary"
     x-small
     dark
-    @click="e => $emit('click', e)"
+    @click="(e) => $emit('click', e)"
   >
     <v-icon x-small>mdi-table-row-plus-before</v-icon>
   </v-chip>

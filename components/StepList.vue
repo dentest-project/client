@@ -2,7 +2,12 @@
   <div>
     <div v-for="(step, i) in steps" :key="i">
       <div
-        v-if="mode === $modes.edit && draggedElement && draggedElementId !== i && draggedElementId !== i - 1"
+        v-if="
+          mode === $modes.edit &&
+          draggedElement &&
+          draggedElementId !== i &&
+          draggedElementId !== i - 1
+        "
         class="step-list-drop-target"
         :class="{ 'step-list-drop-target--over': i === hoveredTargetId }"
         @dragover.prevent="onDragOver(i)"
@@ -12,13 +17,18 @@
       <step-content
         :step="step"
         :mode="mode"
-        @dragstart="e => onDragStepStart(i, e)"
+        @dragstart="(e) => onDragStepStart(i, e)"
         @dragend="onDragStepEnd"
-        @input="e => onUpdated(i, e)"
+        @input="(e) => onUpdated(i, e)"
         @deleted="() => onDeleted(i)"
       />
       <div
-        v-if="i === steps.length - 1 && mode === $modes.edit && draggedElement && draggedElementId !== i"
+        v-if="
+          i === steps.length - 1 &&
+          mode === $modes.edit &&
+          draggedElement &&
+          draggedElementId !== i
+        "
         class="step-list-drop-target"
         :class="{ 'step-list-drop-target--over': i + 1 === hoveredTargetId }"
         @dragover.prevent="onDragOver(i + 1)"
@@ -29,91 +39,99 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import AddButton from '~/components/buttons/AddButton.vue';
-import StepContent from '~/components/StepContent.vue';
+import Vue, { PropOptions } from 'vue'
+import AddButton from '~/components/buttons/AddButton.vue'
+import StepContent from '~/components/StepContent.vue'
 import {
   InlineStepParam,
   Mode,
   MultilineStepParam,
   ScenarioStep,
   StepAdverb,
-  TableStepParam
-} from '~/types';
+  TableStepParam,
+} from '~/types'
 
 export default Vue.extend({
   components: {
     AddButton,
-    StepContent
+    StepContent,
   },
   model: {
-    prop: 'steps'
+    prop: 'steps',
   },
   props: {
     mode: {
       type: Number,
-      required: true
+      required: true,
     } as PropOptions<Mode>,
     steps: {
       type: Array,
-      required: true
-    } as PropOptions<Array<ScenarioStep>>
+      required: true,
+    } as PropOptions<Array<ScenarioStep>>,
   },
   data() {
     return {
       draggedElementId: null as null | number,
       draggedElement: null as null | ScenarioStep,
-      hoveredTargetId: null as null | number
-    };
+      hoveredTargetId: null as null | number,
+    }
   },
   methods: {
     fixPriorities(steps: Array<ScenarioStep>): Array<ScenarioStep> {
-      return steps.map((step, i) => ({ ...step, priority: i }));
+      return steps.map((step, i) => ({ ...step, priority: i }))
     },
     onDeleted(i: number) {
-      const steps = [...this.steps];
+      const steps = [...this.steps]
 
-      steps.splice(i, 1);
-      this.$emit('input', this.fixPriorities(steps));
+      steps.splice(i, 1)
+      this.$emit('input', this.fixPriorities(steps))
     },
     onDragLeave() {
-      this.hoveredTargetId = null;
+      this.hoveredTargetId = null
     },
     onDragOver(i: number) {
       if (this.draggedElementId === null) {
-        return;
+        return
       }
       if (i !== this.draggedElementId && i !== this.draggedElementId + 1) {
-        this.hoveredTargetId = i;
+        this.hoveredTargetId = i
       }
     },
     onDragStepEnd() {
-      this.draggedElement = null;
-      this.draggedElementId = null;
-      this.hoveredTargetId = null;
+      this.draggedElement = null
+      this.draggedElementId = null
+      this.hoveredTargetId = null
     },
     onDragStepStart(i: number, step: ScenarioStep) {
-      this.draggedElement = step;
-      this.draggedElementId = i;
+      this.draggedElement = step
+      this.draggedElementId = i
     },
-    onDrop(i:number) {
-      const steps = [...this.steps];
+    onDrop(i: number) {
+      const steps = [...this.steps]
 
-      if (i !== this.draggedElementId && this.draggedElementId !== null && this.draggedElement !== null) {
-        steps.splice(this.draggedElementId, 1);
-        steps.splice(this.draggedElementId < i ? i - 1 : i, 0, this.draggedElement);
+      if (
+        i !== this.draggedElementId &&
+        this.draggedElementId !== null &&
+        this.draggedElement !== null
+      ) {
+        steps.splice(this.draggedElementId, 1)
+        steps.splice(
+          this.draggedElementId < i ? i - 1 : i,
+          0,
+          this.draggedElement
+        )
       }
 
-      this.$emit('input', this.fixPriorities(steps));
+      this.$emit('input', this.fixPriorities(steps))
     },
     onUpdated(i: number, step: ScenarioStep) {
-      const steps = [...this.steps];
+      const steps = [...this.steps]
 
-      steps[i] = step;
-      this.$emit('input', this.fixPriorities(steps));
-    }
-  }
-});
+      steps[i] = step
+      this.$emit('input', this.fixPriorities(steps))
+    },
+  },
+})
 </script>
 
 <style scoped>

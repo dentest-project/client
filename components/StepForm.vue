@@ -1,21 +1,44 @@
 <template>
   <form class="step-form">
     <div class="step-form-sentence">
-      <v-select :items="adverbsSelectItems" :value="step.adverb" solo @input="onAdverbChanged" />
+      <v-select
+        :items="adverbsSelectItems"
+        :value="step.adverb"
+        solo
+        @input="onAdverbChanged"
+      />
       <div v-for="(part, id) in step.step.parts">
-        <span v-if="part.type === 'sentence'" :key="id">{{ part.content }}</span>
-        <inline-step-param-form v-else :key="id" :param="getParamForPart(part)" @input="onInlineParamUpdated" />
+        <span v-if="part.type === 'sentence'" :key="id">{{
+          part.content
+        }}</span>
+        <inline-step-param-form
+          v-else
+          :key="id"
+          :param="getParamForPart(part)"
+          @input="onInlineParamUpdated"
+        />
       </div>
     </div>
-    <v-textarea v-if="extraParamType === 'multiline'" :value="extraParamValue" filled auto-grow @input="onExtraParamUpdated" />
-    <table-form v-else-if="extraParamType === 'table'" :value="extraParamValue" :deletable-columns="true" @input="onExtraParamUpdated" />
+    <v-textarea
+      v-if="extraParamType === 'multiline'"
+      :value="extraParamValue"
+      filled
+      auto-grow
+      @input="onExtraParamUpdated"
+    />
+    <table-form
+      v-else-if="extraParamType === 'table'"
+      :value="extraParamValue"
+      :deletable-columns="true"
+      @input="onExtraParamUpdated"
+    />
   </form>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import InlineStepParamForm from '~/components/InlineStepParamForm.vue';
-import TableForm from '~/components/TableForm.vue';
+import InlineStepParamForm from '~/components/InlineStepParamForm.vue'
+import TableForm from '~/components/TableForm.vue'
 import {
   InlineStepParam,
   isInlineStepParam,
@@ -25,70 +48,68 @@ import {
   StepParam,
   StepParamType,
   StepPart,
-} from '~/types';
+} from '~/types'
 
 export default Vue.extend({
   components: {
     InlineStepParamForm,
-    TableForm
+    TableForm,
   },
   model: {
-    prop: 'step'
+    prop: 'step',
   },
   props: {
     step: {
       type: Object,
-      required: true
+      required: true,
     } as PropOptions<ScenarioStep>,
     availableAdverbs: {
       type: Array,
-      required: true
-    } as PropOptions<Array<StepAdverb>>
+      required: true,
+    } as PropOptions<Array<StepAdverb>>,
   },
   methods: {
     getParamForPart(part: StepPart): InlineStepParam | undefined {
-      const param = (this.step as ScenarioStep)
-        .params
-        .find(p => isInlineStepParam(p) && p.stepPart?.id === part.id);
+      const param = (this.step as ScenarioStep).params.find(
+        (p) => isInlineStepParam(p) && p.stepPart?.id === part.id
+      )
 
       if (param && isInlineStepParam(param)) {
-        return param;
+        return param
       }
     },
     onAdverbChanged(adverb: StepAdverb) {
       this.$emit('input', {
         ...this.step,
-        adverb
-      });
+        adverb,
+      })
     },
     onInlineParamUpdated(param: InlineStepParam) {
-      const updatedParamIndex = this
-        .step
-        .params
-        .findIndex(p => isInlineStepParam(p) && p.stepPart?.id === param.stepPart.id);
-      const params = [...this.step.params];
+      const updatedParamIndex = this.step.params.findIndex(
+        (p) => isInlineStepParam(p) && p.stepPart?.id === param.stepPart.id
+      )
+      const params = [...this.step.params]
 
-      params[updatedParamIndex] = param;
+      params[updatedParamIndex] = param
 
       this.$emit('input', {
         ...this.step,
-        params
-      });
+        params,
+      })
     },
     onExtraParamUpdated(content: string | Array<Array<string>>) {
-      const updatedParamIndex = this
-        .step
-        .params
-        .findIndex(p => !isInlineStepParam(p));
-      const params = [...this.step.params];
+      const updatedParamIndex = this.step.params.findIndex(
+        (p) => !isInlineStepParam(p)
+      )
+      const params = [...this.step.params]
 
-      params[updatedParamIndex].content = content;
+      params[updatedParamIndex].content = content
 
       this.$emit('input', {
         ...this.step,
-        params
-      });
-    }
+        params,
+      })
+    },
   },
   computed: {
     adverbsSelectItems(): Array<SelectItem> {
@@ -97,29 +118,35 @@ export default Vue.extend({
         [StepAdverb.When]: 'When',
         [StepAdverb.Then]: 'Then',
         [StepAdverb.And]: 'And',
-        [StepAdverb.But]: 'But'
-      } as Record<StepAdverb, string>;
+        [StepAdverb.But]: 'But',
+      } as Record<StepAdverb, string>
 
-      return (this as any).availableAdverbs.map((a: StepAdverb): SelectItem => ({
-        text: labels[a],
-        value: a,
-        disabled: false
-      }));
+      return (this as any).availableAdverbs.map(
+        (a: StepAdverb): SelectItem => ({
+          text: labels[a],
+          value: a,
+          disabled: false,
+        })
+      )
     },
     extraParamType(): StepParamType {
-      const extraParam = (this as any).step.params.find((p: StepParam) => !isInlineStepParam(p));
+      const extraParam = (this as any).step.params.find(
+        (p: StepParam) => !isInlineStepParam(p)
+      )
 
       if (!extraParam) {
-        return StepParamType.None;
+        return StepParamType.None
       }
 
-      return extraParam.type;
+      return extraParam.type
     },
     extraParamValue(): string | Array<Array<string>> {
-      return (this as any).step.params.find((p: StepParam) => !isInlineStepParam(p)).content;
-    }
-  }
-});
+      return (this as any).step.params.find(
+        (p: StepParam) => !isInlineStepParam(p)
+      ).content
+    },
+  },
+})
 </script>
 
 <style scoped>

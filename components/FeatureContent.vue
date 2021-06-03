@@ -1,63 +1,82 @@
 <template>
   <form>
-    <v-sheet elevation="2" class="description" :style="`background-color: ${$colors.lightPrimary}`">
-      <editable-textarea v-if="canWrite" :value="feature.description" label="Feature description" @input="onDescriptionChanged" />
-      <p v-else class="feature-content-description">{{ feature.description }}</p>
+    <v-sheet
+      elevation="2"
+      class="description"
+      :style="`background-color: ${$colors.lightPrimary}`"
+    >
+      <editable-textarea
+        v-if="canWrite"
+        :value="feature.description"
+        label="Feature description"
+        @input="onDescriptionChanged"
+      />
+      <p v-else class="feature-content-description">
+        {{ feature.description }}
+      </p>
     </v-sheet>
     <steps-button v-if="canWrite" @click.prevent="activateDrawer" />
-    <scenario-list :scenarios="feature.scenarios" :can-write="canWrite" @input="onScenariosChanged" />
-    <steps-drawer v-if="canWrite" v-model="stepsDrawer" :project="feature.rootProject" />
+    <scenario-list
+      :scenarios="feature.scenarios"
+      :can-write="canWrite"
+      @input="onScenariosChanged"
+    />
+    <steps-drawer
+      v-if="canWrite"
+      v-model="stepsDrawer"
+      :project="feature.rootProject"
+    />
   </form>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import EditableTextarea from '~/components/EditableTextarea.vue';
-import ScenarioList from '~/components/ScenarioList.vue';
-import StepsButton from '~/components/buttons/StepsButton.vue';
-import StepsDrawer from '~/components/StepsDrawer.vue';
-import { Feature, Scenario } from '~/types';
+import EditableTextarea from '~/components/EditableTextarea.vue'
+import ScenarioList from '~/components/ScenarioList.vue'
+import StepsButton from '~/components/buttons/StepsButton.vue'
+import StepsDrawer from '~/components/StepsDrawer.vue'
+import { Feature, Scenario } from '~/types'
 
 export default Vue.extend({
   components: {
     EditableTextarea,
     ScenarioList,
     StepsButton,
-    StepsDrawer
+    StepsDrawer,
   },
   props: {
     canWrite: {
       type: Boolean,
-      required: true
+      required: true,
     },
     feature: {
       type: Object,
-      required: true
-    } as PropOptions<Feature>
+      required: true,
+    } as PropOptions<Feature>,
   },
   data() {
     return {
-      stepsDrawer: false
+      stepsDrawer: false,
     }
   },
   methods: {
     activateDrawer(): void {
-      this.stepsDrawer = true;
+      this.stepsDrawer = true
     },
     onDescriptionChanged(description: string): void {
       this.$emit('input', {
         ...this.feature,
-        description
-      });
+        description,
+      })
     },
     onScenariosChanged(scenarios: Array<Scenario>): void {
       this.$emit('input', {
         ...this.feature,
-        scenarios
+        scenarios,
       })
-    }
-  }
-});
+    },
+  },
+})
 </script>
 
 <style scoped>

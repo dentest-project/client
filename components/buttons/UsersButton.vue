@@ -11,8 +11,8 @@ export default Vue.extend({
   props: {
     to: {
       type: String,
-      required: true
-    }
-  }
-});
+      required: true,
+    },
+  },
+})
 </script>

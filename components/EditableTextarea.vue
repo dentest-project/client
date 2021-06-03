@@ -1,11 +1,20 @@
 <template>
-  <v-textarea v-if="mode === $modes.edit" :value="value" :label="label" autofocus auto-grow filled @change="onChanged" @blur="onSubmit" />
+  <v-textarea
+    v-if="mode === $modes.edit"
+    :value="value"
+    :label="label"
+    autofocus
+    auto-grow
+    filled
+    @change="onChanged"
+    @blur="onSubmit"
+  />
   <p v-else @click="switchToEdit">{{ value }}</p>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Mode } from '~/types';
+import Vue from 'vue'
+import { Mode } from '~/types'
 
 interface Data {
   mode: Mode
@@ -13,35 +22,35 @@ interface Data {
 
 export default Vue.extend({
   model: {
-    prop: 'value'
+    prop: 'value',
   },
   props: {
     label: {
       type: String,
-      required: true
+      required: true,
     },
     value: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data: function (): Data {
     return {
-      mode: Mode.View
+      mode: Mode.View,
     }
   },
   methods: {
-    switchToEdit (): void {
-      this.mode = Mode.Edit;
+    switchToEdit(): void {
+      this.mode = Mode.Edit
     },
-    onSubmit (): void {
+    onSubmit(): void {
       this.mode = Mode.View
     },
-    onChanged (e: string): void {
-      this.$emit('input', e);
-    }
-  }
-});
+    onChanged(e: string): void {
+      this.$emit('input', e)
+    },
+  },
+})
 </script>
 
 <style scoped>

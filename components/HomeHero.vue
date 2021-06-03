@@ -10,17 +10,18 @@
 </template>
 
 <script>
-import CucumberLogo from '~/components/logos/CucumberLogo.vue';
-import Logo from '~/components/logos/Logo';
+import CucumberLogo from '~/components/logos/CucumberLogo.vue'
+import Logo from '~/components/logos/Logo'
 
 export default {
-  components: { CucumberLogo, Logo }
+  components: { CucumberLogo, Logo },
 }
 </script>
 
 <style scoped>
 .home-hero {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/home_bg.jpg') #333333 center center;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url('/home_bg.jpg') #333333 center center;
   background-size: cover;
   color: #ffffff;
   width: 100vw;

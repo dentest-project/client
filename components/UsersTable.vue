@@ -1,6 +1,10 @@
 <template>
   <div>
-    <user-search label="Add user..." :search-within-organization="searchUsersWithinOrganization" @selected="onUserAdd" />
+    <user-search
+      label="Add user..."
+      :search-within-organization="searchUsersWithinOrganization"
+      @selected="onUserAdd"
+    />
     <v-simple-table dense>
       <template v-slot:default>
         <tbody>
@@ -20,51 +24,52 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import UserSearch from '~/components/UserSearch.vue';
-import UsersTableRow from '~/components/UsersTableRow.vue';
+import UserSearch from '~/components/UserSearch.vue'
+import UsersTableRow from '~/components/UsersTableRow.vue'
 import {
   BaseUser,
   OrganizationUser,
-  OrganizationUserList, ProjectUser,
-  ProjectUserList
-} from '~/types';
+  OrganizationUserList,
+  ProjectUser,
+  ProjectUserList,
+} from '~/types'
 
 enum Mode {
   Project = 'project',
-  Organization = 'organization'
+  Organization = 'organization',
 }
 
 export default Vue.extend({
   components: {
     UserSearch,
-    UsersTableRow
+    UsersTableRow,
   },
   props: {
     users: {
       type: Array,
-      required: true
+      required: true,
     } as PropOptions<OrganizationUserList | ProjectUserList>,
     mode: {
       type: String,
-      required: true
+      required: true,
     } as PropOptions<Mode>,
     searchUsersWithinOrganization: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     onUserAdd: function (user?: BaseUser) {
       if (user) {
-        this.$emit('add', user);
+        this.$emit('add', user)
       }
     },
     onUserChanged: function (user: ProjectUser | OrganizationUser) {
-      this.$emit('change', user);
+      this.$emit('change', user)
     },
     onUserDelete: function (user: ProjectUser | OrganizationUser) {
-      this.$emit('delete', user);
-    }
-  }
-});
+      this.$emit('delete', user)
+    },
+  },
+})
 </script>

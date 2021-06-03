@@ -4,7 +4,7 @@
     :color="$colors.error"
     x-small
     dark
-    @click="e => $emit('click', e)"
+    @click="(e) => $emit('click', e)"
   >
     <v-icon x-small>mdi-delete</v-icon>
   </v-chip>

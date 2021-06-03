@@ -1,12 +1,13 @@
 <template>
-  <v-dialog width="20rem" :value=value :persistent="true" @input="onDialogStatusChanged">
+  <v-dialog
+    width="20rem"
+    :value="value"
+    :persistent="true"
+    @input="onDialogStatusChanged"
+  >
     <v-card>
-      <v-card-title class="headline">
-        Table dimensions
-      </v-card-title>
-      <v-card-subtitle>
-        This step requires a table param.
-      </v-card-subtitle>
+      <v-card-title class="headline"> Table dimensions </v-card-title>
+      <v-card-subtitle> This step requires a table param. </v-card-subtitle>
       <v-card-text>
         <div class="create-table-step-param">
           <div class="create-table-step-param-wrapper">
@@ -28,34 +29,34 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default Vue.extend({
   model: {
-    prop: 'value'
+    prop: 'value',
   },
   props: {
-    value: Boolean
+    value: Boolean,
   },
   data: function () {
     return {
       x: 0,
-      y: 0
+      y: 0,
     }
   },
   methods: {
-    onSquareHover (x: number, y: number): void {
-      this.x = x;
-      this.y = y;
+    onSquareHover(x: number, y: number): void {
+      this.x = x
+      this.y = y
     },
-    onSquareSelection (): void {
-      this.$emit('selected', { width: this.x, height: this.y });
+    onSquareSelection(): void {
+      this.$emit('selected', { width: this.x, height: this.y })
     },
     onDialogStatusChanged(e: boolean) {
-      this.$emit('input', e);
-    }
-  }
-});
+      this.$emit('input', e)
+    },
+  },
+})
 </script>
 
 <style scoped>
@@ -83,6 +84,6 @@ export default Vue.extend({
 }
 
 .create-table-step-param-wrapper .create-table-step-param-button.selected {
-  background-color: #AAAAAA !important;
+  background-color: #aaaaaa !important;
 }
 </style>

@@ -1,9 +1,14 @@
 <template>
-  <v-dialog width="480" :value=value @input="onDialogStatusChanged">
+  <v-dialog width="480" :value="value" @input="onDialogStatusChanged">
     <v-card>
       <v-card-title class="headline">Move folder</v-card-title>
       <v-card-text>
-        <paths-tree v-if="tree.length > 0" :default="parent" :tree="tree" @input="onNewParentChanged" />
+        <paths-tree
+          v-if="tree.length > 0"
+          :default="parent"
+          :tree="tree"
+          @input="onNewParentChanged"
+        />
       </v-card-text>
       <v-card-actions v-if="tree.length > 0">
         <v-divider />
@@ -14,66 +19,69 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import PathsTree from '~/components/PathsTree.vue';
-import buildTree from '~/helpers/buildTree';
-import { Path } from '~/types';
+import Vue, { PropOptions } from 'vue'
+import PathsTree from '~/components/PathsTree.vue'
+import buildTree from '~/helpers/buildTree'
+import { Path } from '~/types'
 
 export default Vue.extend({
   components: {
-    PathsTree
+    PathsTree,
   },
   model: {
-    prop: 'value'
+    prop: 'value',
   },
   props: {
     value: {
       type: Boolean,
-      required: true
+      required: true,
     },
     path: {
       type: Object,
-      required: true
+      required: true,
     } as PropOptions<Path>,
     parent: {
       type: Object,
-      required: true
-    } as PropOptions<Path>
+      required: true,
+    } as PropOptions<Path>,
   },
   data() {
     return {
-      rootPath: null as null|Path,
-      newParent: null as string|null
+      rootPath: null as null | Path,
+      newParent: null as string | null,
     }
   },
   methods: {
     async onDialogStatusChanged(e: boolean) {
-      this.$emit('input', e);
+      this.$emit('input', e)
     },
     onNewParentChanged(newParent: string) {
-      this.newParent = newParent;
+      this.newParent = newParent
     },
     onSubmit() {
-      this.$emit('submit', { id: this.path.id, newParentId: this.newParent });
-    }
+      this.$emit('submit', { id: this.path.id, newParentId: this.newParent })
+    },
   },
   computed: {
     tree() {
       if (!(this as any).rootPath) {
-        return [];
+        return []
       }
 
-      let root = buildTree((this as any).rootPath, false, (this as any).path.id);
+      let root = buildTree((this as any).rootPath, false, (this as any).path.id)
 
-      return [root];
-    }
+      return [root]
+    },
   },
   watch: {
     async value(v) {
       if (v && !this.rootPath) {
-        this.rootPath = await (this as any).$api.getPathRoot((this as any).path.id, (this as any).$axios);
+        this.rootPath = await (this as any).$api.getPathRoot(
+          (this as any).path.id,
+          (this as any).$axios
+        )
       }
-    }
-  }
-});
+    },
+  },
+})
 </script>

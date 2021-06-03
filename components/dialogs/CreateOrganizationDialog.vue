@@ -1,12 +1,15 @@
 <template>
-  <v-dialog width="480" :value=value @input="onDialogStatusChanged">
+  <v-dialog width="480" :value="value" @input="onDialogStatusChanged">
     <form @submit.prevent="onSubmit">
       <v-card>
-        <v-card-title class="headline">
-          Create organization
-        </v-card-title>
+        <v-card-title class="headline"> Create organization </v-card-title>
         <v-card-text>
-          <v-text-field v-model="organizationName" label="Organization name" autofocus clearable />
+          <v-text-field
+            v-model="organizationName"
+            label="Organization name"
+            autofocus
+            clearable
+          />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -14,50 +17,55 @@
         </v-card-actions>
       </v-card>
     </form>
-    <v-snackbar v-model="conflictSnackbarOpened" :color="$colors.error">This organization name is already taken</v-snackbar>
+    <v-snackbar v-model="conflictSnackbarOpened" :color="$colors.error"
+      >This organization name is already taken</v-snackbar
+    >
   </v-dialog>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import SubmitButton from '~/components/buttons/SubmitButton.vue';
+import Vue from 'vue'
+import SubmitButton from '~/components/buttons/SubmitButton.vue'
 
 export default Vue.extend({
   components: { SubmitButton },
   model: {
-    prop: 'value'
+    prop: 'value',
   },
   props: {
-    value: Boolean
+    value: Boolean,
   },
   data: function () {
     return {
       organizationName: '',
-      conflictSnackbarOpened: false
+      conflictSnackbarOpened: false,
     }
   },
   methods: {
-    async onSubmit (): Promise<void> {
+    async onSubmit(): Promise<void> {
       if (this.organizationName.trim() === '') {
-        return;
+        return
       }
 
       try {
-        await this.$api.createOrganization({ name: this.organizationName, permissions: [] }, this.$axios);
+        await this.$api.createOrganization(
+          { name: this.organizationName, permissions: [] },
+          this.$axios
+        )
 
-        this.$emit('created');
-        this.organizationName = '';
+        this.$emit('created')
+        this.organizationName = ''
       } catch (error) {
         if (error.response.status === 409) {
-          this.conflictSnackbarOpened = true;
+          this.conflictSnackbarOpened = true
         } else {
-          this.$emit('errored');
+          this.$emit('errored')
         }
       }
     },
     onDialogStatusChanged(e: boolean) {
-      this.$emit('input', e);
-    }
-  }
-});
+      this.$emit('input', e)
+    },
+  },
+})
 </script>

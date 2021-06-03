@@ -1,5 +1,13 @@
 <template>
-  <v-treeview :items="tree" activatable hoverable open-all selection-type="independent" :active.sync="active" @update:active="onChange">
+  <v-treeview
+    :items="tree"
+    activatable
+    hoverable
+    open-all
+    selection-type="independent"
+    :active.sync="active"
+    @update:active="onChange"
+  >
     <template v-slot:prepend="{ open }">
       <v-icon>{{ open ? 'mdi-folder-open' : 'mdi-folder' }}</v-icon>
     </template>
@@ -7,24 +15,24 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import { Path } from '~/types';
-import { TreeElement } from '~/types/component-types';
+import Vue, { PropOptions } from 'vue'
+import { Path } from '~/types'
+import { TreeElement } from '~/types/component-types'
 
 export default Vue.extend({
   props: {
     tree: {
       type: Array,
-      required: true
+      required: true,
     } as PropOptions<Array<TreeElement>>,
     default: {
       type: Object,
-      required: true
-    } as PropOptions<Path>
+      required: true,
+    } as PropOptions<Path>,
   },
   data() {
     return {
-      active: [] as Array<string>
+      active: [] as Array<string>,
     }
   },
   mounted() {
@@ -33,11 +41,11 @@ export default Vue.extend({
   methods: {
     onChange(e: Array<string>) {
       if (e.length === 0) {
-        return;
+        return
       }
 
-      this.$emit('input', e[0]);
-    }
-  }
-});
+      this.$emit('input', e[0])
+    },
+  },
+})
 </script>

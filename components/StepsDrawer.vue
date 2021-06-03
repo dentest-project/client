@@ -1,11 +1,16 @@
 <template>
-  <v-navigation-drawer hide-overlay fixed floating temporary right v-model="drawer">
+  <v-navigation-drawer
+    hide-overlay
+    fixed
+    floating
+    temporary
+    right
+    v-model="drawer"
+  >
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="title">Steps</v-list-item-title>
-        <v-list-item-subtitle>
-          Drag'n'drop your steps
-        </v-list-item-subtitle>
+        <v-list-item-subtitle> Drag'n'drop your steps </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <v-divider />
@@ -18,7 +23,12 @@
     </v-list-item>
     <v-divider />
     <v-list>
-      <v-list-group v-for="group in steps" v-model="group.active" :key="group.title" :prepend-icon="group.icon">
+      <v-list-group
+        v-for="group in steps"
+        v-model="group.active"
+        :key="group.title"
+        :prepend-icon="group.icon"
+      >
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title v-text="group.title"></v-list-item-title>
@@ -35,11 +45,18 @@
           @dragend="removeFromStore"
         >
           <v-list-item-icon>
-            <v-icon color="#CCCCCC">{{ iconForStepParamType(step.extraParamType) }}</v-icon>
+            <v-icon color="#CCCCCC">{{
+              iconForStepParamType(step.extraParamType)
+            }}</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <div class="step-drawer-step">
-              <span v-for="part in step.parts" :key="part.id" :class="`step-drawer-step-type--${part.type}`">{{ part.content }}</span>
+              <span
+                v-for="part in step.parts"
+                :key="part.id"
+                :class="`step-drawer-step-type--${part.type}`"
+                >{{ part.content }}</span
+              >
             </div>
           </v-list-item-content>
         </v-list-item>
@@ -67,57 +84,87 @@
       @deleted="onStepDeleted"
       @errored="onStepDeleteError"
     />
-    <v-snackbar v-model="stepCreatedSnackbarOpened" :color="$colors.success" absolute>Step created</v-snackbar>
-    <v-snackbar v-model="stepUpdatedSnackbarOpened" :color="$colors.success" absolute>Step updated</v-snackbar>
-    <v-snackbar v-model="stepDeletedSnackbarOpened" :color="$colors.success" absolute>Step deleted</v-snackbar>
-    <v-snackbar v-model="stepCreationErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while creating the step</v-snackbar>
-    <v-snackbar v-model="stepUpdateErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while updating the step</v-snackbar>
-    <v-snackbar v-model="stepDeleteErrorSnackbarOpened" :color="$colors.error" absolute>An error occurred while deleting the step</v-snackbar>
+    <v-snackbar
+      v-model="stepCreatedSnackbarOpened"
+      :color="$colors.success"
+      absolute
+      >Step created</v-snackbar
+    >
+    <v-snackbar
+      v-model="stepUpdatedSnackbarOpened"
+      :color="$colors.success"
+      absolute
+      >Step updated</v-snackbar
+    >
+    <v-snackbar
+      v-model="stepDeletedSnackbarOpened"
+      :color="$colors.success"
+      absolute
+      >Step deleted</v-snackbar
+    >
+    <v-snackbar
+      v-model="stepCreationErrorSnackbarOpened"
+      :color="$colors.error"
+      absolute
+      >An error occurred while creating the step</v-snackbar
+    >
+    <v-snackbar
+      v-model="stepUpdateErrorSnackbarOpened"
+      :color="$colors.error"
+      absolute
+      >An error occurred while updating the step</v-snackbar
+    >
+    <v-snackbar
+      v-model="stepDeleteErrorSnackbarOpened"
+      :color="$colors.error"
+      absolute
+      >An error occurred while deleting the step</v-snackbar
+    >
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import { mapMutations } from 'vuex';
-import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue';
-import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue';
-import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue';
-import { Project, Step, StepParamType, StepType } from '~/types';
+import Vue, { PropOptions } from 'vue'
+import { mapMutations } from 'vuex'
+import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue'
+import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue'
+import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue'
+import { Project, Step, StepParamType, StepType } from '~/types'
 
 interface DisplayableStepsGroup {
-  title: string,
-  icon: string,
-  active: boolean,
+  title: string
+  icon: string
+  active: boolean
   steps: Array<Step>
 }
 
 export default Vue.extend({
   model: {
-    prop: 'value'
+    prop: 'value',
   },
   components: {
     CreateStepDialog,
     DeleteStepDialog,
-    UpdateStepDialog
+    UpdateStepDialog,
   },
   props: {
     project: {
       type: Object,
-      required: true
+      required: true,
     } as PropOptions<Project>,
     value: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   async beforeMount() {
-    await this.loadSteps();
+    await this.loadSteps()
   },
   data() {
     return {
       steps: [] as Array<DisplayableStepsGroup>,
-      updateStep: null as Step|null,
-      deletingStepId: null as number|null,
+      updateStep: null as Step | null,
+      deletingStepId: null as number | null,
       stepCreationDialog: false,
       stepUpdateDialog: false,
       stepDeleteDialog: false,
@@ -126,110 +173,113 @@ export default Vue.extend({
       stepUpdatedSnackbarOpened: false,
       stepCreationErrorSnackbarOpened: false,
       stepDeleteErrorSnackbarOpened: false,
-      stepUpdateErrorSnackbarOpened: false
-    };
+      stepUpdateErrorSnackbarOpened: false,
+    }
   },
   methods: {
     activateStepCreationDialog(): void {
-      this.stepCreationDialog = true;
+      this.stepCreationDialog = true
     },
     deactivateStepCreationDialog(): void {
-      this.stepCreationDialog = false;
+      this.stepCreationDialog = false
     },
     activateStepUpdateDialog(step: Step): void {
-      this.stepUpdateDialog = true;
-      this.updateStep = step;
+      this.stepUpdateDialog = true
+      this.updateStep = step
     },
     deactivateStepUpdateDialog(): void {
-      this.stepUpdateDialog = false;
-      this.updateStep = null;
+      this.stepUpdateDialog = false
+      this.updateStep = null
     },
     activateStepDeleteDialog(): void {
-      this.stepDeleteDialog = true;
+      this.stepDeleteDialog = true
     },
     deactivateStepDeleteDialog(): void {
-      this.stepDeleteDialog = false;
-      this.deletingStepId = null;
+      this.stepDeleteDialog = false
+      this.deletingStepId = null
     },
     async onStepCreated(): Promise<void> {
-      this.deactivateStepCreationDialog();
-      this.stepCreatedSnackbarOpened = true;
-      await this.loadSteps();
+      this.deactivateStepCreationDialog()
+      this.stepCreatedSnackbarOpened = true
+      await this.loadSteps()
     },
     async onStepUpdated(): Promise<void> {
-      this.deactivateStepUpdateDialog();
-      this.stepUpdatedSnackbarOpened = true;
-      await this.loadSteps();
+      this.deactivateStepUpdateDialog()
+      this.stepUpdatedSnackbarOpened = true
+      await this.loadSteps()
     },
     async onStepDeleted(): Promise<void> {
-      this.deactivateStepDeleteDialog();
-      this.stepDeletedSnackbarOpened = true;
-      await this.loadSteps();
+      this.deactivateStepDeleteDialog()
+      this.stepDeletedSnackbarOpened = true
+      await this.loadSteps()
     },
     onStepDeleteDialogChanged(status: boolean): void {
       if (!status) {
-        this.deactivateStepDeleteDialog();
+        this.deactivateStepDeleteDialog()
       }
     },
     onStepDeleteRequest(stepId: number): void {
-      this.deactivateStepUpdateDialog();
-      this.deletingStepId = stepId;
-      this.activateStepDeleteDialog();
+      this.deactivateStepUpdateDialog()
+      this.deletingStepId = stepId
+      this.activateStepDeleteDialog()
     },
     onStepCreationError(): void {
-      this.deactivateStepCreationDialog();
-      this.stepCreationErrorSnackbarOpened = true;
+      this.deactivateStepCreationDialog()
+      this.stepCreationErrorSnackbarOpened = true
     },
     onStepDeleteError(): void {
-      this.deactivateStepDeleteDialog();
-      this.stepDeleteErrorSnackbarOpened = true;
+      this.deactivateStepDeleteDialog()
+      this.stepDeleteErrorSnackbarOpened = true
     },
     onStepUpdateError(): void {
-      this.deactivateStepUpdateDialog();
-      this.stepUpdateErrorSnackbarOpened = true;
+      this.deactivateStepUpdateDialog()
+      this.stepUpdateErrorSnackbarOpened = true
     },
     async loadSteps(): Promise<void> {
-      const steps = await this.$api.getProjectSteps(this.project.id, this.$axios);
+      const steps = await this.$api.getProjectSteps(
+        this.project.id,
+        this.$axios
+      )
 
       this.steps = [
         ['Givens', 'mdi-ray-start', StepType.Given],
         ['Whens', 'mdi-ray-vertex', StepType.When],
-        ['Thens', 'mdi-ray-end', StepType.Then]
+        ['Thens', 'mdi-ray-end', StepType.Then],
       ].map(([title, icon, type]) => ({
         title,
         icon,
         steps: steps.filter((step: Step) => step.type === type),
-        active: false
-      }));
+        active: false,
+      }))
     },
     iconForStepParamType(type: StepParamType): string {
       switch (type) {
         case StepParamType.None:
-          return 'mdi-circle-off-outline';
+          return 'mdi-circle-off-outline'
         case StepParamType.Multiline:
-          return 'mdi-text-box';
+          return 'mdi-text-box'
         case StepParamType.Table:
-          return 'mdi-table-large';
+          return 'mdi-table-large'
         default:
-          return '';
+          return ''
       }
     },
     ...mapMutations({
       addToStore: 'stepsDrawer/dragStep',
-      removeFromStore: 'stepsDrawer/clearDraggedStep'
-    })
+      removeFromStore: 'stepsDrawer/clearDraggedStep',
+    }),
   },
   computed: {
     drawer: {
       get() {
-        return this.value;
+        return this.value
       },
       set(value: boolean) {
-        this.$emit('input', value);
-      }
-    }
-  }
-});
+        this.$emit('input', value)
+      },
+    },
+  },
+})
 </script>
 
 <style scoped>
@@ -239,15 +289,15 @@ export default Vue.extend({
 }
 
 .step-drawer-step-type--param:before {
-  content: " :";
+  content: ' :';
 }
 
 .step-drawer-step-type--param:after {
-  content: " ";
+  content: ' ';
 }
 
 .step-drawer-step-type--param {
-  color: #2814B4;
+  color: #2814b4;
   font-weight: bold;
 }
 </style>

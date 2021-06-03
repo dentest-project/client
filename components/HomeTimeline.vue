@@ -2,7 +2,11 @@
   <section class="home-timeline">
     <h2>How does it work?</h2>
     <div class="home-timeline-wrapper">
-      <v-timeline class="home-timeline-timeline" align-top :dense="$vuetify.breakpoint.smAndDown">
+      <v-timeline
+        class="home-timeline-timeline"
+        align-top
+        :dense="$vuetify.breakpoint.smAndDown"
+      >
         <v-timeline-item
           v-for="(item, i) in items"
           :key="i"
@@ -10,10 +14,7 @@
           :icon="item.icon"
           fill-dot
         >
-          <v-card
-            :color="item.color"
-            dark
-          >
+          <v-card :color="item.color" dark>
             <v-card-title class="home-timeline-card-title">
               {{ item.title }}
             </v-card-title>
@@ -35,27 +36,30 @@ export default {
         color: 'red lighten-2',
         icon: 'mdi-lead-pencil',
         title: 'Product owners write the specs',
-        content: 'By using a handy interface, you can specify all your features and respect the Gherkin syntax. With a bank of reusable steps and a clear presentation, you will avoid encountering the main Gherkin pain points'
+        content:
+          'By using a handy interface, you can specify all your features and respect the Gherkin syntax. With a bank of reusable steps and a clear presentation, you will avoid encountering the main Gherkin pain points',
       },
       {
         color: 'purple darken-1',
         icon: 'mdi-download',
         title: 'Developers pull the features',
-        content: 'By using Dentest CLI, developers will be able to retrieve the features, formatted as Gherkin files.'
-
+        content:
+          'By using Dentest CLI, developers will be able to retrieve the features, formatted as Gherkin files.',
       },
       {
         color: 'green lighten-1',
         icon: 'mdi-share-variant',
         title: 'Everyone reads the documentation',
-        content: 'By writing your features as clearly as possible, they will act as a perfect documentation that you will share with everybody'
+        content:
+          'By writing your features as clearly as possible, they will act as a perfect documentation that you will share with everybody',
       },
       {
         color: 'orange darken-1',
         icon: 'mdi-checkbox-marked-outline',
         title: 'CI or quality engineers run the tests',
-        content: 'As Gherkin features behave as tests, they can be incorporated in your CI. But you can also run the tests straight from this interface (to come)'
-      }
+        content:
+          'As Gherkin features behave as tests, they can be incorporated in your CI. But you can also run the tests straight from this interface (to come)',
+      },
     ],
   }),
 }
@@ -63,7 +67,7 @@ export default {
 
 <style scoped>
 .home-timeline {
-  background-color: #AAAAAA;
+  background-color: #aaaaaa;
 }
 
 .home-timeline h2 {

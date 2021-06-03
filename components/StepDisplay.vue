@@ -3,12 +3,24 @@
     <div class="step-display-sentence">
       <span class="step-display-adverb">{{ adverb }}</span>
       <span v-for="(part, id) in step.step.parts">
-        <span v-if="part.type === 'sentence'" :key="id"> {{ part.content }}</span>
-        <span v-else :key="id" class="step-display-inline-param"> {{ getParamForPart(part).content }}</span>
+        <span v-if="part.type === 'sentence'" :key="id">
+          {{ part.content }}</span
+        >
+        <span v-else :key="id" class="step-display-inline-param">
+          {{ getParamForPart(part).content }}</span
+        >
       </span>
     </div>
-    <div v-if="extraParamType === 'multiline'" class="step-display-multiline-param">{{ extraParamValue }}</div>
-    <table v-else-if="extraParamType === 'table'" class="step-display-table-param">
+    <div
+      v-if="extraParamType === 'multiline'"
+      class="step-display-multiline-param"
+    >
+      {{ extraParamValue }}
+    </div>
+    <table
+      v-else-if="extraParamType === 'table'"
+      class="step-display-table-param"
+    >
       <tbody>
         <tr v-for="(row, j) in extraParamValue" :key="j">
           <td v-for="(cell, i) in row" :key="`${j}-${i}`">{{ cell }}</td>
@@ -28,28 +40,28 @@ import {
   StepParam,
   StepParamType,
   StepPart,
-} from '~/types';
+} from '~/types'
 
 export default Vue.extend({
   model: {
-    prop: 'step'
+    prop: 'step',
   },
   props: {
     step: {
       type: Object,
-      required: true
-    } as PropOptions<ScenarioStep>
+      required: true,
+    } as PropOptions<ScenarioStep>,
   },
   methods: {
     getParamForPart(part: StepPart): InlineStepParam | undefined {
-      const param = (this.step as ScenarioStep)
-        .params
-        .find(p => isInlineStepParam(p) && p.stepPart?.id === part.id);
+      const param = (this.step as ScenarioStep).params.find(
+        (p) => isInlineStepParam(p) && p.stepPart?.id === part.id
+      )
 
       if (param && isInlineStepParam(param)) {
-        return param;
+        return param
       }
-    }
+    },
   },
   computed: {
     adverb(): string {
@@ -58,23 +70,29 @@ export default Vue.extend({
         [StepAdverb.When]: 'When',
         [StepAdverb.Then]: 'Then',
         [StepAdverb.And]: 'And',
-        [StepAdverb.But]: 'But'
-      } as Record<StepAdverb, string>)[((this as any).step as ScenarioStep).adverb];
+        [StepAdverb.But]: 'But',
+      } as Record<StepAdverb, string>)[
+        ((this as any).step as ScenarioStep).adverb
+      ]
     },
     extraParamType(): StepParamType {
-      const extraParam = (this as any).step.params.find((p: StepParam) => !isInlineStepParam(p));
+      const extraParam = (this as any).step.params.find(
+        (p: StepParam) => !isInlineStepParam(p)
+      )
 
       if (!extraParam) {
-        return StepParamType.None;
+        return StepParamType.None
       }
 
-      return extraParam.type;
+      return extraParam.type
     },
     extraParamValue(): string | Array<Array<string>> {
-      return (this as any).step.params.find((p: StepParam) => !isInlineStepParam(p)).content;
-    }
-  }
-});
+      return (this as any).step.params.find(
+        (p: StepParam) => !isInlineStepParam(p)
+      ).content
+    },
+  },
+})
 </script>
 
 <style scoped>

@@ -1,15 +1,28 @@
 <template>
   <v-main>
     <breadcrumb :items="breadcrumbItems" />
-    <editable-title v-if="canWrite" label="Feature title" v-model="feature.title" @input="onChanged" />
+    <editable-title
+      v-if="canWrite"
+      label="Feature title"
+      v-model="feature.title"
+      @input="onChanged"
+    />
     <h1 v-else>{{ feature.title }}</h1>
     <actions-bar>
-      <feature-status-chip :feature="feature" :can-select="canWrite" @selected="onFeatureStatusSelected" />
+      <feature-status-chip
+        :feature="feature"
+        :can-select="canWrite"
+        @selected="onFeatureStatusSelected"
+      />
       <save-button v-if="canWrite" :enabled="saveEnabled" @click="save" />
       <v-spacer />
       <delete-button v-if="canWrite" @click.stop="activateDeleteDialog" />
     </actions-bar>
-    <feature-content :feature="feature" :can-write="canWrite" @input="onChanged" />
+    <feature-content
+      :feature="feature"
+      :can-write="canWrite"
+      @input="onChanged"
+    />
     <delete-feature-dialog
       v-model="deleteDialog"
       :feature="feature"
@@ -17,37 +30,46 @@
       @deleted="onDeleted"
       @errored="onDeleteErrored"
     />
-    <v-snackbar v-model="deletedSnackbarOpened" :color="$colors.success">Feature deleted</v-snackbar>
-    <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the feature</v-snackbar>
-    <v-snackbar v-model="savedSnackbarOpened" :color="$colors.success">Feature saved</v-snackbar>
-    <v-snackbar v-model="saveErrorSnackbarOpened" :color="$colors.error">An error occurred while saving the feature</v-snackbar>
+    <v-snackbar v-model="deletedSnackbarOpened" :color="$colors.success"
+      >Feature deleted</v-snackbar
+    >
+    <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error"
+      >An error occurred while deleting the feature</v-snackbar
+    >
+    <v-snackbar v-model="savedSnackbarOpened" :color="$colors.success"
+      >Feature saved</v-snackbar
+    >
+    <v-snackbar v-model="saveErrorSnackbarOpened" :color="$colors.error"
+      >An error occurred while saving the feature</v-snackbar
+    >
   </v-main>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import ActionsBar from '~/components/ActionsBar.vue';
-import Breadcrumb from '~/components/Breadcrumb.vue';
-import DeleteButton from '~/components/buttons/DeleteButton.vue';
-import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue';
-import EditableTitle from '~/components/EditableTitle.vue';
-import FeatureContent from '~/components/FeatureContent.vue';
-import FeatureStatusChip from '~/components/chips/FeatureStatusChip.vue';
-import SaveButton from '~/components/buttons/SaveButton.vue';
+import ActionsBar from '~/components/ActionsBar.vue'
+import Breadcrumb from '~/components/Breadcrumb.vue'
+import DeleteButton from '~/components/buttons/DeleteButton.vue'
+import DeleteFeatureDialog from '~/components/dialogs/DeleteFeatureDialog.vue'
+import EditableTitle from '~/components/EditableTitle.vue'
+import FeatureContent from '~/components/FeatureContent.vue'
+import FeatureStatusChip from '~/components/chips/FeatureStatusChip.vue'
+import SaveButton from '~/components/buttons/SaveButton.vue'
 import {
   Breadcrumb as BreadcrumbType,
-  Feature, FeatureStatus,
+  Feature,
+  FeatureStatus,
   OrganizationPermission,
   ProjectPermission,
-  UpdateFeature
-} from '~/types';
+  UpdateFeature,
+} from '~/types'
 
 interface Data {
-  deleteDialog: boolean,
-  deletedSnackbarOpened: boolean,
-  deleteErrorSnackbarOpened: boolean,
-  saveEnabled: boolean,
-  savedSnackbarOpened: boolean,
+  deleteDialog: boolean
+  deletedSnackbarOpened: boolean
+  deleteErrorSnackbarOpened: boolean
+  saveEnabled: boolean
+  savedSnackbarOpened: boolean
   saveErrorSnackbarOpened: boolean
 }
 
@@ -60,13 +82,13 @@ export default Vue.extend({
     DeleteFeatureDialog,
     EditableTitle,
     FeatureContent,
-    FeatureStatusChip
+    FeatureStatusChip,
   },
   props: {
     feature: {
       type: Object,
-      required: true
-    } as PropOptions<Feature>
+      required: true,
+    } as PropOptions<Feature>,
   },
   data: function (): Data {
     return {
@@ -75,116 +97,139 @@ export default Vue.extend({
       deleteErrorSnackbarOpened: false,
       saveEnabled: false,
       savedSnackbarOpened: false,
-      saveErrorSnackbarOpened: false
+      saveErrorSnackbarOpened: false,
     }
   },
   methods: {
     activateDeleteDialog(): void {
-      this.deleteDialog = true;
+      this.deleteDialog = true
     },
     deactivateDeleteDialog(): void {
-      this.deleteDialog = false;
+      this.deleteDialog = false
     },
     formatFeatureForSave(): UpdateFeature {
       return {
         ...this.feature,
         path: {
-          id: this.feature.path.id
-        }
-      };
+          id: this.feature.path.id,
+        },
+      }
     },
     onChanged(feature: Feature): void {
-      this.saveEnabled = true;
-      this.$emit('needUpdate', feature);
+      this.saveEnabled = true
+      this.$emit('needUpdate', feature)
     },
     onDeleted(): void {
-      this.deactivateDeleteDialog();
-      this.deletedSnackbarOpened = true;
-      setTimeout(() => this.$router.push(this.$routes.path(this.feature.path)), 2000);
+      this.deactivateDeleteDialog()
+      this.deletedSnackbarOpened = true
+      setTimeout(
+        () => this.$router.push(this.$routes.path(this.feature.path)),
+        2000
+      )
     },
     onDeleteErrored(): void {
-      this.deactivateDeleteDialog();
-      this.deleteErrorSnackbarOpened = true;
+      this.deactivateDeleteDialog()
+      this.deleteErrorSnackbarOpened = true
     },
     async onFeatureStatusSelected(status: FeatureStatus): Promise<void> {
       try {
-        await this.$api.updateFeatureStatus({
-          id: this.feature.id,
-          status
-        }, this.$axios);
-        this.feature.status = status;
-        this.savedSnackbarOpened = true;
+        await this.$api.updateFeatureStatus(
+          {
+            id: this.feature.id,
+            status,
+          },
+          this.$axios
+        )
+        this.feature.status = status
+        this.savedSnackbarOpened = true
       } catch (error) {
-        this.onSaveErrored();
+        this.onSaveErrored()
       }
     },
     onSaved(): void {
-      this.savedSnackbarOpened = true;
-      this.saveEnabled = false;
+      this.savedSnackbarOpened = true
+      this.saveEnabled = false
     },
     onSaveErrored(): void {
-      this.saveErrorSnackbarOpened = true;
+      this.saveErrorSnackbarOpened = true
     },
     async save(): Promise<void> {
       try {
-        const feature = await this.$api.saveFeature(this.formatFeatureForSave(), this.$axios);
+        const feature = await this.$api.saveFeature(
+          this.formatFeatureForSave(),
+          this.$axios
+        )
 
-        this.onSaved();
-        this.$emit('saved', feature);
+        this.onSaved()
+        this.$emit('saved', feature)
       } catch (error) {
-        this.onSaveErrored();
+        this.onSaveErrored()
       }
-    }
+    },
   },
   computed: {
     breadcrumbItems(): BreadcrumbType {
-      const out = [{
-        text: (this as any).feature.title,
-        href: (this as any).id,
-        disabled: true
-      }] as BreadcrumbType;
-      let path = (this as any).feature.path;
+      const out = [
+        {
+          text: (this as any).feature.title,
+          href: (this as any).id,
+          disabled: true,
+        },
+      ] as BreadcrumbType
+      let path = (this as any).feature.path
 
       while (path !== undefined) {
         out.push({
           text: path.project ? path.project.title : path.path,
           href: (this as any).$routes.path(path),
-          disabled: false
-        });
+          disabled: false,
+        })
 
         if (path.project && path.project.organization) {
           out.push({
             text: path.project.organization.name,
-            href: (this as any).$routes.organization(path.project.organization.slug),
-            disabled: false
-          });
+            href: (this as any).$routes.organization(
+              path.project.organization.slug
+            ),
+            disabled: false,
+          })
         }
 
-        path = path.parent;
+        path = path.parent
       }
 
-      return out.reverse();
+      return out.reverse()
     },
     canWrite: function (): boolean {
-      const rootProject = ((this as any).feature as Feature).rootProject;
+      const rootProject = ((this as any).feature as Feature).rootProject
 
       if (!(this as any).$auth.loggedIn) {
-        return false;
+        return false
       }
 
       if (!rootProject) {
-        return false;
+        return false
       }
 
-      if (typeof rootProject.permissions.find(p => p === ProjectPermission.Admin || p === ProjectPermission.Write) !== 'undefined') {
-        return true;
+      if (
+        typeof rootProject.permissions.find(
+          (p) => p === ProjectPermission.Admin || p === ProjectPermission.Write
+        ) !== 'undefined'
+      ) {
+        return true
       }
       if (!rootProject.organization) {
-        return false;
+        return false
       }
 
-      return typeof rootProject.organization.permissions.find(p => p === OrganizationPermission.Admin || p === OrganizationPermission.ProjectWrite) !== 'undefined';
-    }
-  }
-});
+      return (
+        typeof rootProject.organization.permissions.find(
+          (p) =>
+            p === OrganizationPermission.Admin ||
+            p === OrganizationPermission.ProjectWrite
+        ) !== 'undefined'
+      )
+    },
+  },
+})
 </script>
