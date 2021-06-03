@@ -11,12 +11,13 @@
         <div class="create-table-step-param">
           <div class="create-table-step-param-wrapper">
             <div v-for="(i, ik) in Array(10)" :key="ik">
-              <button
+              <v-btn
                 v-for="(j, jk) in Array(10)"
+                class="create-table-step-param-button"
                 :class="{ selected: x >= jk && y >= ik }"
                 :key="`${ik}-${jk}`"
                 @mouseover="onSquareHover(jk, ik)"
-                @click.native="onSquareSelection"
+                @click="onSquareSelection"
               />
             </div>
           </div>
@@ -67,19 +68,21 @@ export default Vue.extend({
 
 .create-table-step-param-wrapper > div {
   height: 1rem;
-  margin: 0.1rem;
+  margin: 0.2rem;
 }
 
-.create-table-step-param-wrapper button {
+.create-table-step-param-wrapper .create-table-step-param-button {
   width: 1rem;
   height: 1rem;
   display: inline-block;
   background-color: transparent;
   border: 1px solid #333333;
   margin: 0.1rem;
+  padding: 0;
+  min-width: 1rem;
 }
 
-.create-table-step-param-wrapper button.selected {
-  background-color: #777777;
+.create-table-step-param-wrapper .create-table-step-param-button.selected {
+  background-color: #AAAAAA !important;
 }
 </style>
