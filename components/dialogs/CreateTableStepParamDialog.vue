@@ -16,7 +16,7 @@
                 :class="{ selected: x >= jk && y >= ik }"
                 :key="`${ik}-${jk}`"
                 @mouseover="onSquareHover(jk, ik)"
-                @click.prevent="onSquareSelection"
+                @click.native="onSquareSelection"
               />
             </div>
           </div>
