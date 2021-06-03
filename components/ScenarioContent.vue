@@ -43,6 +43,11 @@ import StepList from '~/components/StepList.vue';
 import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep';
 import { isInlineStepParam, Mode, Scenario, ScenarioStep, ScenarioType, StepParamType } from '~/types';
 
+interface Dimensions {
+  width: number,
+  height: number
+}
+
 export default Vue.extend({
   components: {
     CreateTableStepParamDialog,
@@ -143,7 +148,7 @@ export default Vue.extend({
         examples
       });
     },
-    onTableStepParamDimensionsSelected(width: number, height: number) {
+    onTableStepParamDimensionsSelected(dimensions: Dimensions) {
       if (!this.tableParamStepIndex) {
         return;
       }
@@ -151,7 +156,7 @@ export default Vue.extend({
       const steps = [...this.scenario.steps];
       const params = [...steps[this.tableParamStepIndex].params];
 
-      params[params.findIndex(p => !isInlineStepParam(p))].content = new Array(height + 1).fill(null).map(() => new Array(width + 1).fill(''));
+      params[params.findIndex(p => !isInlineStepParam(p))].content = new Array(dimensions.height + 1).fill(null).map(() => new Array(dimensions.width + 1).fill(''));
       steps[this.tableParamStepIndex].params = params;
 
       this.createTableStepParamDialog = false;
