@@ -31,7 +31,7 @@
         @click="activateLeaveProjectDialog"
       />
       <delete-button
-        v-if="canAdministrate"
+        v-if="canDelete"
         @click.stop="onDeleteButtonClicked"
       />
     </actions-bar>
@@ -462,10 +462,6 @@ export default Vue.extend({
     canAdministrate: function (): boolean {
       const path = (this as any).path as Path
 
-      if (!path.project) {
-        return (this as any).canWrite
-      }
-
       if (!path.rootProject) {
         return false
       }
@@ -475,6 +471,15 @@ export default Vue.extend({
           (p) => p === ProjectPermission.Admin
         ) !== 'undefined'
       )
+    },
+    canDelete: function (): boolean {
+      const path = (this as any).path as Path
+
+      if (!path.project) {
+        return (this as any).canWrite
+      }
+
+      return (this as any).canAdministrate
     },
     canPull: function (): boolean {
       const rootProject = ((this as any).path as Path).rootProject
