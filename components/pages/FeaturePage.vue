@@ -154,7 +154,7 @@ export default Vue.extend({
       this.saveErrorSnackbarOpened = true
     },
     onTitleChanged(title: string): void {
-      this.onChanged({ ...feature, title })
+      this.onChanged({ ...this.feature, title })
     },
     async save(): Promise<void> {
       try {
