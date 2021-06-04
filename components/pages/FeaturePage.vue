@@ -5,7 +5,7 @@
       v-if="canWrite"
       label="Feature title"
       v-model="feature.title"
-      @input="onChanged"
+      @input="onTitleChanged"
     />
     <h1 v-else>{{ feature.title }}</h1>
     <actions-bar>
@@ -152,6 +152,9 @@ export default Vue.extend({
     },
     onSaveErrored(): void {
       this.saveErrorSnackbarOpened = true
+    },
+    onTitleChanged(title: string): void {
+      this.onChanged({ ...feature, title })
     },
     async save(): Promise<void> {
       try {
