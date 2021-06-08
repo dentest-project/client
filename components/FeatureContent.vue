@@ -1,10 +1,8 @@
 <template>
   <form>
     <v-sheet
-      elevation="2"
       class="description"
       :style="`background-color: ${$colors.lightPrimary}`"
-      shaped
     >
       <editable-textarea
         v-if="canWrite"

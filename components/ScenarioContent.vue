@@ -3,8 +3,6 @@
     class="scenario"
     :class="{ 'scenario--background': isBackground }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
-    shaped
-    elevation="2"
     @dragover.prevent="onDragEnter"
   >
     <div

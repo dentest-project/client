@@ -3,6 +3,7 @@
     :color="color"
     @click="(e) => $emit('click', e)"
     :title="label"
+    elevation="0"
     fab
     dark
     x-small

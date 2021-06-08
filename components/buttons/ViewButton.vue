@@ -2,6 +2,7 @@
   <v-btn
     @click="(e) => $emit('click', e)"
     :color="$colors.secondary"
+    elevation="0"
     fab
     dark
     x-small
