@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  nuxt:
+    container_name: dentest_nuxt
+    build:
+      context: ./nuxt
+    environment:
+      API_URL: http://localhost:8000
+    volumes:
+      - ../:/usr/nuxt-app
+    ports:
+      - 3000:3000
