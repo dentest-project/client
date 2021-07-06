@@ -4,13 +4,11 @@ RUN mkdir -p /usr/nuxt-app
 WORKDIR /usr/nuxt-app
 
 RUN apk update && apk upgrade
-RUN apk add git
+RUN apk add git python make g++
+
+COPY package.json .
+COPY package-lock.json .
 
 RUN npm install
-
-EXPOSE 3000
-
-ENV NUXT_HOST=0.0.0.0
-ENV NUXT_PORT=3000
 
 CMD [ "npm", "run", "dev" ]
