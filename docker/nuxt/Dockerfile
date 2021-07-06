@@ -9,6 +9,4 @@ RUN apk add git python make g++
 COPY package.json .
 COPY package-lock.json .
 
-RUN npm install
-
 CMD npm install && npm run dev
