@@ -4,11 +4,14 @@ services:
   nuxt:
     container_name: dentest_nuxt
     build:
-      context: ./nuxt
+      context: ..
+      dockerfile: ./docker/nuxt/Dockerfile
     environment:
       API_URL: http://localhost:8000
+      NUXT_HOST: 0.0.0.0
+      NUXT_PORT: 3000
+      NODE_ENV: dev
     volumes:
       - ../:/usr/nuxt-app
-      - ./php-fpm/jwt:/var/www/config/jwt
     ports:
       - 3000:3000
