@@ -9,5 +9,6 @@ services:
       API_URL: http://localhost:8000
     volumes:
       - ../:/usr/nuxt-app
+      - ./php-fpm/jwt:/var/www/config/jwt
     ports:
       - 3000:3000
