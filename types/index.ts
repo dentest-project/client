@@ -105,6 +105,11 @@ interface CreateProjectRootPath {
   path: string
 }
 
+interface CreateTag {
+  name: string,
+  color: string
+}
+
 interface Feature {
   id: string,
   slug?: string,
@@ -244,6 +249,12 @@ interface TableStepParam extends StepParam {
   content: Array<Array<string>>
 }
 
+interface Tag {
+  id: string,
+  name: string,
+  color: string
+}
+
 interface UpdateFeature {
   id: string,
   path: UpdateFeaturePath,
@@ -313,6 +324,7 @@ export {
   CreateFeature,
   CreatePath,
   CreateProject,
+  CreateTag,
   Feature,
   FeatureStatus,
   InlineStepParam,
@@ -349,6 +361,7 @@ export {
   StepPartType,
   StepType,
   TableStepParam,
+  Tag,
   UpdateFeature,
   UpdateFeaturePath,
   UpdateFeatureParentPath,

@@ -1,5 +1,13 @@
 <template>
-  <v-btn :to="to" :color="$colors.primary" elevation="0" fab dark x-small title="Users">
+  <v-btn
+    :to="to"
+    :color="$colors.primary"
+    elevation="0"
+    fab
+    dark
+    x-small
+    title="Users"
+  >
     <v-icon>mdi-account-group</v-icon>
   </v-btn>
 </template>

@@ -30,10 +30,7 @@
         label="Leave project"
         @click="activateLeaveProjectDialog"
       />
-      <delete-button
-        v-if="canDelete"
-        @click.stop="onDeleteButtonClicked"
-      />
+      <delete-button v-if="canDelete" @click.stop="onDeleteButtonClicked" />
     </actions-bar>
     <grid3>
       <path-card
