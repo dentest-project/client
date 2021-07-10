@@ -10,6 +10,7 @@
             autofocus
             clearable
           />
+          <v-color-picker v-model="color" hide-mode-switch hide-inputs />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -47,6 +48,7 @@ export default Vue.extend({
   data: function () {
     return {
       tagName: '',
+      color: '#FF0000'
     }
   },
   methods: {
@@ -56,7 +58,7 @@ export default Vue.extend({
           this.project.id,
           {
             name: this.tagName,
-            color: '',
+            color: this.color,
           },
           this.$axios
         )

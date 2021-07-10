@@ -1,5 +1,7 @@
 <template>
   <form>
+    <tags-selector v-if="canWrite" :project="feature.rootProject" :value="feature.tags" @input="onTagsChanged" />
+    <tags-list v-else :tags="feature.tags" />
     <v-sheet
       class="description"
       :style="`background-color: ${$colors.lightPrimary}`"
@@ -34,10 +36,14 @@ import EditableTextarea from '~/components/EditableTextarea.vue'
 import ScenarioList from '~/components/ScenarioList.vue'
 import StepsButton from '~/components/buttons/StepsButton.vue'
 import StepsDrawer from '~/components/StepsDrawer.vue'
-import { Feature, Scenario } from '~/types'
+import TagsList from '~/components/TagsList.vue';
+import TagsSelector from '~/components/TagsSelector.vue';
+import { Feature, Scenario, Tag } from '~/types'
 
 export default Vue.extend({
   components: {
+    TagsList,
+    TagsSelector,
     EditableTextarea,
     ScenarioList,
     StepsButton,
@@ -74,6 +80,12 @@ export default Vue.extend({
         scenarios,
       })
     },
+    onTagsChanged(tags: Array<Tag>): void {
+      this.$emit('input', {
+        ...this.feature,
+        tags,
+      })
+    }
   },
 })
 </script>

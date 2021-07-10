@@ -3,7 +3,9 @@
     <tags-autocomplete
       :project="project"
       :items="items"
+      :value="value"
       @new="onNewTagRequested"
+      @input="onInput"
     />
     <create-tag-dialog
       :project="project"
@@ -45,6 +47,10 @@ export default Vue.extend({
       type: Object,
       required: true,
     } as PropOptions<Project>,
+    value: {
+      type: Array,
+      required: true
+    } as PropOptions<Array<Tag>>
   },
   data: function (): Data {
     return {
@@ -56,7 +62,7 @@ export default Vue.extend({
     }
   },
   async created() {
-    this.loadItems()
+    await this.loadItems()
   },
   methods: {
     activateCreateTagDialog(): void {
@@ -65,7 +71,7 @@ export default Vue.extend({
     deactivateCreateTagDialog(): void {
       this.createTagDialogOpened = false
     },
-    async loadItems(): void {
+    async loadItems(): Promise<void> {
       this.items = await this.$api.getTags(this.project.id, this.$axios)
     },
     onNewTagRequested(name: string): void {
@@ -81,6 +87,9 @@ export default Vue.extend({
       this.deactivateCreateTagDialog()
       this.creationTagErrorSnackbarOpened = true
     },
+    onInput(v: Array<Tag>): void {
+      this.$emit('input', v)
+    }
   },
 })
 </script>

@@ -1,6 +1,6 @@
 <template>
   <v-autocomplete
-    v-model="model"
+    :value="value"
     :items="items"
     :loading="isLoading"
     :search-input.sync="search"
@@ -15,12 +15,25 @@
     multiple
     small-chips
     @change="onChange"
+    @input="onInput"
     @keydown="onKeyDown"
-  />
+  >
+    <template v-slot:selection="data">
+      <v-chip
+        v-bind="data.attrs"
+        :input-value="data.selected"
+        :color="data.item.color"
+        :text-color="oppositeColor(data.item.color)"
+      >
+        {{ data.item.name }}
+      </v-chip>
+    </template>
+  </v-autocomplete>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
+import blackOrWhite from '~/helpers/blackOrWhite';
 import { Project, Tag } from '~/types'
 
 export default Vue.extend({
@@ -32,7 +45,11 @@ export default Vue.extend({
     items: {
       type: Array,
       required: true,
-    } as PropOptions<Tag>,
+    } as PropOptions<Array<Tag>>,
+    value: {
+      type: Array,
+      required: true
+    }
   },
   data() {
     return {
@@ -42,8 +59,14 @@ export default Vue.extend({
     }
   },
   methods: {
+    oppositeColor(color: string): string {
+      return blackOrWhite(color)
+    },
     onChange() {
       this.search = ''
+    },
+    onInput(v: Array<Tag>) {
+      this.$emit('input', v)
     },
     onKeyDown(e: KeyboardEvent) {
       if (e.ctrlKey && e.key === 'Enter') {
