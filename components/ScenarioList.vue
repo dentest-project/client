@@ -31,7 +31,7 @@ import {
   Scenario,
   ScenarioStep,
   ScenarioType,
-  TableStepParam,
+  TableStepParam, Tag,
 } from '~/types'
 
 export default Vue.extend({
@@ -117,6 +117,13 @@ export default Vue.extend({
           })),
         ],
         examples: toCopy.examples,
+        tags: [
+          ...toCopy.tags.map((t: Tag) => ({
+            id: t.id,
+            color: t.color,
+            name: t.name
+          })),
+        ]
       })
 
       this.$emit('input', scenarios)

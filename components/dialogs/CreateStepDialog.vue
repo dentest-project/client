@@ -7,15 +7,20 @@
           <div class="create-step-dialog">
             <v-select :items="stepTypes" v-model="type" />
             <div class="create-step-inputs">
-              <v-text-field
-                v-for="(part, i) in parts"
-                v-model="parts[i].content"
-                :key="partsHashes[i].toString() + '#' + i"
-                :class="`create-step-input--${parts[i].type}`"
-                clearable
-                @select="(e) => onContentSelected(i, e)"
-                @click:clear.stop="() => onInputCleared(i)"
-              />
+              <div class="create-step-input" v-for="(part, i) in parts" :key="partsHashes[i].toString() + '#' + i">
+                <v-text-field
+                  v-model="parts[i].content"
+                  :class="`create-step-input--${parts[i].type}`"
+                  clearable
+                  @select="(e) => onContentSelected(i, e)"
+                  @focus="onPotentialSelectionEnd"
+                  @blur="onPotentialSelectionEnd"
+                  @keydown="onPotentialSelectionEnd"
+                  @mousedown="onPotentialSelectionEnd"
+                  @click:clear.stop="() => onInputCleared(i)"
+                />
+                <split-button v-if="selection.inputId === i" @click="onSplitButtonClicked" />
+              </div>
             </div>
             <div class="create-step-type-selector">
               <step-param-type-selector v-model="extraParamType" />
@@ -33,6 +38,7 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
+import SplitButton from '~/components/buttons/SplitButton.vue';
 import StepParamTypeSelector from '~/components/StepParamTypeSelector.vue'
 import SubmitButton from '~/components/buttons/SubmitButton.vue'
 import {
@@ -43,8 +49,18 @@ import {
   StepType,
 } from '~/types'
 
+interface SelectionBoundaries {
+  start: number | null,
+  end: number | null
+}
+
+interface Selection {
+  inputId: number | null,
+  boundaries: SelectionBoundaries | null
+}
+
 export default Vue.extend({
-  components: { StepParamTypeSelector, SubmitButton },
+  components: { SplitButton, StepParamTypeSelector, SubmitButton },
   model: {
     prop: 'value',
   },
@@ -70,6 +86,9 @@ export default Vue.extend({
       ],
       extraParamType: StepParamType.None,
       partsHashes: [Math.random()],
+      selection: {
+        inputId: null
+      } as Selection
     }
   },
   methods: {
@@ -85,40 +104,14 @@ export default Vue.extend({
       }
 
       const target = e.target as HTMLInputElement
-      const before = (target as HTMLInputElement).value
-        .substring(0, this.resolveSelectionBounding(target.selectionStart))
-        .trim()
-      const selected = target.value
-        .substring(
-          this.resolveSelectionBounding(target.selectionStart),
-          this.resolveSelectionBounding(target.selectionEnd)
-        )
-        .trim()
-      const after = target.value
-        .substring(this.resolveSelectionBounding(target.selectionEnd))
-        .trim()
 
-      if (after !== '') {
-        this.parts.splice(i + 1, 0, {
-          type: StepPartType.Sentence,
-          priority: 0,
-          content: after,
-        })
+      this.selection = {
+        inputId: i,
+        boundaries: {
+          start: target.selectionStart,
+          end: target.selectionEnd
+        }
       }
-      this.parts.splice(i + 1, 0, {
-        type: StepPartType.Param,
-        priority: i + 1,
-        content: selected,
-      })
-      if (before !== '') {
-        this.parts.splice(i + 1, 0, {
-          type: StepPartType.Sentence,
-          priority: 0,
-          content: before,
-        })
-      }
-      this.parts.splice(i, 1)
-      this.fixPriorities()
     },
     onInputCleared(i: number): void {
       if (this.parts[i].type === StepPartType.Sentence) {
@@ -150,6 +143,61 @@ export default Vue.extend({
         priority: 0,
       })
       this.fixPriorities()
+    },
+    onPotentialSelectionEnd(e: InputEvent) {
+      const input = e.target as HTMLInputElement
+
+      window.setTimeout(() => {
+        if (input.selectionStart === input.selectionEnd) {
+          this.selection.inputId = null
+        }
+      }, 50)
+    },
+    onSplitButtonClicked(): void {
+      const id = this.selection.inputId;
+      const boundaries = this.selection.boundaries;
+
+      if (null === id || null === boundaries) {
+        return;
+      }
+
+      const value = this.parts[id].content
+
+      const before = value
+        .substring(0, this.resolveSelectionBounding(boundaries.start))
+        .trim()
+      const selected = value
+        .substring(
+          this.resolveSelectionBounding(boundaries.start),
+          this.resolveSelectionBounding(boundaries.end)
+        )
+        .trim()
+      const after = value
+        .substring(this.resolveSelectionBounding(boundaries.end))
+        .trim()
+
+      if (after !== '') {
+        this.parts.splice(id + 1, 0, {
+          type: StepPartType.Sentence,
+          priority: 0,
+          content: after,
+        })
+      }
+      this.parts.splice(id + 1, 0, {
+        type: StepPartType.Param,
+        priority: id + 1,
+        content: selected,
+      })
+      if (before !== '') {
+        this.parts.splice(id + 1, 0, {
+          type: StepPartType.Sentence,
+          priority: 0,
+          content: before,
+        })
+      }
+      this.parts.splice(id, 1)
+      this.fixPriorities()
+      this.selection.inputId = null
     },
     async onSubmit(): Promise<void> {
       try {
@@ -206,6 +254,11 @@ export default Vue.extend({
 }
 .create-step-inputs {
   display: flex;
+  margin-bottom: 1rem;
+}
+.create-step-input {
+  width: 100%;
+  text-align: center;
 }
 .create-step-type-selector {
   width: fit-content;
