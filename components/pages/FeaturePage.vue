@@ -165,6 +165,10 @@ export default Vue.extend({
 
         this.onSaved()
         this.$emit('saved', feature)
+
+        if (feature.slug !== this.$route.params.feature_slug) {
+          await this.$router.push(this.$routes.feature(feature.path, feature))
+        }
       } catch (error) {
         this.onSaveErrored()
       }

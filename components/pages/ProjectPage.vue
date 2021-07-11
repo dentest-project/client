@@ -375,7 +375,8 @@ export default Vue.extend({
       if (this.path.project) {
         try {
           this.path.project.title = e
-          await this.$api.updateProject(
+
+          const updatedProject = await this.$api.updateProject(
             {
               id: this.path.project.id,
               title: e,
@@ -383,13 +384,18 @@ export default Vue.extend({
             this.$axios
           )
           this.projectUpdatedSnackbarOpened = true
+
+          if (updatedProject.slug !== this.$route.params.project_slug) {
+            await this.$router.push(this.$routes.project(updatedProject))
+          }
+
         } catch (error) {
           this.projectUpdateErrorSnackbarOpened = true
         }
       } else {
         try {
           this.path.path = e
-          await this.$api.updatePath(
+          const updatedPath = await this.$api.updatePath(
             {
               id: this.path.id,
               path: e,
@@ -397,6 +403,11 @@ export default Vue.extend({
             this.$axios
           )
           this.pathUpdatedSnackbarOpened = true
+
+          if (updatedPath.slug !== this.$route.params.path_slug) {
+            await this.$router.push(this.$routes.path(updatedPath))
+          }
+
         } catch (error) {
           this.pathUpdateErrorSnackbarOpened = true
         }

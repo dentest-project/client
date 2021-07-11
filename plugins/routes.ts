@@ -13,7 +13,7 @@ interface Routes {
   feature(path: Path, feature: Feature): string,
   organization(slug: string): string,
   path(path: Path): string,
-  project(path: Project): string,
+  project(project: Project): string,
   projectUsers(path: Project): string,
   register(): string
 }

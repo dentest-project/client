@@ -16,6 +16,9 @@
           <submit-button>Create folder</submit-button>
         </v-card-actions>
       </v-card>
+      <v-snackbar v-model="conflictSnackbarOpened" :color="$colors.error">
+        This folder name is already taken
+      </v-snackbar>
     </form>
   </v-dialog>
 </template>
@@ -43,6 +46,7 @@ export default Vue.extend({
   data: function () {
     return {
       pathName: '',
+      conflictSnackbarOpened: false
     }
   },
   methods: {
@@ -61,7 +65,11 @@ export default Vue.extend({
         this.$emit('created')
         this.pathName = ''
       } catch (error) {
-        this.$emit('errored')
+        if (error.response.status === 409) {
+          this.conflictSnackbarOpened = true
+        } else {
+          this.$emit('errored')
+        }
       }
     },
     onDialogStatusChanged(e: boolean) {
