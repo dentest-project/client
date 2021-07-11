@@ -20,6 +20,7 @@
     <scenario-list
       :scenarios="feature.scenarios"
       :can-write="canWrite"
+      :project="feature.rootProject"
       @input="onScenariosChanged"
     />
     <steps-drawer
@@ -94,10 +95,5 @@ export default Vue.extend({
 .feature-content-description {
   padding: 1rem;
   white-space: pre;
-}
-
-.feature-content-drawer-row {
-  margin-right: 0;
-  margin-left: 0;
 }
 </style>

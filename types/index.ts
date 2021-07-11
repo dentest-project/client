@@ -205,7 +205,8 @@ interface Scenario {
   type: ScenarioType,
   title: string,
   steps: Array<ScenarioStep>,
-  examples?: Record<string, Array<string>> | null
+  examples?: Record<string, Array<string>> | null,
+  tags: Array<Tag>
 }
 
 interface ScenarioStep {

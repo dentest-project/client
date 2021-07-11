@@ -47,6 +47,8 @@
       :mode="mode"
       @input="onTypeChanged"
     />
+    <tags-selector v-if="mode === $modes.edit" :project="project" :value="scenario.tags" @input="onTagsChanged" />
+    <tags-list v-else :tags="scenario.tags" />
     <editable-subtitle
       v-if="mode === $modes.edit && !isBackground"
       label="Scenario title"
@@ -82,14 +84,16 @@ import CreateTableStepParamDialog from '~/components/dialogs/CreateTableStepPara
 import EditableSubtitle from '~/components/EditableSubtitle.vue'
 import ExamplesContent from '~/components/ExamplesContent.vue'
 import StepList from '~/components/StepList.vue'
+import TagsList from '~/components/TagsList.vue';
+import TagsSelector from '~/components/TagsSelector.vue';
 import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep'
 import {
   isInlineStepParam,
-  Mode,
+  Mode, Project,
   Scenario,
   ScenarioStep,
   ScenarioType,
-  StepParamType,
+  StepParamType, Tag,
 } from '~/types'
 
 interface Dimensions {
@@ -99,6 +103,8 @@ interface Dimensions {
 
 export default Vue.extend({
   components: {
+    TagsList,
+    TagsSelector,
     CreateTableStepParamDialog,
     CopyButton,
     DeleteButton,
@@ -135,6 +141,10 @@ export default Vue.extend({
       type: Object,
       required: true,
     } as PropOptions<Scenario>,
+    project: {
+      type: Object,
+      required: true
+    } as PropOptions<Project>,
   },
   data() {
     return {
@@ -217,6 +227,12 @@ export default Vue.extend({
       this.tableParamStepIndex = null
 
       this.onStepsChanged(steps)
+    },
+    onTagsChanged(tags: Array<Tag>): void {
+      this.$emit('input', {
+        ...this.scenario,
+        tags,
+      })
     },
     onTitleChanged(title: string): void {
       this.$emit('input', {

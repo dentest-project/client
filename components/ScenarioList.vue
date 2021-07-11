@@ -9,6 +9,7 @@
       :can-write="canWrite"
       :scenario="scenario"
       :backgroundable="i === 0"
+      :project="project"
       :key="i"
       @input="(e) => onUpdated(i, e)"
       @copy="() => onCopy(i)"
@@ -26,7 +27,7 @@ import AddButton from '~/components/buttons/AddButton.vue'
 import ScenarioContent from '~/components/ScenarioContent.vue'
 import {
   InlineStepParam,
-  MultilineStepParam,
+  MultilineStepParam, Project,
   Scenario,
   ScenarioStep,
   ScenarioType,
@@ -46,6 +47,10 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+    project: {
+      type: Object,
+      required: true
+    } as PropOptions<Project>,
     scenarios: {
       type: Array,
       required: true,
@@ -62,6 +67,7 @@ export default Vue.extend({
           type: ScenarioType.Regular,
           title: 'Scenario title',
           steps: [] as Array<ScenarioStep>,
+          tags: []
         },
       ])
     },
