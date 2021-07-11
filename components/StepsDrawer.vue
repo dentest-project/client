@@ -72,6 +72,7 @@
       v-if="updateStep"
       v-model="stepUpdateDialog"
       :step="updateStep"
+      :project="project"
       @updated="onStepUpdated"
       @delete-request="onStepDeleteRequest"
       @errored="onStepUpdateError"

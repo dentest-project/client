@@ -301,7 +301,8 @@ interface UpdateProject {
 
 interface UpdateStep {
   id: number,
-  parts: Array<StepPart>
+  parts: Array<StepPart>,
+  tags: Array<Tag>
 }
 
 interface User extends BaseUser {

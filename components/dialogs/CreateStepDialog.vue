@@ -49,13 +49,14 @@ import Vue, { PropOptions } from 'vue'
 import SplitButton from '~/components/buttons/SplitButton.vue'
 import StepParamTypeSelector from '~/components/StepParamTypeSelector.vue'
 import SubmitButton from '~/components/buttons/SubmitButton.vue'
-import TagsSelector from '~/components/TagsSelector.vue';
+import TagsSelector from '~/components/TagsSelector.vue'
 import {
   Project,
   SelectItem,
   StepParamType,
   StepPartType,
   StepType,
+  Tag,
 } from '~/types'
 
 interface SelectionBoundaries {
@@ -69,7 +70,12 @@ interface Selection {
 }
 
 export default Vue.extend({
-  components: { TagsSelector, SplitButton, StepParamTypeSelector, SubmitButton },
+  components: {
+    TagsSelector,
+    SplitButton,
+    StepParamTypeSelector,
+    SubmitButton,
+  },
   model: {
     prop: 'value',
   },
@@ -98,7 +104,7 @@ export default Vue.extend({
       selection: {
         inputId: null,
       } as Selection,
-      tags: [] as Array<Tag>
+      tags: [] as Array<Tag>,
     }
   },
   methods: {
@@ -219,7 +225,7 @@ export default Vue.extend({
             },
             extraParamType: this.extraParamType,
             parts: this.parts,
-            tags: this.tags
+            tags: this.tags,
           },
           this.$axios
         )

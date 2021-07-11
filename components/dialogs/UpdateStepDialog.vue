@@ -17,6 +17,7 @@
                 :class="`update-step-input--${part.type}`"
               />
             </div>
+            <tags-selector v-model="tags" :project="project" />
           </div>
         </v-card-text>
         <v-card-actions>
@@ -35,10 +36,11 @@
 import Vue, { PropOptions } from 'vue'
 import ErrorActionButton from '~/components/buttons/ErrorActionButton.vue'
 import SubmitButton from '~/components/buttons/SubmitButton.vue'
-import { Step } from '~/types'
+import TagsSelector from '~/components/TagsSelector.vue'
+import { Project, Step } from '~/types'
 
 export default Vue.extend({
-  components: { ErrorActionButton, SubmitButton },
+  components: { TagsSelector, ErrorActionButton, SubmitButton },
   model: {
     prop: 'value',
   },
@@ -51,10 +53,15 @@ export default Vue.extend({
       type: Object,
       required: true,
     } as PropOptions<Step>,
+    project: {
+      type: Object,
+      required: true,
+    } as PropOptions<Project>,
   },
   data: function () {
     return {
       parts: this.step.parts,
+      tags: this.step.tags,
     }
   },
   methods: {
@@ -70,6 +77,7 @@ export default Vue.extend({
           {
             id: this.step.id,
             parts: this.parts,
+            tags: this.tags,
           },
           this.$axios
         )
@@ -86,6 +94,7 @@ export default Vue.extend({
   watch: {
     step(s: Step) {
       this.parts = s.parts
+      this.tags = s.tags
     },
   },
 })
