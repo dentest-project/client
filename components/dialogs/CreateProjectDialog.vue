@@ -18,6 +18,9 @@
         </v-card-actions>
       </v-card>
     </form>
+    <v-snackbar v-model="conflictSnackbarOpened" :color="$colors.error">
+      This project name is already taken
+    </v-snackbar>
   </v-dialog>
 </template>
 
@@ -51,6 +54,7 @@ export default Vue.extend({
     return {
       projectName: '',
       projectVisibility: ProjectVisibility.Public,
+      conflictSnackbarOpened: false,
     }
   },
   methods: {
@@ -75,7 +79,11 @@ export default Vue.extend({
         this.$emit('created')
         this.projectName = ''
       } catch (error) {
-        this.$emit('errored')
+        if (error.response.status === 409) {
+          this.conflictSnackbarOpened = true
+        } else {
+          this.$emit('errored')
+        }
       }
     },
     onDialogStatusChanged(e: boolean) {

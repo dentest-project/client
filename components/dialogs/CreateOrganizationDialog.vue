@@ -17,9 +17,9 @@
         </v-card-actions>
       </v-card>
     </form>
-    <v-snackbar v-model="conflictSnackbarOpened" :color="$colors.error"
-      >This organization name is already taken</v-snackbar
-    >
+    <v-snackbar v-model="conflictSnackbarOpened" :color="$colors.error">
+      This organization name is already taken
+    </v-snackbar>
   </v-dialog>
 </template>
 
