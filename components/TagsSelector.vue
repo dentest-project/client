@@ -42,6 +42,9 @@ export default Vue.extend({
     CreateTagDialog,
     TagsAutocomplete,
   },
+  model: {
+    prop: 'value',
+  },
   props: {
     project: {
       type: Object,
@@ -49,8 +52,8 @@ export default Vue.extend({
     } as PropOptions<Project>,
     value: {
       type: Array,
-      required: true
-    } as PropOptions<Array<Tag>>
+      required: true,
+    } as PropOptions<Array<Tag>>,
   },
   data: function (): Data {
     return {
@@ -89,7 +92,7 @@ export default Vue.extend({
     },
     onInput(v: Array<Tag>): void {
       this.$emit('input', v)
-    }
+    },
   },
 })
 </script>

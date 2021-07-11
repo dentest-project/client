@@ -47,7 +47,12 @@
       :mode="mode"
       @input="onTypeChanged"
     />
-    <tags-selector v-if="mode === $modes.edit" :project="project" :value="scenario.tags" @input="onTagsChanged" />
+    <tags-selector
+      v-if="mode === $modes.edit"
+      :project="project"
+      :value="scenario.tags"
+      @input="onTagsChanged"
+    />
     <tags-list v-else :tags="scenario.tags" />
     <editable-subtitle
       v-if="mode === $modes.edit && !isBackground"
@@ -84,16 +89,18 @@ import CreateTableStepParamDialog from '~/components/dialogs/CreateTableStepPara
 import EditableSubtitle from '~/components/EditableSubtitle.vue'
 import ExamplesContent from '~/components/ExamplesContent.vue'
 import StepList from '~/components/StepList.vue'
-import TagsList from '~/components/TagsList.vue';
-import TagsSelector from '~/components/TagsSelector.vue';
+import TagsList from '~/components/TagsList.vue'
+import TagsSelector from '~/components/TagsSelector.vue'
 import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep'
 import {
   isInlineStepParam,
-  Mode, Project,
+  Mode,
+  Project,
   Scenario,
   ScenarioStep,
   ScenarioType,
-  StepParamType, Tag,
+  StepParamType,
+  Tag,
 } from '~/types'
 
 interface Dimensions {
@@ -143,7 +150,7 @@ export default Vue.extend({
     } as PropOptions<Scenario>,
     project: {
       type: Object,
-      required: true
+      required: true,
     } as PropOptions<Project>,
   },
   data() {

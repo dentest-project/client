@@ -228,7 +228,8 @@ interface Step {
   project: StepProject,
   type: StepType,
   extraParamType: StepParamType,
-  parts: Array<StepPart>
+  parts: Array<StepPart>,
+  tags: Array<Tag>
 }
 
 interface StepParam {

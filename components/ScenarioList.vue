@@ -27,11 +27,13 @@ import AddButton from '~/components/buttons/AddButton.vue'
 import ScenarioContent from '~/components/ScenarioContent.vue'
 import {
   InlineStepParam,
-  MultilineStepParam, Project,
+  MultilineStepParam,
+  Project,
   Scenario,
   ScenarioStep,
   ScenarioType,
-  TableStepParam, Tag,
+  TableStepParam,
+  Tag,
 } from '~/types'
 
 export default Vue.extend({
@@ -49,7 +51,7 @@ export default Vue.extend({
     },
     project: {
       type: Object,
-      required: true
+      required: true,
     } as PropOptions<Project>,
     scenarios: {
       type: Array,
@@ -67,7 +69,7 @@ export default Vue.extend({
           type: ScenarioType.Regular,
           title: 'Scenario title',
           steps: [] as Array<ScenarioStep>,
-          tags: []
+          tags: [],
         },
       ])
     },
@@ -121,9 +123,9 @@ export default Vue.extend({
           ...toCopy.tags.map((t: Tag) => ({
             id: t.id,
             color: t.color,
-            name: t.name
+            name: t.name,
           })),
-        ]
+        ],
       })
 
       this.$emit('input', scenarios)

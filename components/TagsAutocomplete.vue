@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import blackOrWhite from '~/helpers/blackOrWhite';
+import blackOrWhite from '~/helpers/blackOrWhite'
 import { Project, Tag } from '~/types'
 
 export default Vue.extend({
@@ -48,8 +48,8 @@ export default Vue.extend({
     } as PropOptions<Array<Tag>>,
     value: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {

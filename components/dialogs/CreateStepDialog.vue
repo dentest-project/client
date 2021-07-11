@@ -7,7 +7,11 @@
           <div class="create-step-dialog">
             <v-select :items="stepTypes" v-model="type" />
             <div class="create-step-inputs">
-              <div class="create-step-input" v-for="(part, i) in parts" :key="partsHashes[i].toString() + '#' + i">
+              <div
+                class="create-step-input"
+                v-for="(part, i) in parts"
+                :key="partsHashes[i].toString() + '#' + i"
+              >
                 <v-text-field
                   v-model="parts[i].content"
                   :class="`create-step-input--${parts[i].type}`"
@@ -19,12 +23,16 @@
                   @mousedown="onPotentialSelectionEnd"
                   @click:clear.stop="() => onInputCleared(i)"
                 />
-                <split-button v-if="selection.inputId === i" @click="onSplitButtonClicked" />
+                <split-button
+                  v-if="selection.inputId === i"
+                  @click="onSplitButtonClicked"
+                />
               </div>
             </div>
             <div class="create-step-type-selector">
               <step-param-type-selector v-model="extraParamType" />
             </div>
+            <tags-selector v-model="tags" :project="project" />
           </div>
         </v-card-text>
         <v-card-actions>
@@ -38,9 +46,10 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import SplitButton from '~/components/buttons/SplitButton.vue';
+import SplitButton from '~/components/buttons/SplitButton.vue'
 import StepParamTypeSelector from '~/components/StepParamTypeSelector.vue'
 import SubmitButton from '~/components/buttons/SubmitButton.vue'
+import TagsSelector from '~/components/TagsSelector.vue';
 import {
   Project,
   SelectItem,
@@ -50,17 +59,17 @@ import {
 } from '~/types'
 
 interface SelectionBoundaries {
-  start: number | null,
+  start: number | null
   end: number | null
 }
 
 interface Selection {
-  inputId: number | null,
+  inputId: number | null
   boundaries: SelectionBoundaries | null
 }
 
 export default Vue.extend({
-  components: { SplitButton, StepParamTypeSelector, SubmitButton },
+  components: { TagsSelector, SplitButton, StepParamTypeSelector, SubmitButton },
   model: {
     prop: 'value',
   },
@@ -87,8 +96,9 @@ export default Vue.extend({
       extraParamType: StepParamType.None,
       partsHashes: [Math.random()],
       selection: {
-        inputId: null
-      } as Selection
+        inputId: null,
+      } as Selection,
+      tags: [] as Array<Tag>
     }
   },
   methods: {
@@ -109,8 +119,8 @@ export default Vue.extend({
         inputId: i,
         boundaries: {
           start: target.selectionStart,
-          end: target.selectionEnd
-        }
+          end: target.selectionEnd,
+        },
       }
     },
     onInputCleared(i: number): void {
@@ -154,11 +164,11 @@ export default Vue.extend({
       }, 50)
     },
     onSplitButtonClicked(): void {
-      const id = this.selection.inputId;
-      const boundaries = this.selection.boundaries;
+      const id = this.selection.inputId
+      const boundaries = this.selection.boundaries
 
       if (null === id || null === boundaries) {
-        return;
+        return
       }
 
       const value = this.parts[id].content
@@ -209,6 +219,7 @@ export default Vue.extend({
             },
             extraParamType: this.extraParamType,
             parts: this.parts,
+            tags: this.tags
           },
           this.$axios
         )

@@ -48,7 +48,7 @@ export default Vue.extend({
   data: function () {
     return {
       tagName: '',
-      color: '#FF0000'
+      color: '#FF0000',
     }
   },
   methods: {
