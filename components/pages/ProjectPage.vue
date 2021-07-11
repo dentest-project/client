@@ -2,7 +2,7 @@
   <v-main>
     <breadcrumb :items="breadcrumbItems" />
     <editable-title
-      v-if="$auth.loggedIn && canAdministrate"
+      v-if="$auth.loggedIn && (canAdministrate || (!isProject && canWrite))"
       :value="title"
       label="Title"
       @submit="onTitleUpdated"
@@ -157,6 +157,7 @@ import AddFeatureButton from '~/components/buttons/AddFeatureButton.vue'
 import AddFolderButton from '~/components/buttons/AddFolderButton.vue'
 import DeleteButton from '~/components/buttons/DeleteButton.vue'
 import ExitButton from '~/components/buttons/ExitButton.vue'
+import TokenButton from '~/components/buttons/TokenButton.vue'
 import UsersButton from '~/components/buttons/UsersButton.vue'
 import VisibilityButton from '~/components/buttons/VisibilityButton.vue'
 import FeatureCard from '~/components/cards/FeatureCard.vue'
@@ -169,7 +170,6 @@ import GetTokenDialog from '~/components/dialogs/GetTokenDialog.vue'
 import LeaveProjectDialog from '~/components/dialogs/LeaveProjectDialog.vue'
 import EditableTitle from '~/components/EditableTitle.vue'
 import Grid3 from '~/components/Grid3.vue'
-import TokenButton from '~/components/buttons/TokenButton.vue'
 import {
   Breadcrumb as BreadcrumbType,
   OrganizationPermission,
@@ -178,7 +178,6 @@ import {
   ProjectPermission,
   ProjectVisibility,
   UpdateFeatureParentPath,
-  UpdateFeaturePath,
   UpdatePathParent,
 } from '~/types'
 
@@ -501,6 +500,7 @@ export default Vue.extend({
       ) {
         return true
       }
+
       if (!rootProject.organization) {
         return false
       }
@@ -513,6 +513,9 @@ export default Vue.extend({
         ) !== 'undefined'
       )
     },
+    isProject: function (): boolean {
+      return !!((this as any).path as Path).project
+    },
     isProjectUser: function (): boolean {
       const rootProject = ((this as any).path as Path).rootProject
 
@@ -520,13 +523,27 @@ export default Vue.extend({
         return false
       }
 
-      return (
+      if (
         typeof rootProject.permissions.find(
           (p) =>
             p === ProjectPermission.Admin ||
             p === ProjectPermission.Write ||
             p === ProjectPermission.Read ||
             p === ProjectPermission.Pull
+        ) !== 'undefined'
+      ) {
+        return true
+      }
+
+      if (!rootProject.organization) {
+        return false
+      }
+
+      return (
+        typeof rootProject.organization.permissions.find(
+          (p) =>
+            p === OrganizationPermission.Admin ||
+            p === OrganizationPermission.ProjectWrite
         ) !== 'undefined'
       )
     },
