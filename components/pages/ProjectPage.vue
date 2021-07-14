@@ -388,7 +388,6 @@ export default Vue.extend({
           if (updatedProject.slug !== this.$route.params.project_slug) {
             await this.$router.push(this.$routes.project(updatedProject))
           }
-
         } catch (error) {
           this.projectUpdateErrorSnackbarOpened = true
         }
@@ -407,7 +406,6 @@ export default Vue.extend({
           if (updatedPath.slug !== this.$route.params.path_slug) {
             await this.$router.push(this.$routes.path(updatedPath))
           }
-
         } catch (error) {
           this.pathUpdateErrorSnackbarOpened = true
         }

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Feature, Path, Project, ProjectRootPath } from '~/types';
+import { Feature, Path, Project } from '~/types';
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -15,7 +15,8 @@ interface Routes {
   path(path: Path): string,
   project(project: Project): string,
   projectUsers(path: Project): string,
-  register(): string
+  register(): string,
+  resetPassword(): string
 }
 
 Vue.prototype.$routes = {
@@ -40,5 +41,6 @@ Vue.prototype.$routes = {
   projectUsers: function (project: Project): string {
     return `${this.project(project)}/users`;
   },
-  register: (): string => '/register'
+  register: (): string => '/register',
+  resetPassword: (): string => '/reset-password'
 } as Routes;

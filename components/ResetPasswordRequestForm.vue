@@ -5,7 +5,9 @@
       label="Email"
       :rules="[rules.email, rules.required]"
     />
-    <v-btn type="submit" :color="$colors.primary" dark>Send me an email to reset my password</v-btn>
+    <v-btn type="submit" :color="$colors.primary" dark
+      >Send me an email to reset my password</v-btn
+    >
   </form>
 </template>
 
@@ -35,7 +37,7 @@ export default Vue.extend({
   methods: {
     onSubmit(): void {
       this.$emit('submit', {
-        email: this.email
+        email: this.email,
       })
     },
   },

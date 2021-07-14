@@ -7,13 +7,18 @@
     <reset-password-form v-else @submit="onSubmit" />
 
     <v-snackbar v-model="requestedSnackbarOpened" :color="$colors.success">
-      If the address exists on Dentest, an email has been sent to it with a link for password reset
+      If the address exists on Dentest, an email has been sent to it with a link
+      for password reset
     </v-snackbar>
     <v-snackbar v-model="resetSnackbarOpened" :color="$colors.success">
       Your password has been successfully reset!
     </v-snackbar>
-    <v-snackbar v-model="resetErrorSnackbarOpened" :color="$colors.error">We couldn't reset your password</v-snackbar>
-    <v-snackbar v-model="errorSnackbarOpened" :color="$colors.error">An error occurred</v-snackbar>
+    <v-snackbar v-model="resetErrorSnackbarOpened" :color="$colors.error"
+      >We couldn't reset your password</v-snackbar
+    >
+    <v-snackbar v-model="errorSnackbarOpened" :color="$colors.error"
+      >An error occurred</v-snackbar
+    >
   </v-main>
 </template>
 
@@ -21,7 +26,7 @@
 import Vue from 'vue'
 import ResetPasswordForm from '~/components/ResetPasswordForm.vue'
 import ResetPasswordRequestForm from '~/components/ResetPasswordRequestForm.vue'
-import { ResetPasswordRequest } from '~/types';
+import { ResetPasswordRequest } from '~/types'
 
 interface ResetPasswordFormOutput {
   password: string
@@ -35,39 +40,44 @@ export default Vue.extend({
       requestedSnackbarOpened: false,
       resetSnackbarOpened: false,
       resetErrorSnackbarOpened: false,
-      errorSnackbarOpened: false
+      errorSnackbarOpened: false,
     }
   },
   methods: {
     async onRequestSubmit(data: ResetPasswordRequest): Promise<void> {
       try {
-        await this.$api.resetPasswordRequest(data, this.$axios);
-        this.requestedSnackbarOpened = true;
+        await this.$api.resetPasswordRequest(data, this.$axios)
+        this.requestedSnackbarOpened = true
       } catch (error) {
-        this.errorSnackbarOpened = true;
+        this.errorSnackbarOpened = true
       }
     },
     async onSubmit(data: ResetPasswordFormOutput): Promise<void> {
       try {
-        await this.$api.resetPassword({
-          code: this.$route.query.code,
-          newPassword: data.password
-        }, this.$axios);
-        this.resetSnackbarOpened = true;
-        setTimeout(() => { this.$router.push('/login'); }, 2000);
+        await this.$api.resetPassword(
+          {
+            code: this.$route.query.code,
+            newPassword: data.password,
+          },
+          this.$axios
+        )
+        this.resetSnackbarOpened = true
+        setTimeout(() => {
+          this.$router.push('/login')
+        }, 2000)
       } catch (error) {
         if (error.response.status === 404) {
-          this.resetErrorSnackbarOpened = true;
+          this.resetErrorSnackbarOpened = true
         } else {
-          this.errorSnackbarOpened = true;
+          this.errorSnackbarOpened = true
         }
       }
-    }
+    },
   },
   computed: {
     isRequest(): bool {
       return !(this as any).$route.query.code
-    }
-  }
-});
+    },
+  },
+})
 </script>

@@ -46,7 +46,7 @@ export default Vue.extend({
   data: function () {
     return {
       pathName: '',
-      conflictSnackbarOpened: false
+      conflictSnackbarOpened: false,
     }
   },
   methods: {
