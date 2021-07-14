@@ -1,11 +1,15 @@
 <template>
-  <feature-page :feature="feature" @saved="onSaved" @needUpdate="onNeedUpdate" />
+  <feature-page
+    :feature="feature"
+    @saved="onSaved"
+    @needUpdate="onNeedUpdate"
+  />
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import FeaturePage from '~/components/pages/FeaturePage.vue';
-import { Feature, Scenario } from '~/types';
+import FeaturePage from '~/components/pages/FeaturePage.vue'
+import { Feature, Scenario } from '~/types'
 
 interface InitialData {
   feature: Feature
@@ -15,11 +19,14 @@ export default Vue.extend({
   auth: false,
   components: { FeaturePage },
   async asyncData({ $api, params }): Promise<InitialData> {
-    const feature: Feature = await $api.getFeature(params.path_id, params.feature_slug);
+    const feature: Feature = await $api.getFeature(
+      params.path_id,
+      params.feature_slug
+    )
 
     return {
-      feature
-    };
+      feature,
+    }
   },
   data: function () {
     return {
@@ -29,17 +36,17 @@ export default Vue.extend({
         title: '',
         description: '',
         scenarios: [] as Array<Scenario>,
-        rootProject: {}
-      } as Feature
-    };
+        rootProject: {},
+      } as Feature,
+    }
   },
   methods: {
     onNeedUpdate: function (feature: Feature) {
-      this.feature = feature;
+      this.feature = feature
     },
     onSaved: function (feature: Feature) {
-      this.feature = feature;
-    }
-  }
-});
+      this.feature = feature
+    },
+  },
+})
 </script>

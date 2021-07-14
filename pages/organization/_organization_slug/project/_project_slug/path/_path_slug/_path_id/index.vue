@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import ProjectPage from '~/components/pages/ProjectPage.vue';
-import { Path, PathFeature, PathList } from '~/types';
+import ProjectPage from '~/components/pages/ProjectPage.vue'
+import { Path, PathFeature, PathList } from '~/types'
 
 interface InitialData {
   path: Path
@@ -15,11 +15,11 @@ export default Vue.extend({
   auth: false,
   components: { ProjectPage },
   async asyncData({ $api, params }): Promise<InitialData> {
-    const path: Path = await $api.getPath(params.path_id);
+    const path: Path = await $api.getPath(params.path_id)
 
     return {
-      path
-    };
+      path,
+    }
   },
   data: function (): InitialData {
     return {
@@ -29,14 +29,17 @@ export default Vue.extend({
         project: undefined,
         path: '',
         children: [] as PathList,
-        features: [] as Array<PathFeature>
-      } as Path
-    };
+        features: [] as Array<PathFeature>,
+      } as Path,
+    }
   },
   methods: {
     async onNeedReload(): Promise<void> {
-      this.path = await this.$api.getPath(this.$route.params.path_id, this.$axios);
+      this.path = await this.$api.getPath(
+        this.$route.params.path_id,
+        this.$axios
+      )
     },
-  }
-});
+  },
+})
 </script>
