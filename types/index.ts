@@ -200,6 +200,16 @@ interface Register {
   password: string
 }
 
+interface ResetPassword {
+  code: string,
+  newPassword: string
+}
+
+interface ResetPasswordRequest {
+  email: string
+}
+
+
 interface Scenario {
   id?: number,
   type: ScenarioType,
@@ -353,6 +363,8 @@ export {
   ProjectUserToken,
   ProjectVisibility,
   Register,
+  ResetPassword,
+  ResetPasswordRequest,
   Scenario,
   ScenarioStep,
   ScenarioType,

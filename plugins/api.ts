@@ -21,7 +21,7 @@ import {
   ProjectUser,
   ProjectUserList,
   ProjectUserToken,
-  Register,
+  Register, ResetPassword, ResetPasswordRequest,
   Step, Tag,
   UpdateFeature, UpdateFeatureParentPath, UpdateFeatureStatus,
   UpdateOrganizationName,
@@ -78,6 +78,8 @@ interface Api {
   getTags(projectId: string, axios?: NuxtAxiosInstance): Promise<Array<Tag>>,
   login(user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse>,
   register(user: Register, axios?: NuxtAxiosInstance): Promise<User>,
+  resetPassword(resetPassword: ResetPassword, axios?: NuxtAxiosInstance): Promise<void>,
+  resetPasswordRequest(resetPasswordRequest: ResetPasswordRequest, axios?: NuxtAxiosInstance): Promise<void>,
   saveFeature(feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature>,
   searchUsers(query: string, organizationSlug?: string | null, axios?: NuxtAxiosInstance): Promise<Array<BaseUser>>,
   updateFeaturePath(featurePath: UpdateFeatureParentPath, axios?: NuxtAxiosInstance): Promise<Path>,
@@ -153,6 +155,8 @@ const Api = (context: any) => {
     getProjectUserToken: async (projectId: string, userId: string, axios?: NuxtAxiosInstance): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`, axios),
     login: async (user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse> => post(`login`, user, axios),
     register: async (user: Register, axios?: NuxtAxiosInstance): Promise<User> => post(`register`, user, axios),
+    resetPassword: (resetPassword: ResetPassword, axios?: NuxtAxiosInstance): Promise<void> => post('reset-password', resetPassword, axios),
+    resetPasswordRequest: (resetPasswordRequest: ResetPasswordRequest, axios?: NuxtAxiosInstance): Promise<void> => post('reset-password-request', resetPasswordRequest, axios),
     saveFeature: async (feature: UpdateFeature, axios?: NuxtAxiosInstance): Promise<Feature> => {
       const toSave = {
         ...feature,
