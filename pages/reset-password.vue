@@ -56,7 +56,7 @@ export default Vue.extend({
       try {
         await this.$api.resetPassword(
           {
-            code: this.$route.query.code,
+            code: this.code,
             newPassword: data.password,
           },
           this.$axios
@@ -75,7 +75,12 @@ export default Vue.extend({
     },
   },
   computed: {
-    isRequest(): bool {
+    code(): string {
+      const code = this.$route.query.code;
+
+      return typeof code === 'string' ? code : ''
+    },
+    isRequest(): boolean {
       return !(this as any).$route.query.code
     },
   },
