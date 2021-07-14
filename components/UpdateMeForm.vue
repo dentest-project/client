@@ -13,10 +13,11 @@
     <v-text-field
       v-model="password"
       label="Password"
-      :rules="[rules.required, rules.length]"
+      :rules="[rules.length]"
       type="password"
     />
-    <v-btn type="submit" :color="$colors.primary" dark>Register</v-btn>
+    <v-btn type="submit" :color="$colors.primary" dark>Update profile</v-btn>
+    <v-btn :color="$colors.error" dark @click="onDeleteButtonClicked">Delete account</v-btn>
   </form>
 </template>
 
@@ -26,8 +27,8 @@ import Vue from 'vue'
 export default Vue.extend({
   data() {
     return {
-      username: '',
-      email: '',
+      username: this.$auth.user.username,
+      email: this.$auth.user.email,
       password: '',
       rules: {
         email(value: string): boolean | string {
@@ -43,7 +44,7 @@ export default Vue.extend({
           return 'This field is required'
         },
         length(value: string): boolean | string {
-          if (value.length >= 8) {
+          if (value.length === 0 || value.length >= 8) {
             return true
           }
 
@@ -53,6 +54,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    onDeleteButtonClicked(): void {
+      this.$emit('delete')
+    },
     onSubmit(): void {
       this.$emit('submit', {
         username: this.username,

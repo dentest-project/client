@@ -16,7 +16,8 @@ interface Routes {
   project(project: Project): string,
   projectUsers(path: Project): string,
   register(): string,
-  resetPassword(): string
+  resetPassword(): string,
+  updateProfile(): string
 }
 
 Vue.prototype.$routes = {
@@ -42,5 +43,6 @@ Vue.prototype.$routes = {
     return `${this.project(project)}/users`;
   },
   register: (): string => '/register',
-  resetPassword: (): string => '/reset-password'
+  resetPassword: (): string => '/reset-password',
+  updateProfile: (): string => '/update-profile'
 } as Routes;

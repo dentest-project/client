@@ -288,6 +288,8 @@ interface UpdateFeatureStatus {
 
 interface UpdateFeaturePath extends CreateFeaturePath {}
 
+interface UpdateMe extends Register {}
+
 interface UpdateOrganizationName {
   id: string,
   name: string
@@ -382,6 +384,7 @@ export {
   UpdateFeaturePath,
   UpdateFeatureParentPath,
   UpdateFeatureStatus,
+  UpdateMe,
   UpdateOrganizationName,
   UpdatePath,
   UpdatePathParent,

@@ -3,8 +3,9 @@
     <v-text-field
       v-model="password"
       label="New password"
-      :rules="[rules.required]"
+      :rules="[rules.required, rules.length]"
       type="password"
+      hint="Please use a minimum of 8 chars"
     />
     <v-btn type="submit" :color="$colors.primary" dark>Reset my password</v-btn>
   </form>
@@ -25,6 +26,13 @@ export default Vue.extend({
 
           return 'This field is required'
         },
+        length(value: string): boolean | string {
+          if (value.length >= 8) {
+            return true
+          }
+
+          return 'This field should be at least 8 characters long'
+        }
       },
     }
   },

@@ -3,22 +3,29 @@
     <h1>Register</h1>
     <register-form @submit="onSubmit" />
     <div class="register-switch-to-login">
-      <nuxt-link :to="$routes.login()"
-        >Already have an account? Log in instead ;)</nuxt-link
-      >
+      <nuxt-link :to="$routes.login()">
+        Already have an account? Log in instead ;)
+      </nuxt-link>
     </div>
-    <v-snackbar v-model="registeredSnackbarOpened" :color="$colors.success"
-      >Welcome ;)</v-snackbar
+    <v-snackbar
+      v-model="registeredSnackbarOpened"
+      :color="$colors.success"
     >
+      Welcome ;)
+    </v-snackbar>
     <v-snackbar
       v-model="registrationConflictErrorSnackbarOpened"
       :color="$colors.error"
-      >This email or username is already existing. Try to login
-      instead.</v-snackbar
     >
-    <v-snackbar v-model="registrationErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while registering</v-snackbar
+      This email or username is already existing. Try to login
+      instead.
+    </v-snackbar>
+    <v-snackbar
+      v-model="registrationErrorSnackbarOpened"
+      :color="$colors.error"
     >
+      An error occurred while registering
+    </v-snackbar>
   </v-main>
 </template>
 

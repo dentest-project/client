@@ -10,32 +10,54 @@
       @delete="onUserDelete"
       @change="onUserChanged"
     />
-    <v-snackbar v-model="addSuccessSnackbarOpened" :color="$colors.success"
-      >User added</v-snackbar
+    <v-snackbar
+      v-model="addSuccessSnackbarOpened"
+      :color="$colors.success"
     >
-    <v-snackbar v-model="deleteSuccessSnackbarOpened" :color="$colors.success"
-      >User removed</v-snackbar
+      User added
+    </v-snackbar>
+    <v-snackbar
+      v-model="deleteSuccessSnackbarOpened"
+      :color="$colors.success"
     >
-    <v-snackbar v-model="updateSuccessSnackbarOpened" :color="$colors.success"
-      >User updated</v-snackbar
+      User removed
+    </v-snackbar>
+    <v-snackbar
+      v-model="updateSuccessSnackbarOpened"
+      :color="$colors.success"
     >
-    <v-snackbar v-model="addErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while updating the user</v-snackbar
+      User updated
+    </v-snackbar>
+    <v-snackbar
+      v-model="addErrorSnackbarOpened"
+      :color="$colors.error"
     >
-    <v-snackbar v-model="addConflictErrorSnackbarOpened" :color="$colors.error"
-      >The user is already in this project</v-snackbar
+      An error occurred while updating the user
+    </v-snackbar>
+    <v-snackbar
+      v-model="addConflictErrorSnackbarOpened"
+      :color="$colors.error"
     >
-    <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while removing the user</v-snackbar
+      The user is already in this project
+    </v-snackbar>
+    <v-snackbar
+      v-model="deleteErrorSnackbarOpened"
+      :color="$colors.error"
     >
-    <v-snackbar v-model="updateErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while updating the user</v-snackbar
+      An error occurred while removing the user
+    </v-snackbar>
+    <v-snackbar
+      v-model="updateErrorSnackbarOpened"
+      :color="$colors.error"
     >
+      An error occurred while updating the user
+    </v-snackbar>
   </v-main>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import Breadcrumb from '~/components/Breadcrumb.vue';
 import UsersTable from '~/components/UsersTable.vue'
 import {
   BaseUser,
@@ -53,6 +75,7 @@ interface InitialData {
 export default Vue.extend({
   auth: true,
   components: {
+    Breadcrumb,
     UsersTable,
   },
   async asyncData({ $api, params }): Promise<InitialData> {

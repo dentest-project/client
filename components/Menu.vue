@@ -9,14 +9,17 @@
     <logo v-if="transparent" />
     <bar-logo v-else />
     <v-toolbar-title>
-      <nuxt-link v-if="$route.path !== '/'" :to="$routes.home()"
-        >Dentest</nuxt-link
+      <nuxt-link
+        v-if="$route.path !== '/'"
+        :to="$routes.home()"
       >
+        Dentest
+      </nuxt-link>
       <h1 v-else>Dentest</h1>
     </v-toolbar-title>
     <v-spacer />
     <div v-if="$auth.loggedIn">
-      <span>{{ $auth.user.username }}</span>
+      <v-btn class="menu-username" :to="$routes.updateProfile()" :color="$colors.primary" small>{{ $auth.user.username }}</v-btn>
       <a class="menu-logout" href="#" @click.prevent="logout">Log out</a>
     </div>
     <nuxt-link v-else :to="$routes.login()">Log in</nuxt-link>
@@ -51,6 +54,10 @@ export default Vue.extend({
   color: #ffffff;
   font-size: 1.25rem;
   padding: 0;
+}
+
+.menu-username {
+  margin-right: 1rem;
 }
 
 .menu-logout {
