@@ -1,5 +1,10 @@
 <template>
   <form>
+    <steps-button
+      v-if="canWrite"
+      class="feature-content-step-button"
+      @click.prevent="activateDrawer"
+    />
     <tags-selector
       v-if="canWrite"
       :project="feature.rootProject"
@@ -21,7 +26,6 @@
         {{ feature.description }}
       </p>
     </v-sheet>
-    <steps-button v-if="canWrite" @click.prevent="activateDrawer" />
     <scenario-list
       :scenarios="feature.scenarios"
       :can-write="canWrite"
@@ -100,5 +104,11 @@ export default Vue.extend({
 .feature-content-description {
   padding: 1rem;
   white-space: pre;
+}
+
+.feature-content-step-button {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
 }
 </style>

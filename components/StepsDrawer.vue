@@ -1,9 +1,9 @@
 <template>
   <v-navigation-drawer
-    hide-overlay
+    class="step-drawer"
+    :style="`border-color: ${$colors.primary}`"
     fixed
     floating
-    temporary
     right
     v-model="drawer"
   >
@@ -12,6 +12,9 @@
         <v-list-item-title class="title">Steps</v-list-item-title>
         <v-list-item-subtitle> Drag'n'drop your steps </v-list-item-subtitle>
       </v-list-item-content>
+      <v-btn icon @click.stop="drawer = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-list-item>
     <v-divider />
     <v-list-item>
@@ -89,38 +92,44 @@
       v-model="stepCreatedSnackbarOpened"
       :color="$colors.success"
       absolute
-      >Step created</v-snackbar
     >
+      Step created
+    </v-snackbar>
     <v-snackbar
       v-model="stepUpdatedSnackbarOpened"
       :color="$colors.success"
       absolute
-      >Step updated</v-snackbar
     >
+      Step updated
+    </v-snackbar>
     <v-snackbar
       v-model="stepDeletedSnackbarOpened"
       :color="$colors.success"
       absolute
-      >Step deleted</v-snackbar
     >
+      Step deleted
+    </v-snackbar>
     <v-snackbar
       v-model="stepCreationErrorSnackbarOpened"
       :color="$colors.error"
       absolute
-      >An error occurred while creating the step</v-snackbar
     >
+      An error occurred while creating the step
+    </v-snackbar>
     <v-snackbar
       v-model="stepUpdateErrorSnackbarOpened"
       :color="$colors.error"
       absolute
-      >An error occurred while updating the step</v-snackbar
     >
+      An error occurred while updating the step
+    </v-snackbar>
     <v-snackbar
       v-model="stepDeleteErrorSnackbarOpened"
       :color="$colors.error"
       absolute
-      >An error occurred while deleting the step</v-snackbar
     >
+      An error occurred while deleting the step
+    </v-snackbar>
   </v-navigation-drawer>
 </template>
 
@@ -284,6 +293,10 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.step-drawer {
+  border-left: 3px solid;
+}
+
 .step-drawer-step {
   font-style: italic;
   font-size: 0.9rem;

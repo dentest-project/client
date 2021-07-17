@@ -48,7 +48,7 @@ export default Vue.extend({
           }
 
           return 'This field should be at least 8 characters long'
-        }
+        },
       },
     }
   },

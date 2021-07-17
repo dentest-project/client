@@ -1,12 +1,20 @@
 <template>
   <v-btn
     @click="(e) => $emit('click', e)"
-    :color="$colors.quaternary"
+    :color="$colors.primary"
     elevation="0"
-    tile
+    class="steps-button"
     dark
-    x-small
+    fab
+    large
   >
-    Show available steps
+    Show<br />steps
   </v-btn>
 </template>
+
+<style scoped>
+.steps-button {
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+</style>
