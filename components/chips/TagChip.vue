@@ -1,5 +1,10 @@
 <template>
-  <v-chip :color="outlined ? '#333333' : tag.color" :text-color="textColor" :outlined="outlined" @click="$emit('click', tag)">
+  <v-chip
+    :color="outlined ? '#333333' : tag.color"
+    :text-color="textColor"
+    :outlined="outlined"
+    @click="$emit('click', tag)"
+  >
     {{ tag.name }}
   </v-chip>
 </template>
@@ -18,12 +23,14 @@ export default Vue.extend({
     outlined: {
       type: Boolean,
       required: false,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     textColor(): string {
-      return (this as any).outlined ? '#777777' : blackOrWhite((this as any).tag.color);
+      return (this as any).outlined
+        ? '#777777'
+        : blackOrWhite((this as any).tag.color)
     },
   },
 })

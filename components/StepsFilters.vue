@@ -7,20 +7,23 @@
       :outlined="!isTagSelected(tag)"
       @click="onTagClicked"
     />
+    <v-list-item-content v-if="tags.length === 0" class="no-tags">
+      Add tags to your steps to filter them
+    </v-list-item-content>
   </v-list-item>
 </template>
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import TagChip from '~/components/chips/TagChip.vue';
-import { Tag } from '~/types';
+import TagChip from '~/components/chips/TagChip.vue'
+import { Tag } from '~/types'
 
 export default Vue.extend({
   model: {
     prop: 'value',
   },
   components: {
-    TagChip
+    TagChip,
   },
   props: {
     project: {
@@ -42,23 +45,23 @@ export default Vue.extend({
   },
   methods: {
     isTagSelected(tag: Tag): bool {
-      return this.selected.length === 0 || !!this.selected.find((t: Tag) => t.id === tag.id)
-    },
-    async loadTags(): Promise<void> {
-      this.tags = await this.$api.getTags(
-        this.project.id,
-        this.$axios
+      return (
+        this.selected.length === 0 ||
+        !!this.selected.find((t: Tag) => t.id === tag.id)
       )
     },
+    async loadTags(): Promise<void> {
+      this.tags = await this.$api.getTags(this.project.id, this.$axios)
+    },
     onTagClicked(tag: Tag): void {
-      const existing = this.selected.findIndex((t: Tag) => t.id === tag.id);
+      const existing = this.selected.findIndex((t: Tag) => t.id === tag.id)
 
       if (existing !== -1) {
         this.selected.splice(existing, 1)
       } else {
         this.selected.push(tag)
       }
-    }
+    },
   },
   computed: {
     selected: {
@@ -72,3 +75,11 @@ export default Vue.extend({
   },
 })
 </script>
+
+<style scoped>
+.no-tags {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #777777;
+}
+</style>

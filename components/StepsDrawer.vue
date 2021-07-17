@@ -19,7 +19,12 @@
     <v-divider />
     <v-list-item>
       <v-list-item-title>
-        <v-btn :color="$colors.primary" small dark @mousedown="activateStepCreationDialog">
+        <v-btn
+          :color="$colors.primary"
+          small
+          dark
+          @mousedown="activateStepCreationDialog"
+        >
           <strong>Create a new step</strong>
         </v-btn>
       </v-list-item-title>
@@ -141,7 +146,7 @@ import { mapMutations } from 'vuex'
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue'
 import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue'
 import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue'
-import StepsFilters from '~/components/StepsFilters.vue';
+import StepsFilters from '~/components/StepsFilters.vue'
 import { Project, Step, StepParamType, StepType } from '~/types'
 
 interface DisplayableStepsGroup {
@@ -251,10 +256,7 @@ export default Vue.extend({
       this.stepUpdateErrorSnackbarOpened = true
     },
     async loadSteps(): Promise<void> {
-      this.steps = await this.$api.getProjectSteps(
-        this.project.id,
-        this.$axios
-      )
+      this.steps = await this.$api.getProjectSteps(this.project.id, this.$axios)
     },
     iconForStepParamType(type: StepParamType): string {
       switch (type) {
@@ -269,7 +271,11 @@ export default Vue.extend({
       }
     },
     isStepCorrespondingToTags(step: Step): bool {
-      return this.tagsFilterIds.length === 0 || step.tags.map(t => t.id).filter(t => this.tagsFilterIds.includes(t)).length > 0
+      return (
+        this.tagsFilterIds.length === 0 ||
+        step.tags.map((t) => t.id).filter((t) => this.tagsFilterIds.includes(t))
+          .length > 0
+      )
     },
     ...mapMutations({
       addToStore: 'stepsDrawer/dragStep',
@@ -287,12 +293,15 @@ export default Vue.extend({
       ].map(([title, icon, type]) => ({
         title,
         icon,
-        steps: steps.filter((step: Step) => step.type === type && (this as any).isStepCorrespondingToTags(step)),
+        steps: steps.filter(
+          (step: Step) =>
+            step.type === type && (this as any).isStepCorrespondingToTags(step)
+        ),
         active: false,
       }))
     },
     tagsFilterIds(): Array<string> {
-      return (this as any).tagsFilter.map(t => t.id)
+      return (this as any).tagsFilter.map((t) => t.id)
     },
     drawer: {
       get() {
