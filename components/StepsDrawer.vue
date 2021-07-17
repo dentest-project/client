@@ -19,15 +19,17 @@
     <v-divider />
     <v-list-item>
       <v-list-item-title>
-        <v-btn small @mousedown="activateStepCreationDialog">
+        <v-btn :color="$colors.primary" small dark @mousedown="activateStepCreationDialog">
           <strong>Create a new step</strong>
         </v-btn>
       </v-list-item-title>
     </v-list-item>
     <v-divider />
+    <steps-filters v-model="tagsFilter" :project="project" />
+    <v-divider />
     <v-list>
       <v-list-group
-        v-for="group in steps"
+        v-for="group in displayedSteps"
         v-model="group.active"
         :key="group.title"
         :prepend-icon="group.icon"
@@ -139,6 +141,7 @@ import { mapMutations } from 'vuex'
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue'
 import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue'
 import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue'
+import StepsFilters from '~/components/StepsFilters.vue';
 import { Project, Step, StepParamType, StepType } from '~/types'
 
 interface DisplayableStepsGroup {
@@ -153,6 +156,7 @@ export default Vue.extend({
     prop: 'value',
   },
   components: {
+    StepsFilters,
     CreateStepDialog,
     DeleteStepDialog,
     UpdateStepDialog,
@@ -172,8 +176,9 @@ export default Vue.extend({
   },
   data() {
     return {
-      steps: [] as Array<DisplayableStepsGroup>,
+      steps: [] as Array<Step>,
       updateStep: null as Step | null,
+      tagsFilter: [] as Array<Tag>,
       deletingStepId: null as number | null,
       stepCreationDialog: false,
       stepUpdateDialog: false,
@@ -246,21 +251,10 @@ export default Vue.extend({
       this.stepUpdateErrorSnackbarOpened = true
     },
     async loadSteps(): Promise<void> {
-      const steps = await this.$api.getProjectSteps(
+      this.steps = await this.$api.getProjectSteps(
         this.project.id,
         this.$axios
       )
-
-      this.steps = [
-        ['Givens', 'mdi-ray-start', StepType.Given],
-        ['Whens', 'mdi-ray-vertex', StepType.When],
-        ['Thens', 'mdi-ray-end', StepType.Then],
-      ].map(([title, icon, type]) => ({
-        title,
-        icon,
-        steps: steps.filter((step: Step) => step.type === type),
-        active: false,
-      }))
     },
     iconForStepParamType(type: StepParamType): string {
       switch (type) {
@@ -274,12 +268,32 @@ export default Vue.extend({
           return ''
       }
     },
+    isStepCorrespondingToTags(step: Step): bool {
+      return this.tagsFilterIds.length === 0 || step.tags.map(t => t.id).filter(t => this.tagsFilterIds.includes(t)).length > 0
+    },
     ...mapMutations({
       addToStore: 'stepsDrawer/dragStep',
       removeFromStore: 'stepsDrawer/clearDraggedStep',
     }),
   },
   computed: {
+    displayedSteps(): Array<DisplayableStepsGroup> {
+      const steps: Array<Step> = (this as any).steps
+
+      return [
+        ['Givens', 'mdi-ray-start', StepType.Given],
+        ['Whens', 'mdi-ray-vertex', StepType.When],
+        ['Thens', 'mdi-ray-end', StepType.Then],
+      ].map(([title, icon, type]) => ({
+        title,
+        icon,
+        steps: steps.filter((step: Step) => step.type === type && (this as any).isStepCorrespondingToTags(step)),
+        active: false,
+      }))
+    },
+    tagsFilterIds(): Array<string> {
+      return (this as any).tagsFilter.map(t => t.id)
+    },
     drawer: {
       get() {
         return this.value

@@ -16,18 +16,8 @@
       :rules="[rules.length]"
       type="password"
     />
-    <v-btn
-      type="submit"
-      :color="$colors.primary"
-      dark
-    >
-      Update profile
-    </v-btn>
-    <v-btn
-      :color="$colors.error"
-      dark
-      @click="onDeleteButtonClicked"
-    >
+    <v-btn type="submit" :color="$colors.primary" dark> Update profile </v-btn>
+    <v-btn :color="$colors.error" dark @click="onDeleteButtonClicked">
       Delete account
     </v-btn>
   </form>
