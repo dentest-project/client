@@ -147,7 +147,7 @@ import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue'
 import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue'
 import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue'
 import StepsFilters from '~/components/StepsFilters.vue'
-import { Project, Step, StepParamType, StepType } from '~/types'
+import { Project, Step, StepParamType, StepType, Tag } from '~/types'
 
 interface DisplayableStepsGroup {
   title: string
@@ -270,7 +270,7 @@ export default Vue.extend({
           return ''
       }
     },
-    isStepCorrespondingToTags(step: Step): bool {
+    isStepCorrespondingToTags(step: Step): boolean {
       return (
         this.tagsFilterIds.length === 0 ||
         step.tags.map((t) => t.id).filter((t) => this.tagsFilterIds.includes(t))
@@ -301,7 +301,7 @@ export default Vue.extend({
       }))
     },
     tagsFilterIds(): Array<string> {
-      return (this as any).tagsFilter.map((t) => t.id)
+      return (this as any).tagsFilter.map((t: Tag) => t.id)
     },
     drawer: {
       get() {

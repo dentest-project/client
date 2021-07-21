@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import TagChip from '~/components/chips/TagChip.vue'
-import { Tag } from '~/types'
+import { Project, Tag } from '~/types'
 
 export default Vue.extend({
   model: {
@@ -44,7 +44,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    isTagSelected(tag: Tag): bool {
+    isTagSelected(tag: Tag): boolean {
       return (
         this.selected.length === 0 ||
         !!this.selected.find((t: Tag) => t.id === tag.id)
