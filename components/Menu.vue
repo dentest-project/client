@@ -26,7 +26,10 @@
       </v-btn>
       <a class="menu-logout" href="#" @click.prevent="logout">Log out</a>
     </div>
-    <nuxt-link v-else :to="$routes.login()">Log in</nuxt-link>
+    <div v-else>
+      <a href="https://docs.dentest.tech" target="_blank">Docs</a>
+      <nuxt-link :to="$routes.login()">Log in</nuxt-link>
+    </div>
   </v-app-bar>
 </template>
 
@@ -56,12 +59,10 @@ export default Vue.extend({
 .app-bar h1 {
   text-decoration: none;
   color: #ffffff;
-  font-size: 1.25rem;
+  font-size: 1rem;
   padding: 0;
-}
-
-.menu-username {
-  margin-right: 1rem;
+  margin-left: 0.3rem;
+  font-weight: normal;
 }
 
 .menu-logout {
