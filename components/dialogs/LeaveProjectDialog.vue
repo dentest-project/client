@@ -38,6 +38,10 @@ export default Vue.extend({
   },
   methods: {
     async confirm(): Promise<void> {
+      if (typeof this.$auth.user?.id !== 'string') {
+        return;
+      }
+
       try {
         if (this.path.rootProject) {
           await this.$api.deleteProjectUser(

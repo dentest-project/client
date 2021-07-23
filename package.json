@@ -1,22 +1,23 @@
 {
-  "name": "entest-client",
+  "name": "dentest-client",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt-ts",
-    "build": "nuxt-ts build",
-    "start": "nuxt-ts start",
-    "generate": "nuxt-ts generate"
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/typescript-runtime": "^2.0.0",
     "@nuxtjs/auth-next": "^5.0.0-1607335658.590bfae",
     "@nuxtjs/axios": "^5.13.1",
     "@nuxtjs/pwa": "^3.0.2",
     "@types/lodash": "^4.14.165",
     "core-js": "^3.6.5",
     "lodash": "^4.17.20",
-    "nuxt": "^2.14.6"
+    "nuxt": "^2.13.3",
+    "vue-json-pretty": "^1.8.1",
+    "vue-markdown": "^2.1.2"
   },
   "devDependencies": {
     "@mdi/font": "^5.8.55",

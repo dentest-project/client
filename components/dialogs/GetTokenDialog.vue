@@ -48,6 +48,10 @@ export default Vue.extend({
     }
   },
   async mounted() {
+    if (typeof this.$auth.user?.id !== 'string') {
+      return;
+    }
+
     try {
       this.token = (
         await this.$api.getProjectUserToken(
@@ -78,6 +82,10 @@ export default Vue.extend({
       this.copiedSnackbarOpened = true
     },
     async onRefreshClicked() {
+      if (typeof this.$auth.user?.id !== 'string') {
+        return;
+      }
+
       this.token = (
         await this.$api.createProjectUserToken(
           this.project.id,

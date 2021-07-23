@@ -29,8 +29,8 @@ import Vue from 'vue'
 export default Vue.extend({
   data() {
     return {
-      username: this.$auth.user.username,
-      email: this.$auth.user.email,
+      username: this.$auth.user?.username || '',
+      email: this.$auth.user?.email || '',
       password: '',
       rules: {
         email(value: string): boolean | string {
