@@ -122,7 +122,6 @@ export default Vue.extend({
 .step-display-multiline-param {
   background-color: rgba(0, 0, 0, 0.1);
   padding: 1rem;
-  white-space: pre;
 }
 
 .step-display-table-param td {
