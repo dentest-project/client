@@ -16,7 +16,7 @@
       class="step-display-multiline-param"
     >
       <paragraph v-if="!isExtraParamValueJson" :str="extraParamValue" />
-      <vue-json-pretty v-else :data="JSON.parse(extraParamValue)" />
+      <vue-json-pretty v-else :data="JSON.parse(extraParamValue)" :showLength="true" />
     </div>
     <table
       v-else-if="extraParamType === 'table'"

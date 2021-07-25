@@ -94,4 +94,20 @@ h2 {
   color: #4834d4;
 }
 
+.vjs-value__string {
+  color: #2814b4 !important;
+  font-weight: bold;
+}
+.vjs-value__boolean, .vjs-value__number {
+  font-weight: bold;
+}
+.vjs-value__null {
+  font-weight: bold;
+}
+.vjs-comment {
+  color: #ffffff !important;
+  background-color: #000000;
+  font-weight: bold;
+  padding: 2px;
+}
 </style>
