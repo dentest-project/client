@@ -16,5 +16,6 @@
 .steps-button {
   font-weight: bold;
   font-size: 0.8rem;
+  z-index: 999;
 }
 </style>

@@ -22,9 +22,7 @@
         label="Feature description"
         @input="onDescriptionChanged"
       />
-      <p v-else class="feature-content-description">
-        {{ feature.description }}
-      </p>
+      <paragraph v-else class="feature-content-description" :str="feature.description" />
     </v-sheet>
     <scenario-list
       :scenarios="feature.scenarios"
@@ -43,6 +41,7 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import EditableTextarea from '~/components/EditableTextarea.vue'
+import Paragraph from '~/components/Paragraph.vue';
 import ScenarioList from '~/components/ScenarioList.vue'
 import StepsButton from '~/components/buttons/StepsButton.vue'
 import StepsDrawer from '~/components/StepsDrawer.vue'
@@ -52,6 +51,7 @@ import { Feature, Scenario, Tag } from '~/types'
 
 export default Vue.extend({
   components: {
+    Paragraph,
     TagsList,
     TagsSelector,
     EditableTextarea,

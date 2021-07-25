@@ -15,7 +15,8 @@
       v-if="extraParamType === 'multiline'"
       class="step-display-multiline-param"
     >
-      {{ extraParamValue }}
+      <paragraph v-if="!isExtraParamValueJson" :str="extraParamValue" />
+      <vue-json-pretty v-else :data="JSON.parse(extraParamValue)" />
     </div>
     <table
       v-else-if="extraParamType === 'table'"
@@ -32,6 +33,8 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
+import Paragraph from '~/components/Paragraph.vue';
+import isJson from '~/helpers/isJson';
 import {
   InlineStepParam,
   isInlineStepParam,
@@ -43,6 +46,7 @@ import {
 } from '~/types'
 
 export default Vue.extend({
+  components: { Paragraph },
   model: {
     prop: 'step',
   },
@@ -91,6 +95,12 @@ export default Vue.extend({
         (p: StepParam) => !isInlineStepParam(p)
       ).content
     },
+    isExtraParamValueJson(): boolean
+    {
+      const extraParamValue = (this as any).extraParamValue
+
+      return typeof extraParamValue === 'string' && isJson(extraParamValue)
+    }
   },
 })
 </script>

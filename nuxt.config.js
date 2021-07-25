@@ -18,7 +18,8 @@ export default {
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
-    '@assets/css/materialdesignicons.min.css'
+    '@assets/css/materialdesignicons.min.css',
+    'vue-json-pretty/lib/styles.css'
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
@@ -26,7 +27,8 @@ export default {
     '~/plugins/api.ts',
     '~/plugins/colors.ts',
     '~/plugins/mode.ts',
-    '~/plugins/routes.ts'
+    '~/plugins/routes.ts',
+    '~/plugins/vue-json-pretty.ts'
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -58,6 +60,11 @@ export default {
     babel: {
       plugins: [['@babel/plugin-proposal-private-methods', { loose: true }]],
     },
+    extend (config, { isDev, isClient }) {
+      config.node = {
+        fs: 'empty'
+      }
+    }
   },
 
   router: {
