@@ -3,7 +3,7 @@
     class="scenario"
     :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
-    @dragenter.prevent="onDragEnter"
+    @dragover.prevent="onDragEnter"
     @dragleave="onDragLeave"
     @drop="onDrop"
   >
