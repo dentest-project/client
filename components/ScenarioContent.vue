@@ -6,7 +6,7 @@
     @dragover.prevent="onDragEnter"
   >
     <div
-      v-if="draggedOver"
+      v-if="draggedOver && $store.state.stepsDrawer.draggedStep !== null"
       class="scenario-mask"
       @dragleave="onDragLeave"
       @drop="onDrop"
@@ -175,9 +175,14 @@ export default Vue.extend({
     },
     onDrop(): void {
       const droppedStep = this.$store.state.stepsDrawer.draggedStep
+      this.draggedOver = false
+
+      if (null === droppedStep) {
+        return
+      }
+
       const steps = this.scenario.steps
       const step = createScenarioStepFromStep(steps.length, droppedStep)
-      this.draggedOver = false
 
       if (step.withTableParam) {
         const tableParamIndex = step.scenarioStep.params.findIndex(
