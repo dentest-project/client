@@ -1,16 +1,12 @@
 <template>
   <v-sheet
     class="scenario"
-    :class="{ 'scenario--background': isBackground }"
+    :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
     @dragenter.prevent="onDragEnter"
     @dragleave="onDragLeave"
     @drop="onDrop"
   >
-    <div
-      v-if="draggedOver"
-      class="scenario-mask"
-    />
     <up-button
       v-if="canWrite && canMoveUp"
       class="scenario-up"
@@ -346,14 +342,12 @@ export default Vue.extend({
   background-color: #dadada !important;
 }
 
-.scenario-mask {
-  opacity: 0.2;
-  background-color: #badc58;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+.scenario.scenario--dragged, .scenario.scenario--background.scenario.scenario--dragged {
+  background-color: #badc58 !important;
+}
+
+.scenario.scenario--dragged * {
+  pointer-events: none;
 }
 
 .scenario .scenario-up {
