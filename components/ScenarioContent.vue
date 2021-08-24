@@ -3,13 +3,13 @@
     class="scenario"
     :class="{ 'scenario--background': isBackground }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
-    @dragover.prevent="onDragEnter"
+    @dragenter.prevent="onDragEnter"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
   >
     <div
-      v-if="draggedOver && $store.state.stepsDrawer.draggedStep !== null"
+      v-if="draggedOver"
       class="scenario-mask"
-      @dragleave="onDragLeave"
-      @drop="onDrop"
     />
     <up-button
       v-if="canWrite && canMoveUp"
