@@ -1,5 +1,5 @@
 <template>
-  <v-list-item>
+  <v-list-item class="steps-filters">
     <tag-chip
       v-for="tag in tags"
       :key="tag.id"
@@ -81,5 +81,9 @@ export default Vue.extend({
   font-size: 0.8rem;
   font-style: italic;
   color: #777777;
+}
+.v-list-item.steps-filters {
+  display:block;
+  padding: 16px;
 }
 </style>
