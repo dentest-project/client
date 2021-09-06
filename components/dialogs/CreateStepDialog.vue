@@ -231,8 +231,20 @@ export default Vue.extend({
         )
 
         this.$emit('created')
-        this.parts = []
+        this.parts = [
+          {
+            type: StepPartType.Sentence,
+            priority: 0,
+            content: '',
+          },
+        ]
         this.type = StepType.Given
+        this.extraParamType = StepParamType.None
+        this.partsHashes = [Math.random()]
+        this.selection = {
+          inputId: null,
+        } as Selection
+        this.tags = [] as Array<Tag>
       } catch (error) {
         this.$emit('errored')
       }
