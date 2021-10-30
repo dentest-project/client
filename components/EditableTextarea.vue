@@ -56,7 +56,7 @@ export default Vue.extend({
 <style scoped>
 p {
   padding: 1rem;
-  white-space: pre;
+  white-space: pre-line;
 }
 p:hover {
   background-color: rgba(0, 0, 0, 0.1);
