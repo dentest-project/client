@@ -60,11 +60,11 @@ html {
 }
 
 h1 {
-  padding: 1rem;
+  padding: 1rem 0;
 }
 
 h2 {
-  padding: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 .v-textarea.v-text-field--enclosed textarea {
