@@ -103,6 +103,7 @@ export default Vue.extend({
 <style scoped>
 .feature-content-description {
   padding: 1rem;
+  width: 100%;
 }
 
 .feature-content-step-button {
