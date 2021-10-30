@@ -28,13 +28,13 @@ export default {
 
 <style>
 @font-face {
-  font-family: 'Raleway';
-  src: url("/Raleway-Medium.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url("/Nunito-SemiBold.ttf") format("truetype");
 }
 
 html {
   font-family:
-    'Raleway',
+    'Nunito',
     'Source Sans Pro',
     -apple-system,
     BlinkMacSystemFont,
@@ -87,7 +87,7 @@ h2 {
 }
 
 .v-application {
-  font-family: "Raleway", sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 .v-application a {
