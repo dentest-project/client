@@ -78,6 +78,11 @@ export default Vue.extend({
     Breadcrumb,
     UsersTable,
   },
+  head() {
+    return {
+      title: (this as any).getPageTitle()
+    }
+  },
   async asyncData({ $api, params }): Promise<InitialData> {
     const [users, project]: [ProjectUserList, Project] = await Promise.all([
       $api.getProjectUsers(params.project_slug, params.organization_slug),
@@ -151,6 +156,13 @@ export default Vue.extend({
         params.organization_slug,
         this.$axios
       )
+    },
+    getPageTitle(): string {
+      if ((this as any).$data.project.organization) {
+        return `Users - ${(this as any).$data.project.title} - ${(this as any).$data.project.organization.name} | Dentest`;
+      }
+
+      return `Users - ${(this as any).$data.project.title} | Dentest`;
     },
   },
   computed: {

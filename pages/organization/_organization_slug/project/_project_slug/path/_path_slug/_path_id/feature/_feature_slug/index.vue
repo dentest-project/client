@@ -18,6 +18,11 @@ interface InitialData {
 export default Vue.extend({
   auth: false,
   components: { FeaturePage },
+  head() {
+    return {
+      title: (this as any).getPageTitle()
+    }
+  },
   async asyncData({ $api, params }): Promise<InitialData> {
     const feature: Feature = await $api.getFeature(
       params.path_id,
@@ -41,6 +46,13 @@ export default Vue.extend({
     }
   },
   methods: {
+    getPageTitle(): string {
+      if ((this as any).$data.feature.rootProject.organization) {
+        return `${(this as any).$data.feature.title} - ${(this as any).$data.feature.rootProject.title} - ${(this as any).$data.feature.rootProject.organization.name} | Dentest`;
+      }
+
+      return `${(this as any).$data.feature.title} - ${(this as any).$data.feature.rootProject.title} | Dentest`;
+    },
     onNeedUpdate: function (feature: Feature) {
       this.feature = feature
     },

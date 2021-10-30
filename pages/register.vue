@@ -37,6 +37,11 @@ import { Register } from '~/types'
 export default Vue.extend({
   auth: 'guest',
   components: { RegisterForm },
+  head: function () {
+    return {
+      title: `Register | Dentest`
+    };
+  },
   data: function () {
     return {
       registeredSnackbarOpened: false,

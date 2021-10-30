@@ -55,6 +55,11 @@ export default Vue.extend({
   components: {
     UsersTable,
   },
+  head() {
+    return {
+      title: `Users - ${(this as any).$data.organization.name ?? ''} | Dentest`
+    }
+  },
   async asyncData({ $api, params }): Promise<InitialData> {
     const [users, organization]: [
       OrganizationUserList,

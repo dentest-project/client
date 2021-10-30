@@ -28,6 +28,11 @@ import { Login } from '~/types'
 
 export default Vue.extend({
   components: { LoginForm },
+  head: function () {
+    return {
+      title: `Login | Dentest`
+    };
+  },
   data: function () {
     return {
       loginErrorSnackbarOpened: false,

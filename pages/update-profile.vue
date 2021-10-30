@@ -49,6 +49,11 @@ import { UpdateMe } from '~/types'
 
 export default Vue.extend({
   components: { DeleteMeDialog, UpdateMeForm },
+  head: function () {
+    return {
+      title: `Update profile | Dentest`
+    };
+  },
   data: function () {
     return {
       deleteDialogOpened: false,

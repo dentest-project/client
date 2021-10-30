@@ -121,6 +121,40 @@ interface InitialData {
   name: string
 }
 
+declare module 'vue/types/vue' {
+  interface Vue {
+    name: string,
+    projects: ProjectList,
+    organization: Organization,
+    createProjectDialog: boolean,
+    createdSnackbarOpened: boolean,
+    creationErrorSnackbarOpened: boolean,
+    deleteOrganizationDialog: boolean,
+    leaveOrganizationDialog: boolean,
+    deletedOrganizationSnackbarOpened: boolean,
+    deleteOrganizationErrorSnackbarOpened: boolean,
+    organizationLeftSnackbarOpened: boolean,
+    organizationLeaveErrorSnackbarOpened: boolean,
+    organizationUpdatedSnackbarOpened: boolean,
+    organizationUpdateConflictErrorSnackbarOpened: boolean,
+    organizationUpdateErrorSnackbarOpened: boolean,
+    activateCreateProjectDialog(): void,
+    activateDeleteOrganizationDialog(): void,
+    activateLeaveOrganizationDialog(): void,
+    deactivateCreateProjectDialog(): void,
+    deactivateDeleteOrganizationDialog(): void,
+    deactivateLeaveOrganizationDialog(): void,
+    loadProjects(): Promise<void>,
+    onCreated(): void,
+    onCreationErrored(): void,
+    onNameUpdated(): Promise<void>,
+    onOrganizationDeleted(): void,
+    onOrganizationDeleteError(): void,
+    onOrganizationLeft(): void,
+    onOrganizationLeaveErrored(): void
+  }
+}
+
 export default Vue.extend({
   auth: false,
   components: {
@@ -136,6 +170,11 @@ export default Vue.extend({
     PrimaryLinkButton,
     ProjectCard,
     UsersButton,
+  },
+  head() {
+    return {
+      title: `${(this as any).$data.name ?? ''} | Dentest`
+    }
   },
   async asyncData({ $api, params }): Promise<InitialData> {
     const [projects, organization] = await Promise.all([

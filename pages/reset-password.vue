@@ -35,6 +35,11 @@ interface ResetPasswordFormOutput {
 export default Vue.extend({
   auth: 'guest',
   components: { ResetPasswordForm, ResetPasswordRequestForm },
+  head: function () {
+    return {
+      title: `Password forgotten | Dentest`
+    };
+  },
   data: function () {
     return {
       requestedSnackbarOpened: false,

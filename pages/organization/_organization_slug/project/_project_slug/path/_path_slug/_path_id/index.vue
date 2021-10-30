@@ -14,6 +14,11 @@ interface InitialData {
 export default Vue.extend({
   auth: false,
   components: { ProjectPage },
+  head() {
+    return {
+      title: (this as any).getPageTitle()
+    }
+  },
   async asyncData({ $api, params }): Promise<InitialData> {
     const path: Path = await $api.getPath(params.path_id)
 
@@ -34,6 +39,13 @@ export default Vue.extend({
     }
   },
   methods: {
+    getPageTitle(): string {
+      if ((this as any).$data.path.rootProject.organization) {
+        return `${(this as any).$data.path.path} - ${(this as any).$data.path.rootProject.title} - ${(this as any).$data.path.rootProject.organization.name} | Dentest`;
+      }
+
+      return `${(this as any).$data.path.path} - ${(this as any).$data.path.rootProject.title} | Dentest`;
+    },
     async onNeedReload(): Promise<void> {
       this.path = await this.$api.getPath(
         this.$route.params.path_id,
