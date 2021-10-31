@@ -124,6 +124,11 @@ export default Vue.extend({
   padding: 1rem;
 }
 
+.step-display-table-param {
+  display: block;
+  overflow-x: auto;
+}
+
 .step-display-table-param td {
   padding: 1rem;
   margin: 0;
