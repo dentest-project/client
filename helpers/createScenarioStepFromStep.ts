@@ -4,6 +4,7 @@ import {
   MultilineStepParam,
   ScenarioStep,
   Step,
+  StepAdverb,
   StepParamType,
   StepPartType,
   TableStepParam
@@ -56,11 +57,14 @@ const generateParams = (step: Step): GenerateParamsOutput => {
   };
 };
 
-const createScenarioStepFromStep = (priority: number, step: Step): CreateScenarioStepFromStepOutput => {
+const createScenarioStepFromStep = (scenarioSteps: Array<ScenarioStep>, step: Step): CreateScenarioStepFromStepOutput => {
   const generatedParams = generateParams(step);
+  const correspondingAdverb = getCorrespondingAdverb(step.type);
+  const shouldUseAdverb = scenarioSteps.map(s => s.adverb).reverse().find(s => ![StepAdverb.And, StepAdverb.But].includes(s)) !== correspondingAdverb
+
   const scenarioStep = {
-    priority,
-    adverb: getCorrespondingAdverb(step.type),
+    priority: scenarioSteps.length,
+    adverb: shouldUseAdverb ? correspondingAdverb : StepAdverb.And,
     step,
     params: generatedParams.params
   };

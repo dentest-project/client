@@ -178,7 +178,7 @@ export default Vue.extend({
       }
 
       const steps = this.scenario.steps
-      const step = createScenarioStepFromStep(steps.length, droppedStep)
+      const step = createScenarioStepFromStep(steps, droppedStep)
 
       if (step.withTableParam) {
         const tableParamIndex = step.scenarioStep.params.findIndex(
