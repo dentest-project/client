@@ -28,7 +28,8 @@ export default {
     '~/plugins/colors.ts',
     '~/plugins/mode.ts',
     '~/plugins/routes.ts',
-    '~/plugins/vue-json-pretty.ts'
+    '~/plugins/vue-json-pretty.ts',
+    { src: '~/plugins/polyfill-dnd.js', mode: 'client' }
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

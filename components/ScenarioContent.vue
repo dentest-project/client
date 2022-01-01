@@ -75,7 +75,6 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
-import { polyfill } from 'mobile-drag-drop'
 import CopyButton from '~/components/buttons/CopyButton.vue'
 import DeleteButton from '~/components/buttons/DeleteButton.vue'
 import DownButton from '~/components/buttons/DownButton.vue'
@@ -158,9 +157,6 @@ export default Vue.extend({
       createTableStepParamDialog: false,
       tableParamStepIndex: null as number | null,
     }
-  },
-  mounted() {
-    polyfill({})
   },
   methods: {
     onDeleteClick(): void {
