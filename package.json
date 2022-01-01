@@ -18,8 +18,7 @@
     "lodash": "^4.17.20",
     "mobile-drag-drop": "^2.3.0-rc.2",
     "nuxt": "^2.13.3",
-    "vue-json-pretty": "^1.8.1",
-    "vue-markdown": "^2.1.2"
+    "vue-json-pretty": "^1.8.1"
   },
   "devDependencies": {
     "@mdi/font": "^5.8.55",
