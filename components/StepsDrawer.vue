@@ -5,6 +5,7 @@
     fixed
     floating
     right
+    hide-overlay
     v-model="drawer"
   >
     <v-list-item>
@@ -318,6 +319,7 @@ export default Vue.extend({
 <style scoped>
 .step-drawer {
   border-left: 3px solid;
+  background-color: #EEEEEE;
 }
 
 .step-drawer-step {

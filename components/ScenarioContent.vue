@@ -3,9 +3,10 @@
     class="scenario"
     :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
+    @dragenter.prevent="() => {}"
     @dragover.prevent="onDragEnter"
     @dragleave="onDragLeave"
-    @drop="onDrop"
+    @drop.prevent="onDrop"
   >
     <up-button
       v-if="canWrite && canMoveUp"
@@ -74,6 +75,7 @@
 
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
+import { polyfill } from 'mobile-drag-drop'
 import CopyButton from '~/components/buttons/CopyButton.vue'
 import DeleteButton from '~/components/buttons/DeleteButton.vue'
 import DownButton from '~/components/buttons/DownButton.vue'
@@ -156,6 +158,9 @@ export default Vue.extend({
       createTableStepParamDialog: false,
       tableParamStepIndex: null as number | null,
     }
+  },
+  mounted() {
+    polyfill({})
   },
   methods: {
     onDeleteClick(): void {
