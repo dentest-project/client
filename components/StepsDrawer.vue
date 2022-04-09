@@ -302,16 +302,7 @@ export default Vue.extend({
         steps: steps.filter(
           (step: Step) =>
             step.type === type && (this as any).isStepCorrespondingToTags(step)
-        ).sort((a, b) => {
-          const sentenceA = getStepSentence(a)
-          const sentenceB = getStepSentence(b)
-
-          if (sentenceA === sentenceB) {
-            return 0
-          }
-
-          return sentenceA < sentenceB ? -1 : 1
-        }),
+        ).sort((a, b) => getStepSentence(a).localeCompare(getStepSentence(b))),
         active: false,
       }))
     },
