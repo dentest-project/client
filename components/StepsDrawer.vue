@@ -152,6 +152,7 @@ import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue'
 import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue'
 import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue'
 import StepsFilters from '~/components/StepsFilters.vue'
+import getStepSentence from '~/helpers/getStepSentence';
 import { Project, Step, StepParamType, StepType, Tag } from '~/types'
 
 interface DisplayableStepsGroup {
@@ -301,7 +302,16 @@ export default Vue.extend({
         steps: steps.filter(
           (step: Step) =>
             step.type === type && (this as any).isStepCorrespondingToTags(step)
-        ),
+        ).sort((a, b) => {
+          const sentenceA = getStepSentence(a)
+          const sentenceB = getStepSentence(b)
+
+          if (sentenceA === sentenceB) {
+            return 0
+          }
+
+          return sentenceA < sentenceB ? -1 : 1
+        }),
         active: false,
       }))
     },
