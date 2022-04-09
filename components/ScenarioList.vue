@@ -1,22 +1,24 @@
 <template>
-  <div class="scenarios">
-    <scenario-content
-      v-for="(scenario, i) in scenarios"
-      :can-move-up="i > 0 && !(i === 1 && isBackground(scenarios[0]))"
-      :can-move-down="
+  <div>
+    <v-row class="scenarios">
+      <scenario-content
+        v-for="(scenario, i) in scenarios"
+        :can-move-up="i > 0 && !(i === 1 && isBackground(scenarios[0]))"
+        :can-move-down="
         i < scenarios.length - 1 && !(i === 0 && isBackground(scenario))
       "
-      :can-write="canWrite"
-      :scenario="scenario"
-      :backgroundable="i === 0"
-      :project="project"
-      :key="i"
-      @input="(e) => onUpdated(i, e)"
-      @copy="() => onCopy(i)"
-      @deleted="() => onDeleted(i)"
-      @up="() => onUp(i)"
-      @down="() => onDown(i)"
-    />
+        :can-write="canWrite"
+        :scenario="scenario"
+        :backgroundable="i === 0"
+        :project="project"
+        :key="i"
+        @input="(e) => onUpdated(i, e)"
+        @copy="() => onCopy(i)"
+        @deleted="() => onDeleted(i)"
+        @up="() => onUp(i)"
+        @down="() => onDown(i)"
+      />
+    </v-row>
     <add-button v-if="canWrite" @click="onAdd" title="Add scenario" />
   </div>
 </template>

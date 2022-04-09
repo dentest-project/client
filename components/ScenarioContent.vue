@@ -1,76 +1,78 @@
 <template>
-  <v-sheet
-    class="scenario"
-    :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver, 'scenario--pointer-frozen': shouldFreezePointer }"
-    :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
-    @dragenter.prevent="() => {}"
-    @dragover.prevent="onDragOver"
-    @dragleave="onDragLeave"
-    @drop.prevent="onDrop"
-  >
-    <up-button
-      v-if="canWrite && canMoveUp"
-      class="scenario-up"
-      @click="$emit('up')"
-    />
-    <down-button
-      v-if="canWrite && canMoveDown"
-      class="scenario-down"
-      @click="$emit('down')"
-    />
-    <copy-button
-      v-if="canWrite && !isBackground"
-      class="scenario-copy"
-      @click="$emit('copy')"
-    />
-    <edit-button
-      v-if="canWrite && mode === $modes.view"
-      class="scenario-edit"
-      @click="switchToEditMode"
-    />
-    <view-button
-      v-else-if="canWrite && mode === $modes.edit"
-      class="scenario-edit"
-      @click="switchToViewMode"
-    />
-    <delete-button
-      v-if="canWrite"
-      class="scenario-delete"
-      @click="onDeleteClick"
-    />
-    <switch-scenario-type-chip
-      v-if="shouldDisplayTypeSwitch"
-      :value="scenario.type"
-      :mode="mode"
-      @input="onTypeChanged"
-    />
-    <tags-selector
-      v-if="mode === $modes.edit"
-      :project="project"
-      :value="scenario.tags"
-      @input="onTagsChanged"
-    />
-    <tags-list v-else :tags="scenario.tags" />
-    <editable-subtitle
-      v-if="mode === $modes.edit && !isBackground"
-      label="Scenario title"
-      :value="scenario.title"
-      @input="onTitleChanged"
-    />
-    <h2 v-else>{{ scenario.title }}</h2>
-    <step-list :mode="mode" :steps="scenario.steps" @input="onStepsChanged" />
-    <examples-content
-      v-if="scenario.examples"
-      class="scenario-examples"
-      :examples="scenario.examples"
-      :mode="mode"
-      @input="onExamplesChanged"
-    />
-    <create-table-step-param-dialog
-      v-model="createTableStepParamDialog"
-      @selected="onTableStepParamDimensionsSelected"
-    />
-  </v-sheet>
+  <v-col cols="12" sm="12" md="6" lg="6">
+    <v-sheet
+      class="scenario"
+      :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver, 'scenario--pointer-frozen': shouldFreezePointer }"
+      :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
+      @dragenter.prevent="() => {}"
+      @dragover.prevent="onDragOver"
+      @dragleave="onDragLeave"
+      @drop.prevent="onDrop"
+    >
+      <up-button
+        v-if="canWrite && canMoveUp"
+        class="scenario-up"
+        @click="$emit('up')"
+      />
+      <down-button
+        v-if="canWrite && canMoveDown"
+        class="scenario-down"
+        @click="$emit('down')"
+      />
+      <copy-button
+        v-if="canWrite && !isBackground"
+        class="scenario-copy"
+        @click="$emit('copy')"
+      />
+      <edit-button
+        v-if="canWrite && mode === $modes.view"
+        class="scenario-edit"
+        @click="switchToEditMode"
+      />
+      <view-button
+        v-else-if="canWrite && mode === $modes.edit"
+        class="scenario-edit"
+        @click="switchToViewMode"
+      />
+      <delete-button
+        v-if="canWrite"
+        class="scenario-delete"
+        @click="onDeleteClick"
+      />
+      <switch-scenario-type-chip
+        v-if="shouldDisplayTypeSwitch"
+        :value="scenario.type"
+        :mode="mode"
+        @input="onTypeChanged"
+      />
+      <tags-selector
+        v-if="mode === $modes.edit"
+        :project="project"
+        :value="scenario.tags"
+        @input="onTagsChanged"
+      />
+      <tags-list v-else :tags="scenario.tags" />
+      <editable-subtitle
+        v-if="mode === $modes.edit && !isBackground"
+        label="Scenario title"
+        :value="scenario.title"
+        @input="onTitleChanged"
+      />
+      <h2 v-else>{{ scenario.title }}</h2>
+      <step-list :mode="mode" :steps="scenario.steps" @input="onStepsChanged" />
+      <examples-content
+        v-if="scenario.examples"
+        class="scenario-examples"
+        :examples="scenario.examples"
+        :mode="mode"
+        @input="onExamplesChanged"
+      />
+      <create-table-step-param-dialog
+        v-model="createTableStepParamDialog"
+        @selected="onTableStepParamDimensionsSelected"
+      />
+    </v-sheet>
+  </v-col>
 </template>
 
 <script lang="ts">
