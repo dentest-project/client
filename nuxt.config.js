@@ -25,6 +25,7 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     '~/plugins/api.ts',
+    '~/plugins/axios.js',
     '~/plugins/colors.ts',
     '~/plugins/mode.ts',
     '~/plugins/routes.ts',
@@ -105,9 +106,6 @@ export default {
           user: { url: 'me', method: 'get', propertyName: 'data.user' }
         }
       }
-    },
-    redirect: {
-      logout: false,
     }
   },
 
