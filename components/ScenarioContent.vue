@@ -1,10 +1,10 @@
 <template>
   <v-sheet
     class="scenario"
-    :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver }"
+    :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver, 'scenario--pointer-frozen': shouldFreezePointer }"
     :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
     @dragenter.prevent="() => {}"
-    @dragover.prevent="onDragEnter"
+    @dragover.prevent="onDragOver"
     @dragleave="onDragLeave"
     @drop.prevent="onDrop"
   >
@@ -162,15 +162,14 @@ export default Vue.extend({
     onDeleteClick(): void {
       this.$emit('deleted')
     },
-    onDragEnter(): void {
-      if (this.$store.state.stepsDrawer.draggedStep !== null) {
-        this.draggedOver = true
-      }
+    onDragOver(): void {
+      this.draggedOver = !this.draggedOver ? this.$store.state.stepsDrawer.draggedStep !== null : true
     },
     onDragLeave(): void {
       this.draggedOver = false
     },
     onDrop(): void {
+      console.log('dropped')
       const droppedStep = this.$store.state.stepsDrawer.draggedStep
       this.draggedOver = false
 
@@ -327,6 +326,9 @@ export default Vue.extend({
           this.scenario.type === ScenarioType.Background)
       )
     },
+    shouldFreezePointer(): boolean {
+      return (this as any).$store.state.stepsDrawer.draggedStep !== null
+    }
   },
 })
 </script>
@@ -344,10 +346,10 @@ export default Vue.extend({
 }
 
 .scenario.scenario--dragged, .scenario.scenario--background.scenario.scenario--dragged {
-  background-color: #badc58 !important;
+  background-color: #a4b0be !important;
 }
 
-.scenario.scenario--dragged * {
+.scenario.scenario--pointer-frozen * {
   pointer-events: none;
 }
 

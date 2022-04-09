@@ -52,8 +52,8 @@
           link
           dense
           @click="activateStepUpdateDialog(step)"
-          @dragstart="addToStore(step)"
-          @dragend="removeFromStore"
+          @dragstart.stop="addToStore(step)"
+          @dragend.stop="removeFromStore"
         >
           <v-list-item-icon>
             <v-icon color="#CCCCCC">{{
