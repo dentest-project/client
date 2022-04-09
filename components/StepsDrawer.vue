@@ -48,28 +48,32 @@
         <v-list-item
           v-for="step in group.steps"
           :key="step.id"
-          draggable="true"
           link
           dense
           @click="activateStepUpdateDialog(step)"
-          @dragstart.stop="addToStore(step)"
-          @dragend.stop="removeFromStore"
         >
-          <v-list-item-icon>
-            <v-icon color="#CCCCCC">{{
-              iconForStepParamType(step.extraParamType)
-            }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <div class="step-drawer-step">
+          <div
+            class="step-drawer-step-with-type"
+            draggable="true"
+            @dragstart.stop="addToStore(step)"
+            @dragend.stop="removeFromStore"
+          >
+            <v-list-item-icon>
+              <v-icon color="#CCCCCC">{{
+                  iconForStepParamType(step.extraParamType)
+                }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <div class="step-drawer-step">
               <span
                 v-for="part in step.parts"
                 :key="part.id"
                 :class="`step-drawer-step-type--${part.type}`"
-                >{{ part.content }}</span
+              >{{ part.content }}</span
               >
-            </div>
-          </v-list-item-content>
+              </div>
+            </v-list-item-content>
+          </div>
         </v-list-item>
       </v-list-group>
     </v-list>
@@ -338,5 +342,9 @@ export default Vue.extend({
 .step-drawer-step-type--param {
   color: #2814b4;
   font-weight: bold;
+}
+
+.step-drawer-step-with-type {
+  display: flex;
 }
 </style>
