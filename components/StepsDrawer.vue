@@ -37,6 +37,9 @@
           <v-list-item-title>Filters</v-list-item-title>
         </v-list-item-content>
       </template>
+      <v-list-item>
+        <v-text-field v-model="queryFilter" placeholder="Step name..." outlined />
+      </v-list-item>
       <steps-tags-filters v-model="tagsFilter" :project="project" />
     </v-list-group>
     <v-divider />
@@ -198,6 +201,7 @@ export default Vue.extend({
       steps: [] as Array<Step>,
       updateStep: null as Step | null,
       tagsFilter: [] as Array<Tag>,
+      queryFilter: '',
       deletingStepId: null as number | null,
       stepCreationDialog: false,
       stepUpdateDialog: false,
@@ -291,6 +295,9 @@ export default Vue.extend({
           .length > 0
       )
     },
+    isStepMatchingQuery(step: Step): boolean {
+      return getStepSentence(step).toLocaleLowerCase().indexOf(this.queryFilter.toLocaleLowerCase()) !== -1
+    },
     ...mapMutations({
       addToStore: 'stepsDrawer/dragStep',
       removeFromStore: 'stepsDrawer/clearDraggedStep',
@@ -309,7 +316,7 @@ export default Vue.extend({
         icon,
         steps: steps.filter(
           (step: Step) =>
-            step.type === type && (this as any).isStepCorrespondingToTags(step)
+            step.type === type && (this as any).isStepCorrespondingToTags(step) && (this as any).isStepMatchingQuery(step)
         ).sort((a, b) => getStepSentence(a).localeCompare(getStepSentence(b))),
         active: false,
       }))
