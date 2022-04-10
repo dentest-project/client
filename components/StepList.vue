@@ -122,11 +122,6 @@ export default Vue.extend({
 
       this.$emit('input', this.fixPriorities(steps))
     }
-  },
-  computed: {
-    list() {
-
-    }
   }
 })
 </script>
@@ -136,6 +131,6 @@ export default Vue.extend({
   margin-top: 1rem;
 }
 .step-list--dragged {
-  opacity: 0.5;
+  background-color: #a4b0be;
 }
 </style>
