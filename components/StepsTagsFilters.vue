@@ -1,23 +1,16 @@
 <template>
-  <v-list-group :value="false" prepend-icon="mdi-filter">
-    <template v-slot:activator>
-      <v-list-item-content>
-        <v-list-item-title>Filters</v-list-item-title>
-      </v-list-item-content>
-    </template>
-    <v-list-item class="steps-filters">
-      <tag-chip
-        v-for="tag in tags"
-        :key="tag.id"
-        :tag="tag"
-        :outlined="!isTagSelected(tag)"
-        @click="onTagClicked"
-      />
-      <v-list-item-content v-if="tags.length === 0" class="no-tags">
-        Add tags to your steps to filter them
-      </v-list-item-content>
-    </v-list-item>
-  </v-list-group>
+  <v-list-item class="steps-filters">
+    <tag-chip
+      v-for="tag in tags"
+      :key="tag.id"
+      :tag="tag"
+      :outlined="!isTagSelected(tag)"
+      @click="onTagClicked"
+    />
+    <v-list-item-content v-if="tags.length === 0" class="no-tags">
+      Add tags to your steps to filter them
+    </v-list-item-content>
+  </v-list-item>
 </template>
 
 <script lang="ts">

@@ -31,7 +31,14 @@
       </v-list-item-title>
     </v-list-item>
     <v-divider />
-    <steps-filters v-model="tagsFilter" :project="project" />
+    <v-list-group :value="false" prepend-icon="mdi-filter">
+      <template v-slot:activator>
+        <v-list-item-content>
+          <v-list-item-title>Filters</v-list-item-title>
+        </v-list-item-content>
+      </template>
+      <steps-tags-filters v-model="tagsFilter" :project="project" />
+    </v-list-group>
     <v-divider />
     <v-list>
       <v-list-group
@@ -152,7 +159,7 @@ import { mapMutations } from 'vuex'
 import CreateStepDialog from '~/components/dialogs/CreateStepDialog.vue'
 import DeleteStepDialog from '~/components/dialogs/DeleteStepDialog.vue'
 import UpdateStepDialog from '~/components/dialogs/UpdateStepDialog.vue'
-import StepsFilters from '~/components/StepsFilters.vue'
+import StepsTagsFilters from '~/components/StepsTagsFilters.vue';
 import getStepSentence from '~/helpers/getStepSentence';
 import { Project, Step, StepParamType, StepType, Tag } from '~/types'
 
@@ -168,7 +175,7 @@ export default Vue.extend({
     prop: 'value',
   },
   components: {
-    StepsFilters,
+    StepsTagsFilters,
     CreateStepDialog,
     DeleteStepDialog,
     UpdateStepDialog,
