@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>This page does not exist</h1>
+    <h1>An error occurred</h1>
     <a :href="$routes.home()">Go back to home page</a>
   </div>
 </template>

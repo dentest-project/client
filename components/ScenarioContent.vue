@@ -171,7 +171,6 @@ export default Vue.extend({
       this.draggedOver = false
     },
     onDrop(): void {
-      console.log('dropped')
       const droppedStep = this.$store.state.stepsDrawer.draggedStep
       this.draggedOver = false
 

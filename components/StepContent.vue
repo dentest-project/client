@@ -1,9 +1,11 @@
 <template>
   <div
+    ref="el"
     class="step"
     :draggable="mode === $modes.edit"
-    @dragstart.stop="$emit('dragstart', step)"
-    @dragend.stop="$emit('dragend')"
+    @dragstart="$emit('dragstarted', step)"
+    @dragend="$emit('dragended')"
+    @dragleave="onDragLeave"
   >
     <deletable-row v-if="mode === $modes.edit" @delete="onDeleteClick">
       <step-form
@@ -47,6 +49,15 @@ export default Vue.extend({
     onDeleteClick(): void {
       this.$emit('deleted')
     },
+    onDragLeave(e: DragEvent): void {
+      const { top, bottom } = (this.$refs.el as Element).getBoundingClientRect()
+
+      if (e.y < top) {
+        this.$emit('wentahead')
+      } else if (e.y > bottom) {
+        this.$emit('wentbelow')
+      }
+    },
     onUpdated(e: ScenarioStep): void {
       this.$emit('input', e)
     },
@@ -62,3 +73,9 @@ export default Vue.extend({
   },
 })
 </script>
+
+<style scoped>
+.step * {
+  pointer-events: none;
+}
+</style>
