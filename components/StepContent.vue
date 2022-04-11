@@ -73,9 +73,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-.step * {
-  pointer-events: none;
-}
-</style>
