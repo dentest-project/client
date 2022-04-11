@@ -240,6 +240,7 @@ export default Vue.extend({
             type: StepPartType.Sentence,
             priority: 0,
             content: '',
+            choices: null
           },
         ]
         this.type = StepType.Given
