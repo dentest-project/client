@@ -79,9 +79,7 @@
                   v-for="part in step.parts"
                   :key="part.id"
                   :class="`step-drawer-step-type--${part.type}`"
-                >
-                  {{ part.content }}
-                </span>
+                >{{ part.content }}</span>
               </div>
             </v-list-item-content>
           </div>
