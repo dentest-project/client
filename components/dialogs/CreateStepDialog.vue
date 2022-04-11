@@ -160,6 +160,7 @@ export default Vue.extend({
         type: StepPartType.Sentence,
         content: fullContent,
         priority: 0,
+        choices: null
       })
       this.fixPriorities()
     },
@@ -200,19 +201,22 @@ export default Vue.extend({
           type: StepPartType.Sentence,
           priority: 0,
           content: after,
+          choices: null
         })
       }
       this.parts.splice(id + 1, 0, {
         type: StepPartType.Param,
         priority: id + 1,
         content: selected,
-        strategy: StepPartStrategy.Free
+        strategy: StepPartStrategy.Free,
+        choices: null
       })
       if (before !== '') {
         this.parts.splice(id + 1, 0, {
           type: StepPartType.Sentence,
           priority: 0,
           content: before,
+          choices: null
         })
       }
       this.parts.splice(id, 1)
