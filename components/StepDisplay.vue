@@ -116,7 +116,7 @@ export default Vue.extend({
 
 .step-display-inline-param {
   font-weight: bold;
-  color: green;
+  color: #686de0;
 }
 
 .step-display-multiline-param {
