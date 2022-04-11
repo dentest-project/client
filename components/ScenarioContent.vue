@@ -339,6 +339,7 @@ export default Vue.extend({
   padding: 1rem;
   margin: 2rem 0;
   width: 100%;
+  height: 100%;
   position: relative;
 }
 
