@@ -1,5 +1,8 @@
 <template>
-  <v-text-field :value="param.content" @input="onUpdated" solo />
+  <div>
+    <v-text-field v-if="param.stepPart.strategy === 'free'" :value="param.content" @input="onUpdated" solo />
+    <v-select v-else :items="param.stepPart.choices" :value="param.content" @input="onUpdated" solo />
+  </div>
 </template>
 
 <script lang="ts">
@@ -20,9 +23,9 @@ export default Vue.extend({
     onUpdated(content: string): void {
       this.$emit('input', {
         ...this.param,
-        content,
+        content: content,
       })
     },
-  },
+  }
 })
 </script>

@@ -27,6 +27,12 @@
                   v-if="selection.inputId === i"
                   @click="onSplitButtonClicked"
                 />
+                <div v-else-if="parts[i].type === 'param'">
+                  <free-inline-list v-if="parts[i].strategy === 'choices'" v-model="parts[i].choices" />
+                  <div class="create-step-strategy-selector">
+                    <inline-step-param-strategy :step-part-strategy="parts[i].strategy" @input="strategy => onParamStrategyChanged(i, strategy)" />
+                  </div>
+                </div>
               </div>
             </div>
             <div class="create-step-type-selector">
@@ -47,17 +53,12 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import SplitButton from '~/components/buttons/SplitButton.vue'
-import StepParamTypeSelector from '~/components/StepParamTypeSelector.vue'
 import SubmitButton from '~/components/buttons/SubmitButton.vue'
+import FreeInlineList from '~/components/FreeInlineList.vue';
+import InlineStepParamStrategy from '~/components/InlineStepParamStrategy.vue';
+import StepParamTypeSelector from '~/components/StepParamTypeSelector.vue'
 import TagsSelector from '~/components/TagsSelector.vue'
-import {
-  Project,
-  SelectItem,
-  StepParamType,
-  StepPartType,
-  StepType,
-  Tag,
-} from '~/types'
+import { Project, SelectItem, StepParamType, StepPart, StepPartStrategy, StepPartType, StepType, Tag, } from '~/types'
 
 interface SelectionBoundaries {
   start: number | null
@@ -71,6 +72,8 @@ interface Selection {
 
 export default Vue.extend({
   components: {
+    FreeInlineList,
+    InlineStepParamStrategy,
     TagsSelector,
     SplitButton,
     StepParamTypeSelector,
@@ -98,7 +101,7 @@ export default Vue.extend({
           priority: 0,
           content: '',
         },
-      ],
+      ] as Array<StepPart>,
       extraParamType: StepParamType.None,
       partsHashes: [Math.random()],
       selection: {
@@ -203,6 +206,7 @@ export default Vue.extend({
         type: StepPartType.Param,
         priority: id + 1,
         content: selected,
+        strategy: StepPartStrategy.Free
       })
       if (before !== '') {
         this.parts.splice(id + 1, 0, {
@@ -252,6 +256,10 @@ export default Vue.extend({
     onDialogStatusChanged(e: boolean) {
       this.$emit('input', e)
     },
+    onParamStrategyChanged(i: number, strategy: StepPartStrategy) {
+      this.parts[i].choices = strategy === StepPartStrategy.Free ? null : []
+      this.parts[i].strategy = strategy
+    },
     resolveSelectionBounding(n: number | null): number {
       return typeof n === 'number' ? n : 0
     },
@@ -278,7 +286,7 @@ export default Vue.extend({
 
 <style scoped>
 .create-step-input--param {
-  color: green !important;
+  color: #686de0 !important;
   font-weight: bold;
 }
 .create-step-inputs {
@@ -289,7 +297,7 @@ export default Vue.extend({
   width: 100%;
   text-align: center;
 }
-.create-step-type-selector {
+.create-step-type-selector, .create-step-strategy-selector {
   width: fit-content;
   margin: auto;
 }

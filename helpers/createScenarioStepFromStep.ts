@@ -6,6 +6,8 @@ import {
   Step,
   StepAdverb,
   StepParamType,
+  StepPart,
+  StepPartStrategy,
   StepPartType,
   TableStepParam
 } from '~/types';
@@ -20,6 +22,14 @@ interface CreateScenarioStepFromStepOutput {
   scenarioStep: ScenarioStep
 }
 
+const getDefaultValueForStepPart = (part: StepPart) => {
+  if (part.strategy === StepPartStrategy.Choices && part.choices !== null && part.choices.length > 0) {
+    return part.choices[0]
+  }
+
+  return part.content
+}
+
 const generateParams = (step: Step): GenerateParamsOutput => {
   let withTableParam = false;
   const params: Array<InlineStepParam | MultilineStepParam | TableStepParam> = step
@@ -27,7 +37,7 @@ const generateParams = (step: Step): GenerateParamsOutput => {
     .filter(p => p.type === StepPartType.Param)
     .map(stepPart => ({
       type: StepParamType.Inline,
-      content: stepPart.content ,
+      content: getDefaultValueForStepPart(stepPart),
       stepPart
     } as InlineStepParam));
 

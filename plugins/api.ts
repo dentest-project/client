@@ -76,6 +76,7 @@ interface Api {
   getProjects(axios?: NuxtAxiosInstance): Promise<ProjectList>,
   getProjectUsers(projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<ProjectUserList>,
   getProjectUserToken(projectId: string, userId: string, axios?: NuxtAxiosInstance): Promise<ProjectUserToken>,
+  getStepPartChoices(stepPartId: number, axios?: NuxtAxiosInstance): Promise<Array<string>>,
   getTags(projectId: string, axios?: NuxtAxiosInstance): Promise<Array<Tag>>,
   login(user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse>,
   register(user: Register, axios?: NuxtAxiosInstance): Promise<User>,
@@ -154,6 +155,7 @@ const Api = (context: any) => {
     getProjectUsers: async (projectSlug: string, organizationSlug?: string, axios?: NuxtAxiosInstance): Promise<ProjectUserList> => {
       return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}/users`, axios) : get(`projects/${projectSlug}/users`, axios);
     },
+    getStepPartChoices: async (stepPartId: number, axios?: NuxtAxiosInstance): Promise<Array<string>> => get(`step-parts/${stepPartId}/choices`, axios),
     getTags: async (projectId: string, axios?: NuxtAxiosInstance): Promise<Array<Tag>> => get(`projects/${projectId}/tags`, axios),
     getProjectUserToken: async (projectId: string, userId: string, axios?: NuxtAxiosInstance): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`, axios),
     login: async (user: Login, axios?: NuxtAxiosInstance): Promise<LoginResponse> => post(`login`, user, axios),

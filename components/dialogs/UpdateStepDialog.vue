@@ -10,21 +10,22 @@
         <v-card-text>
           <div class="update-step-dialog">
             <div class="update-step-inputs">
-              <v-text-field
-                v-for="(part, i) in parts"
-                v-model="parts[i].content"
-                :key="part.id"
-                :class="`update-step-input--${part.type}`"
-              />
+              <div v-for="(part, i) in parts" :key="part.id">
+                <v-text-field v-model="parts[i].content" :class="`update-step-input--${part.type}`" />
+                <div v-if="part.type === 'param'">
+                  <free-inline-list v-if="parts[i].strategy === 'choices'" v-model="parts[i].choices" />
+                  <div class="update-step-strategy-selector">
+                    <inline-step-param-strategy :step-part-strategy="parts[i].strategy" @input="strategy => onParamStrategyChanged(i, strategy)" />
+                  </div>
+                </div>
+              </div>
             </div>
             <tags-selector v-model="tags" :project="project" />
           </div>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <error-action-button @click="onDeleteSubmit"
-            >Delete step</error-action-button
-          >
+          <error-action-button @click="onDeleteSubmit">Delete step</error-action-button>
           <submit-button>Update step</submit-button>
         </v-card-actions>
       </v-card>
@@ -36,11 +37,13 @@
 import Vue, { PropOptions } from 'vue'
 import ErrorActionButton from '~/components/buttons/ErrorActionButton.vue'
 import SubmitButton from '~/components/buttons/SubmitButton.vue'
+import FreeInlineList from '~/components/FreeInlineList.vue'
+import InlineStepParamStrategy from '~/components/InlineStepParamStrategy.vue'
 import TagsSelector from '~/components/TagsSelector.vue'
-import { Project, Step } from '~/types'
+import { Project, Step, StepPartStrategy } from '~/types'
 
 export default Vue.extend({
-  components: { TagsSelector, ErrorActionButton, SubmitButton },
+  components: { FreeInlineList, InlineStepParamStrategy, TagsSelector, ErrorActionButton, SubmitButton },
   model: {
     prop: 'value',
   },
@@ -67,6 +70,16 @@ export default Vue.extend({
   methods: {
     onDeleteSubmit(): void {
       this.$emit('delete-request', this.step.id)
+    },
+    async onParamStrategyChanged(i: number, strategy: StepPartStrategy) {
+      const partId = this.parts[i].id;
+      if (strategy === StepPartStrategy.Choices) {
+        this.parts[i].choices = typeof partId !== 'undefined' ? await this.$api.getStepPartChoices(partId, this.$axios) : []
+      } else {
+        this.parts[i].choices = null
+      }
+
+      this.parts[i].strategy = strategy
     },
     async onSubmit(): Promise<void> {
       if (!this.step.id) {
@@ -102,10 +115,17 @@ export default Vue.extend({
 
 <style scoped>
 .update-step-input--param {
-  color: green !important;
+  color: #686de0 !important;
   font-weight: bold;
 }
 .update-step-inputs {
   display: flex;
+}
+.update-step-inputs > div {
+  width: 100%;
+}
+.update-step-strategy-selector {
+  width: fit-content;
+  margin: auto;
 }
 </style>

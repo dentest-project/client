@@ -43,6 +43,11 @@ enum StepAdverb {
   But = 'but'
 }
 
+enum StepPartStrategy {
+  Free = 'free',
+  Choices = 'choices'
+}
+
 enum StepParamType {
   Inline = 'inline',
   Multiline = 'multiline',
@@ -251,7 +256,9 @@ interface StepPart {
   id?: number,
   type: StepPartType,
   content: string,
-  priority: number
+  priority: number,
+  strategy?: StepPartStrategy,
+  choices: Array<String> | null
 }
 
 interface StepProject {
@@ -376,6 +383,7 @@ export {
   StepParam,
   StepParamType,
   StepPart,
+  StepPartStrategy,
   StepPartType,
   StepType,
   TableStepParam,
