@@ -150,7 +150,7 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped>
+<style>
 .step-form {
   width: 100%;
 }
@@ -171,6 +171,10 @@ export default Vue.extend({
 
 .step-form .step-form-sentence > *:first-child {
   flex-basis: 150px;
+}
+
+.step-form .v-select.v-text-field input {
+  width: 1rem;
 }
 
 @media screen and (max-width: 640px) {
