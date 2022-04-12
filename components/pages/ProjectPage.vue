@@ -65,6 +65,7 @@
       :path="path"
     />
     <get-token-dialog
+      v-if="canPull"
       v-model="getTokenDialog"
       @close="deactivateGetTokenDialog"
       :project="path.rootProject"
@@ -90,62 +91,41 @@
       @errored="onProjectDeleteErrored"
       :path="path"
     />
-    <v-snackbar v-model="pathCreatedSnackbarOpened" :color="$colors.success"
-      >Folder created</v-snackbar
-    >
-    <v-snackbar v-model="featureCreatedSnackbarOpened" :color="$colors.success"
-      >Feature created</v-snackbar
-    >
-    <v-snackbar v-model="featureUpdatedSnackbarOpened" :color="$colors.success"
-      >Feature updated</v-snackbar
-    >
-    <v-snackbar v-model="pathDeleteSnackbarOpened" :color="$colors.success"
-      >Folder deleted</v-snackbar
-    >
-    <v-snackbar v-model="pathUpdatedSnackbarOpened" :color="$colors.success"
-      >Folder updated</v-snackbar
-    >
-    <v-snackbar v-model="projectDeleteSnackbarOpened" :color="$colors.success"
-      >Project deleted</v-snackbar
-    >
-    <v-snackbar v-model="projectLeftSnackbarOpened" :color="$colors.success"
-      >Project left</v-snackbar
-    >
-    <v-snackbar v-model="projectUpdatedSnackbarOpened" :color="$colors.success"
-      >Project updated</v-snackbar
-    >
-    <v-snackbar v-model="pathCreationErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while creating the folder</v-snackbar
-    >
+    <v-snackbar v-model="pathCreatedSnackbarOpened" :color="$colors.success">Folder created</v-snackbar>
+    <v-snackbar v-model="featureCreatedSnackbarOpened" :color="$colors.success">Feature created</v-snackbar>
+    <v-snackbar v-model="featureUpdatedSnackbarOpened" :color="$colors.success">Feature updated</v-snackbar>
+    <v-snackbar v-model="pathDeleteSnackbarOpened" :color="$colors.success">Folder deleted</v-snackbar>
+    <v-snackbar v-model="pathUpdatedSnackbarOpened" :color="$colors.success">Folder updated</v-snackbar>
+    <v-snackbar v-model="projectDeleteSnackbarOpened" :color="$colors.success">Project deleted</v-snackbar>
+    <v-snackbar v-model="projectLeftSnackbarOpened" :color="$colors.success">Project left</v-snackbar>
+    <v-snackbar v-model="projectUpdatedSnackbarOpened" :color="$colors.success">Project updated</v-snackbar>
+    <v-snackbar v-model="pathCreationErrorSnackbarOpened" :color="$colors.error">An error occurred while creating the folder</v-snackbar>
     <v-snackbar
       v-model="featureCreationErrorSnackbarOpened"
       :color="$colors.error"
-      >An error occurred while creating the feature</v-snackbar
     >
+      An error occurred while creating the feature
+    </v-snackbar>
     <v-snackbar
       v-model="featureUpdateErrorSnackbarOpened"
       :color="$colors.error"
-      >An error occurred while updating the feature</v-snackbar
     >
-    <v-snackbar v-model="pathUpdateErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while updating the folder</v-snackbar
-    >
-    <v-snackbar v-model="pathDeleteErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while deleting the folder</v-snackbar
-    >
+      An error occurred while updating the feature
+    </v-snackbar>
+    <v-snackbar v-model="pathUpdateErrorSnackbarOpened" :color="$colors.error">An error occurred while updating the folder</v-snackbar>
+    <v-snackbar v-model="pathDeleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the folder</v-snackbar>
     <v-snackbar
       v-model="projectUpdateErrorSnackbarOpened"
       :color="$colors.error"
-      >An error occurred while updating the project</v-snackbar
     >
+      An error occurred while updating the project</v-snackbar>
     <v-snackbar
       v-model="projectDeleteErrorSnackbarOpened"
       :color="$colors.error"
-      >An error occurred while deleting the project</v-snackbar
     >
-    <v-snackbar v-model="projectLeaveErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while leaving the project</v-snackbar
-    >
+      An error occurred while deleting the project
+    </v-snackbar>
+    <v-snackbar v-model="projectLeaveErrorSnackbarOpened" :color="$colors.error">An error occurred while leaving the project</v-snackbar>
   </v-main>
 </template>
 
