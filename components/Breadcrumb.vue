@@ -3,7 +3,11 @@
     class="breadcrumb"
     :style="`border-bottom: 1px solid ${$colors.primary}`"
   >
-    <v-breadcrumbs :items="items" />
+    <v-breadcrumbs :items="items">
+      <template v-slot:divider>
+        <v-icon>mdi-chevron-right</v-icon>
+      </template>
+    </v-breadcrumbs>
   </div>
 </template>
 
