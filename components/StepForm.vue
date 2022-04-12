@@ -5,6 +5,7 @@
         :items="adverbsSelectItems"
         :value="step.adverb"
         solo
+        dense
         @input="onAdverbChanged"
       />
       <div v-for="(part, id) in step.step.parts">
@@ -157,6 +158,7 @@ export default Vue.extend({
 .step-form .step-form-sentence {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: left;
 }

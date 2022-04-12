@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-text-field v-if="param.stepPart.strategy === 'free'" :value="param.content" @input="onUpdated" solo />
-    <v-select v-else :items="param.stepPart.choices" :value="param.content" @input="onUpdated" solo />
+    <v-text-field v-if="param.stepPart.strategy === 'free'" :value="param.content" @input="onUpdated" solo dense />
+    <v-select v-else :items="param.stepPart.choices" :value="param.content" @input="onUpdated" solo dense />
   </div>
 </template>
 
