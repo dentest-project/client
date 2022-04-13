@@ -14,13 +14,13 @@
         :can-select="canWrite"
         @selected="onFeatureStatusSelected"
       />
-      <save-button v-if="canWrite" :enabled="saveEnabled" @click="save" />
+      <save-button v-if="canWrite && isFeatureInDraftMode" :enabled="saveEnabled" @click="save" />
       <v-spacer />
       <delete-button v-if="canWrite" @click.stop="activateDeleteDialog" />
     </actions-bar>
     <feature-content
       :feature="feature"
-      :can-write="canWrite"
+      :can-write="canWrite && isFeatureInDraftMode"
       @input="onChanged"
     />
     <delete-feature-dialog
@@ -30,18 +30,10 @@
       @deleted="onDeleted"
       @errored="onDeleteErrored"
     />
-    <v-snackbar v-model="deletedSnackbarOpened" :color="$colors.success"
-      >Feature deleted</v-snackbar
-    >
-    <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while deleting the feature</v-snackbar
-    >
-    <v-snackbar v-model="savedSnackbarOpened" :color="$colors.success"
-      >Feature saved</v-snackbar
-    >
-    <v-snackbar v-model="saveErrorSnackbarOpened" :color="$colors.error"
-      >An error occurred while saving the feature</v-snackbar
-    >
+    <v-snackbar v-model="deletedSnackbarOpened" :color="$colors.success">Feature deleted</v-snackbar>
+    <v-snackbar v-model="deleteErrorSnackbarOpened" :color="$colors.error">An error occurred while deleting the feature</v-snackbar>
+    <v-snackbar v-model="savedSnackbarOpened" :color="$colors.success">Feature saved</v-snackbar>
+    <v-snackbar v-model="saveErrorSnackbarOpened" :color="$colors.error">An error occurred while saving the feature</v-snackbar>
   </v-main>
 </template>
 
@@ -207,11 +199,10 @@ export default Vue.extend({
 
       return out.reverse()
     },
+    isFeatureInDraftMode: function (): boolean {
+      return (this as any).feature.status === FeatureStatus.Draft
+    },
     canWrite: function (): boolean {
-      if ((this as any).feature.status !== FeatureStatus.Draft) {
-        return false
-      }
-
       const rootProject = ((this as any).feature as Feature).rootProject
 
       if (!(this as any).$auth.loggedIn) {
