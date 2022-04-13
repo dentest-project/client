@@ -3,6 +3,7 @@
     :color="mode === $modes.view ? 'e0e0e0' : $colors.secondary"
     :class="{ 'switch-scenario-type--active': mode === $modes.edit }"
     x-small
+    dark
     @click="switchType"
   >
     {{ type }}
