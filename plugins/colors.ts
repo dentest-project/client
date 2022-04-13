@@ -28,7 +28,7 @@ interface Colors {
 // palette: https://flatuicolors.com/palette/au
 Vue.prototype.$colors = {
   primary: '#686de0',
-  secondary: '#ff793f',
+  secondary: '#003668',
   tertiary: '#30336b',
   quaternary: '#535c68',
   add: '#4834d4',
@@ -37,7 +37,7 @@ Vue.prototype.$colors = {
   warning: '#f1c40f',
   error: '#eb4d4b',
   lightPrimary: '#E2E7FF',
-  lightSecondary: '#f7d794',
+  lightSecondary: '#005aad',
   cancel: '#777777',
   disabled: '#777777',
   live: '#6ab04c',
