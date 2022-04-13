@@ -37,7 +37,7 @@ Vue.prototype.$colors = {
   warning: '#f1c40f',
   error: '#eb4d4b',
   lightPrimary: '#E2E7FF',
-  lightSecondary: '#005aad',
+  lightSecondary: '#78beff',
   cancel: '#777777',
   disabled: '#777777',
   live: '#6ab04c',
