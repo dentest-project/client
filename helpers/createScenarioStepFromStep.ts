@@ -80,14 +80,16 @@ const findBestIndexForStep = (scenarioSteps: Array<ScenarioStep>, adverb: StepAd
     }
 
     if (firstWhenIndex > 0) {
-      return [firstWhenIndex - 1, false]
+      return [firstWhenIndex, false]
     }
 
     if (firstThenIndex > 0) {
-      return [firstThenIndex - 1, false]
+      return [firstThenIndex, false]
     }
+
+    return  [scenarioSteps.length, false]
   } else if (adverb === StepAdverb.When && firstThenIndex > 0) {
-    return  [firstThenIndex - 1, firstWhenIndex === -1]
+    return  [firstThenIndex, firstWhenIndex === -1]
   } else if (adverb === StepAdverb.When) {
     return  [scenarioSteps.length, firstWhenIndex === -1]
   } else if (adverb === StepAdverb.Then) {
