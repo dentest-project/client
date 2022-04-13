@@ -208,6 +208,10 @@ export default Vue.extend({
       return out.reverse()
     },
     canWrite: function (): boolean {
+      if ((this as any).feature.status !== FeatureStatus.Draft) {
+        return false
+      }
+
       const rootProject = ((this as any).feature as Feature).rootProject
 
       if (!(this as any).$auth.loggedIn) {
@@ -235,7 +239,7 @@ export default Vue.extend({
             p === OrganizationPermission.Admin ||
             p === OrganizationPermission.ProjectWrite
         ) !== 'undefined'
-      ) && (this as any).feature.status === FeatureStatus.Draft
+      )
     },
   },
 })
