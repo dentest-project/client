@@ -235,7 +235,7 @@ export default Vue.extend({
             p === OrganizationPermission.Admin ||
             p === OrganizationPermission.ProjectWrite
         ) !== 'undefined'
-      )
+      ) && (this as any).feature.status === FeatureStatus.Draft
     },
   },
 })
