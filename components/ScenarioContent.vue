@@ -193,7 +193,7 @@ export default Vue.extend({
         }
       }
 
-      steps.push(step.scenarioStep)
+      steps.splice(step.insertingIndex, 0, step.scenarioStep)
       this.onStepsChanged(steps)
     },
     onExamplesChanged(examples: Record<string, Array<string>>): void {

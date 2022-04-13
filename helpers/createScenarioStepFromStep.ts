@@ -19,7 +19,8 @@ interface GenerateParamsOutput {
 
 interface CreateScenarioStepFromStepOutput {
   withTableParam: boolean,
-  scenarioStep: ScenarioStep
+  scenarioStep: ScenarioStep,
+  insertingIndex: number
 }
 
 const getDefaultValueForStepPart = (part: StepPart) => {
@@ -67,10 +68,39 @@ const generateParams = (step: Step): GenerateParamsOutput => {
   };
 };
 
+const findBestIndexForStep = (scenarioSteps: Array<ScenarioStep>, adverb: StepAdverb): [number, boolean] => {
+  const firstGivenIndex = scenarioSteps.findIndex(s => s.adverb === StepAdverb.Given)
+  const firstWhenIndex = scenarioSteps.findIndex(s => s.adverb === StepAdverb.When)
+  const firstThenIndex = scenarioSteps.findIndex(s => s.adverb === StepAdverb.Then)
+
+
+  if (adverb === StepAdverb.Given) {
+    if (firstGivenIndex === -1) {
+      return [0, true]
+    }
+
+    if (firstWhenIndex > 0) {
+      return [firstWhenIndex - 1, false]
+    }
+
+    if (firstThenIndex > 0) {
+      return [firstThenIndex - 1, false]
+    }
+  } else if (adverb === StepAdverb.When && firstThenIndex > 0) {
+    return  [firstThenIndex - 1, firstWhenIndex === -1]
+  } else if (adverb === StepAdverb.When) {
+    return  [scenarioSteps.length, firstWhenIndex === -1]
+  } else if (adverb === StepAdverb.Then) {
+    return  [scenarioSteps.length, firstThenIndex === -1]
+  }
+
+  return [scenarioSteps.length, true]
+}
+
 const createScenarioStepFromStep = (scenarioSteps: Array<ScenarioStep>, step: Step): CreateScenarioStepFromStepOutput => {
-  const generatedParams = generateParams(step);
-  const correspondingAdverb = getCorrespondingAdverb(step.type);
-  const shouldUseAdverb = scenarioSteps.map(s => s.adverb).reverse().find(s => ![StepAdverb.And, StepAdverb.But].includes(s)) !== correspondingAdverb
+  const generatedParams = generateParams(step)
+  const correspondingAdverb = getCorrespondingAdverb(step.type)
+  const [insertingIndex, shouldUseAdverb] = findBestIndexForStep(scenarioSteps, correspondingAdverb)
 
   const scenarioStep = {
     priority: scenarioSteps.length,
@@ -81,7 +111,8 @@ const createScenarioStepFromStep = (scenarioSteps: Array<ScenarioStep>, step: St
 
   return {
     scenarioStep,
-    withTableParam: generatedParams.withTableParam
+    withTableParam: generatedParams.withTableParam,
+    insertingIndex
   };
 }
 
