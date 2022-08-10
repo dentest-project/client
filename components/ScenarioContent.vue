@@ -189,7 +189,7 @@ export default Vue.extend({
         if (tableParamIndex !== -1) {
           step.scenarioStep.params[tableParamIndex].content = []
           this.createTableStepParamDialog = true
-          this.tableParamStepIndex = steps.length
+          this.tableParamStepIndex = step.insertingIndex
         }
       }
 
