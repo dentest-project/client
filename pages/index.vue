@@ -86,14 +86,12 @@ export default Vue.extend({
     OrganizationCard,
     ProjectCard,
   },
-  async asyncData({ $api, $auth }): Promise<InitialData> {
-    const [organizations, projects] = $auth.loggedIn
-      ? await Promise.all([$api.getOrganizations(), $api.getProjects()])
-      : [[], []]
+  async beforeMount(): Promise<void> {
+    if ((this as any).$auth.loggedIn) {
+      const [organizations, projects] = await Promise.all([(this as any).$api.getOrganizations(), (this as any).$api.getProjects()])
 
-    return {
-      organizations,
-      projects,
+      (this as any).organizations = organizations
+      (this as any).projects = projects
     }
   },
   data: function () {
