@@ -19,7 +19,7 @@
         :project="project"
       />
     </grid3>
-    <p v-if="organizations.length === 0 && projects.length === 0">
+    <p v-if="organizations.length === 0 && projects.length === 0 && !loading">
       You don't have any project nor organization.
     </p>
     <create-organization-dialog
@@ -37,21 +37,24 @@
     <v-snackbar
       v-model="organizationCreatedSnackbarOpened"
       :color="$colors.success"
-      >Organization created</v-snackbar
     >
+      Organization created
+    </v-snackbar>
     <v-snackbar
       v-model="organizationCreationErrorSnackbarOpened"
       :color="$colors.error"
-      >An error occurred while creating the organization</v-snackbar
     >
-    <v-snackbar v-model="projectCreatedSnackbarOpened" :color="$colors.success"
-      >Project created</v-snackbar
-    >
+      An error occurred while creating the organization
+    </v-snackbar>
+    <v-snackbar v-model="projectCreatedSnackbarOpened" :color="$colors.success">
+      Project created
+    </v-snackbar>
     <v-snackbar
       v-model="projectCreationErrorSnackbarOpened"
       :color="$colors.error"
-      >An error occurred while creating the project</v-snackbar
     >
+      An error occurred while creating the project
+    </v-snackbar>
   </v-main>
 </template>
 
@@ -88,11 +91,14 @@ export default Vue.extend({
   },
   async beforeMount(): Promise<void> {
     if (this.$auth.loggedIn) {
+      this.loading = true
       await Promise.all([this.loadOrganizations(), this.loadProjects()])
+      this.loading = false
     }
   },
   data: function () {
     return {
+      loading: false,
       organizations: [] as OrganizationList,
       projects: [] as ProjectList,
       createOrganizationDialog: false,
