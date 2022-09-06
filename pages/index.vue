@@ -88,10 +88,8 @@ export default Vue.extend({
   },
   async beforeMount(): Promise<void> {
     if ((this as any).$auth.loggedIn) {
-      const [organizations, projects] = await Promise.all([(this as any).$api.getOrganizations(), (this as any).$api.getProjects()])
-
-      (this as any).organizations = organizations
-      (this as any).projects = projects
+      (this as any).organizations = await (this as any).$api.getOrganizations()
+      (this as any).projects = await (this as any).$api.getProjects()
     }
   },
   data: function () {
