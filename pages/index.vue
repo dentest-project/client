@@ -87,9 +87,8 @@ export default Vue.extend({
     ProjectCard,
   },
   async beforeMount(): Promise<void> {
-    if ((this as any).$auth.loggedIn) {
-      (this as any).organizations = await (this as any).$api.getOrganizations()
-      (this as any).projects = await (this as any).$api.getProjects()
+    if (this.$auth.loggedIn) {
+      await Promise.all([this.loadOrganizations(), this.loadProjects()])
     }
   },
   data: function () {
