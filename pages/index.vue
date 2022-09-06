@@ -19,7 +19,7 @@
         :project="project"
       />
     </grid3>
-    <p v-if="organizations.length === 0 && projects.length === 0 && !loading">
+    <p v-if="shouldDisplayEmptyMessage">
       You don't have any project nor organization.
     </p>
     <create-organization-dialog
@@ -89,16 +89,15 @@ export default Vue.extend({
     OrganizationCard,
     ProjectCard,
   },
-  async beforeMount(): Promise<void> {
+  async mounted(): Promise<void> {
     if (this.$auth.loggedIn) {
-      this.loading = true
       await Promise.all([this.loadOrganizations(), this.loadProjects()])
-      this.loading = false
     }
+    this.loading = false
   },
   data: function () {
     return {
-      loading: false,
+      loading: true,
       organizations: [] as OrganizationList,
       projects: [] as ProjectList,
       createOrganizationDialog: false,
@@ -146,6 +145,11 @@ export default Vue.extend({
       this.deactivateCreateProjectDialog()
       this.projectCreationErrorSnackbarOpened = true
     },
+  },
+  computed: {
+    shouldDisplayEmptyMessage(): bool {
+      return (this as any).organizations.length === 0 && (this as any).projects.length === 0 && !(this as any).loading
+    }
   },
 })
 </script>
