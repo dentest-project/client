@@ -147,7 +147,7 @@ export default Vue.extend({
     },
   },
   computed: {
-    shouldDisplayEmptyMessage(): bool {
+    shouldDisplayEmptyMessage(): boolean {
       return (this as any).organizations.length === 0 && (this as any).projects.length === 0 && !(this as any).loading
     }
   },
