@@ -1,5 +1,5 @@
 <template>
-  <v-col cols="12" sm="12" md="6" lg="6">
+  <v-col cols="12" sm="12" :md="isBackground ? 12 : 6" :lg="isBackground ? 12 : 6">
     <v-sheet
       class="scenario"
       :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver, 'scenario--pointer-frozen': shouldFreezePointer }"
