@@ -2,9 +2,7 @@
   <v-card elevation="3" :color="$colors.quaternary" dark>
     <v-card-title>{{ path.path }}</v-card-title>
     <v-card-actions>
-      <primary-card-link-button :to="$routes.path(path)"
-        >Enter</primary-card-link-button
-      >
+      <primary-card-link-button :to="$routes.path(path)">Enter</primary-card-link-button>
       <v-btn
         v-if="canWrite"
         @click="activateMoveDialog"
@@ -12,8 +10,9 @@
         outlined
         dark
         text
-        >Move</v-btn
       >
+        Move
+      </v-btn>
     </v-card-actions>
     <move-path-dialog
       v-model="moveDialogOpened"

@@ -2,9 +2,7 @@
   <v-card elevation="3" :color="$colors.secondary" dark>
     <v-card-title>{{ feature.title }}</v-card-title>
     <v-card-actions>
-      <secondary-card-link-button :to="$routes.feature(path, feature)"
-        >See feature</secondary-card-link-button
-      >
+      <secondary-card-link-button :to="$routes.feature(path, feature)">See feature</secondary-card-link-button>
       <v-btn
         v-if="canWrite"
         @click="activateMoveDialog"
@@ -12,8 +10,11 @@
         outlined
         dark
         text
-        >Move</v-btn
       >
+        Move
+      </v-btn>
+      <v-divider />
+      <feature-status-chip :can-select="false" :feature="feature" />
     </v-card-actions>
     <move-feature-dialog
       v-model="moveDialogOpened"
@@ -27,11 +28,13 @@
 <script lang="ts">
 import Vue, { PropOptions } from 'vue'
 import SecondaryCardLinkButton from '~/components/buttons/SecondaryCardLinkButton.vue'
+import FeatureStatusChip from '~/components/chips/FeatureStatusChip.vue';
 import MoveFeatureDialog from '~/components/dialogs/MoveFeatureDialog.vue'
 import { Feature, Path, UpdateFeatureParentPath } from '~/types'
 
 export default Vue.extend({
   components: {
+    FeatureStatusChip,
     MoveFeatureDialog,
     SecondaryCardLinkButton,
   },

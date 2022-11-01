@@ -7,7 +7,7 @@
     origin="top left"
   >
     <template v-slot:activator="{ on }">
-      <v-chip v-on="on" :color="color" class="feature-status-chip">{{
+      <v-chip v-on="on" :color="color" class="feature-status-chip" :class="`feature-status-chip--${feature.status}`">{{
         displayedStatus
       }}</v-chip>
     </template>
@@ -89,7 +89,11 @@ export default Vue.extend({
 
 <style scoped>
 .feature-status-chip.v-chip {
-  color: #ffffff;
+  color: #333333;
   margin: 0.2rem;
+}
+
+.feature-status-chip.v-chip.feature-status-chip--draft {
+  color: #EEEEEE;
 }
 </style>
