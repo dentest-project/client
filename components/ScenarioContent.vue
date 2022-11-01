@@ -357,31 +357,31 @@ export default Vue.extend({
 
 .scenario .scenario-up {
   position: absolute;
-  right: 192px;
+  left: 96px;
   top: -16px;
 }
 
 .scenario .scenario-down {
   position: absolute;
-  right: 144px;
+  left: 144px;
   top: -16px;
 }
 
 .scenario .scenario-copy {
   position: absolute;
-  right: 96px;
+  left: 48px;
   top: -16px;
 }
 
 .scenario .scenario-edit {
   position: absolute;
-  right: 48px;
+  left: 0;
   top: -16px;
 }
 
 .scenario .scenario-delete {
   position: absolute;
-  right: 0;
+  left: 192px;
   top: -16px;
 }
 
