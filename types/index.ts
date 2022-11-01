@@ -266,7 +266,13 @@ interface StepProject {
 }
 
 interface TableStepParam extends StepParam {
-  content: Array<Array<string>>
+  content: Array<Array<string>>,
+  headerColumn: boolean,
+  headerRow: boolean
+}
+
+function isTableStepParam(object: any): object is TableStepParam {
+  return 'headerColumn' in object && 'headerRow' in object;
 }
 
 interface Tag {
@@ -399,5 +405,6 @@ export {
   UpdateProject,
   UpdateStep,
   User,
-  isInlineStepParam
+  isInlineStepParam,
+  isTableStepParam
 };

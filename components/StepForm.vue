@@ -31,6 +31,9 @@
       v-else-if="extraParamType === 'table'"
       :value="extraParamValue"
       :deletable-columns="true"
+      :headerable="true"
+      :header-column="tableParamOptions.headerColumn"
+      :header-row="tableParamOptions.headerRow"
       @input="onExtraParamUpdated"
     />
   </form>
@@ -42,7 +45,7 @@ import InlineStepParamForm from '~/components/InlineStepParamForm.vue'
 import TableForm from '~/components/TableForm.vue'
 import {
   InlineStepParam,
-  isInlineStepParam,
+  isInlineStepParam, isTableStepParam,
   ScenarioStep,
   SelectItem,
   StepAdverb,
@@ -50,6 +53,11 @@ import {
   StepParamType,
   StepPart,
 } from '~/types'
+
+interface TableParamOptions {
+  headerColumn: boolean,
+  headerRow: boolean
+}
 
 export default Vue.extend({
   components: {
@@ -98,13 +106,21 @@ export default Vue.extend({
         params,
       })
     },
-    onExtraParamUpdated(content: string | Array<Array<string>>) {
+    onExtraParamUpdated(content: string | Array<Array<string>>, options: TableParamOptions) {
       const updatedParamIndex = this.step.params.findIndex(
         (p) => !isInlineStepParam(p)
       )
       const params = [...this.step.params]
+      const param = params[updatedParamIndex];
 
-      params[updatedParamIndex].content = content
+      param.content = content
+
+      if (isTableStepParam(param)) {
+        param.headerColumn = options.headerColumn
+        param.headerRow = options.headerRow
+      }
+
+      params[updatedParamIndex] = param
 
       this.$emit('input', {
         ...this.step,
@@ -145,6 +161,16 @@ export default Vue.extend({
       return (this as any).step.params.find(
         (p: StepParam) => !isInlineStepParam(p)
       ).content
+    },
+    tableParamOptions(): TableParamOptions {
+      const extraParam = (this as any).step.params.find(
+        (p: StepParam) => !isInlineStepParam(p)
+      )
+
+      return {
+        headerColumn: extraParam.headerColumn,
+        headerRow: extraParam.headerRow
+      }
     },
   },
 })

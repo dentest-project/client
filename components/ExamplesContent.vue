@@ -17,6 +17,7 @@
       v-else
       :headers="headers"
       :deletable-columns="false"
+      :headerable="false"
       :value="value"
       @input="onUpdated"
     />

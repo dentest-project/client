@@ -58,7 +58,9 @@ const generateParams = (step: Step): GenerateParamsOutput => {
     withTableParam = true;
     params.push({
       type: step.extraParamType,
-      content: [] as Array<Array<string>>
+      content: [] as Array<Array<string>>,
+      headerColumn: false,
+      headerRow: false
     });
   }
 
@@ -99,7 +101,7 @@ const findBestIndexForStep = (scenarioSteps: Array<ScenarioStep>, adverb: StepAd
   return [scenarioSteps.length, true]
 }
 
-const createScenarioStepFromStep = (scenarioSteps: Array<ScenarioStep>, step: Step): CreateScenarioStepFromStepOutput => {
+export default function createScenarioStepFromStep(scenarioSteps: Array<ScenarioStep>, step: Step): CreateScenarioStepFromStepOutput {
   const generatedParams = generateParams(step)
   const correspondingAdverb = getCorrespondingAdverb(step.type)
   const [insertingIndex, shouldUseAdverb] = findBestIndexForStep(scenarioSteps, correspondingAdverb)
@@ -117,5 +119,3 @@ const createScenarioStepFromStep = (scenarioSteps: Array<ScenarioStep>, step: St
     insertingIndex
   };
 }
-
-export default createScenarioStepFromStep;

@@ -22,9 +22,21 @@
       v-else-if="extraParamType === 'table'"
       class="step-display-table-param"
     >
+      <thead v-if="tableParamOptions.headerRow && extraParamValue.length > 0">
+        <tr>
+          <th v-for="(head, i) in extraParamValue[0]" :key="i">
+            {{ head }}
+          </th>
+        </tr>
+      </thead>
       <tbody>
-        <tr v-for="(row, j) in extraParamValue" :key="j">
-          <td v-for="(cell, i) in row" :key="`${j}-${i}`">{{ cell }}</td>
+        <tr v-for="(row, j) in tableParamOptions.headerRow ? extraParamValue.slice(1) : extraParamValue" :key="j">
+          <th v-if="tableParamOptions.headerColumn">
+            {{ row[0] }}
+          </th>
+          <td v-for="(cell, i) in tableParamOptions.headerColumn ? row.slice(1) : row" :key="`${j}-${i}`">
+            {{ cell }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -44,6 +56,11 @@ import {
   StepParamType,
   StepPart,
 } from '~/types'
+
+interface TableParamOptions {
+  headerColumn: boolean,
+  headerRow: boolean
+}
 
 export default Vue.extend({
   components: { Paragraph },
@@ -95,6 +112,16 @@ export default Vue.extend({
         (p: StepParam) => !isInlineStepParam(p)
       ).content
     },
+    tableParamOptions(): TableParamOptions {
+      const param = (this as any).step.params.find(
+        (p: StepParam) => !isInlineStepParam(p)
+      )
+
+      return {
+        headerColumn: param.headerColumn,
+        headerRow: param.headerRow
+      }
+    },
     isExtraParamValueJson(): boolean
     {
       const extraParamValue = (this as any).extraParamValue
@@ -129,9 +156,17 @@ export default Vue.extend({
   overflow-x: auto;
 }
 
-.step-display-table-param td {
+.step-display-table-param td, .step-display-table-param th {
   padding: 1rem;
   margin: 0;
+}
+
+.step-display-table-param td {
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.step-display-table-param th {
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 </style>

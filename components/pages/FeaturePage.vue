@@ -2,7 +2,7 @@
   <v-main>
     <breadcrumb :items="breadcrumbItems" />
     <editable-title
-      v-if="canWrite"
+      v-if="canWrite && isFeatureInDraftMode"
       label="Feature title"
       v-model="feature.title"
       @input="onTitleChanged"

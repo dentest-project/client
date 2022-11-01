@@ -19,14 +19,7 @@
 import Vue, { PropOptions } from 'vue'
 import AddButton from '~/components/buttons/AddButton.vue'
 import StepContent from '~/components/StepContent.vue'
-import {
-  InlineStepParam,
-  Mode,
-  MultilineStepParam,
-  ScenarioStep,
-  StepAdverb,
-  TableStepParam,
-} from '~/types'
+import { Mode, ScenarioStep } from '~/types'
 
 export default Vue.extend({
   components: {
