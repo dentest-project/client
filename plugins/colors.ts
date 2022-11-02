@@ -29,7 +29,7 @@ interface Colors {
 Vue.prototype.$colors = {
   primary: '#686de0',
   secondary: '#003668',
-  tertiary: '#30336b',
+  tertiary: '#6D214F',
   quaternary: '#535c68',
   add: '#4834d4',
   cut: '#22a6b3',
