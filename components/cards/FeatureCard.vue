@@ -13,7 +13,7 @@
       >
         Move
       </v-btn>
-      <v-divider />
+      <v-spacer />
       <feature-status-chip :can-select="false" :feature="feature" />
     </v-card-actions>
     <move-feature-dialog
