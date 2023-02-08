@@ -38,6 +38,6 @@
 }
 .cucumber-logo-c,
 .cucumber-logo-d {
-  fill: #ffffff;
+  fill: #000000;
 }
 </style>

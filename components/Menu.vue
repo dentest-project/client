@@ -1,13 +1,12 @@
 <template>
   <v-app-bar
     class="app-bar"
-    :color="transparent ? 'transparent' : $colors.primary"
+    :color="$colors.primary"
     :flat="transparent"
     dark
     app
   >
-    <logo v-if="transparent" />
-    <bar-logo v-else />
+    <bar-logo />
     <v-toolbar-title>
       <nuxt-link v-if="$route.path !== '/'" :to="$routes.home()">
         Dentest
