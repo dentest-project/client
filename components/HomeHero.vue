@@ -17,7 +17,7 @@
       />
       <home-badge
         title="Document"
-        description="And as online documentation"
+        description="Then, after release, as online documentation"
       />
     </div>
 
