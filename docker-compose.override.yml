@@ -1,0 +1,15 @@
+version: "3.4"
+
+# Development environment override
+services:
+  node:
+    build:
+      target: app_node_dev
+    command: npm run dev
+    volumes:
+      - .:/srv/app
+      - ./node_modules:/srv/app/node_modules
+    extra_hosts:
+      # Ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
+      - ${API_HOST:-api.dentest.local}:host-gateway

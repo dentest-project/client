@@ -1,0 +1,18 @@
+version: "3.4"
+
+services:
+  node:
+    build:
+      context: .
+      target: app_node
+      args:
+        BASE_URL: ${API_URL:-http://api.dentest.local}
+    environment:
+      NODE_OPTIONS: '--openssl-legacy-provider'
+      HOST: '0.0.0.0'
+      API_URL: ${API_URL:-http://api.dentest.local}
+    command: npm start
+    ports:
+      - ${HTTP_PORT:-80}:3000
+      - 24678:24678
+    stdin_open: true
