@@ -13,7 +13,7 @@ jobs:
           DEPLOY_TO: ${{ secrets.PROD_SERVER }}
           DEPLOY_DIR: "/var/www/dockerize-dentest"
           ACTOR: ${{ github.actor }}
-          CR_PAT: ${{ secrets.GITHUB_TOKEN }}
+          CR_PAT: ${{ secrets.READ_PACKAGES_REGISTRY_TOKEN }}
         run: echo "Adding deployer agent identity" &&
           eval `ssh-agent -s` && ssh-add <(echo "$DEPLOYER_AGENT_PRIVATE_KEY") &&
           echo "Creating directories on server" &&
