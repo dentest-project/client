@@ -1,71 +1,79 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <v-text-field
+    <el-input
       v-model="username"
-      label="Username"
-      :rules="[rules.required]"
+      placeholder="Username"
+      required
     />
-    <v-text-field
+    <el-input
       v-model="email"
-      label="Email"
-      :rules="[rules.email, rules.required]"
+      type="email"
+      placeholder="Email"
+      required
     />
-    <v-text-field
+    <el-input
       v-model="password"
-      label="Password"
-      :rules="[rules.length]"
       type="password"
+      placeholder="Password"
+      minlength="8"
+      show-word-limit
+      show-password
     />
-    <v-btn type="submit" :color="$colors.primary" dark> Update profile </v-btn>
-    <v-btn :color="$colors.error" dark @click="onDeleteButtonClicked">
-      Delete account
-    </v-btn>
+
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-input type="submit" value="Update profile" />
+      </el-col>
+      <el-col :span="12">
+        <el-popconfirm
+          title="Are you sure that you want to delete your account? All of your information will be deleted. Which means this action is irreversible"
+          :icon="WarningFilled"
+          icon-color="#f56c6c"
+          :width="300"
+          @confirm="onDeleteButtonClicked"
+        >
+          <template #reference>
+            <el-button type="danger">Delete my account</el-button>
+          </template>
+        </el-popconfirm>
+      </el-col>
+    </el-row>
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script setup lang="ts">
+import { WarningFilled } from '@element-plus/icons-vue'
+import { loggedInUser } from '~/helpers/auth'
 
-export default Vue.extend({
-  data() {
-    return {
-      username: this.$auth.user?.username || '',
-      email: this.$auth.user?.email || '',
-      password: '',
-      rules: {
-        email(value: string): boolean | string {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const { data } = useAuth()
 
-          return pattern.test(value) || 'Invalid e-mail.'
-        },
-        required(value: string): boolean | string {
-          if (value) {
-            return true
-          }
+const username = ref(loggedInUser(data.value).username)
+const email = ref(loggedInUser(data.value).email)
+const password = ref('')
 
-          return 'This field is required'
-        },
-        length(value: string): boolean | string {
-          if (value.length === 0 || value.length >= 8) {
-            return true
-          }
+const emit = defineEmits(['delete', 'submit'])
 
-          return 'This field should be at least 8 characters long'
-        },
-      },
-    }
-  },
-  methods: {
-    onDeleteButtonClicked(): void {
-      this.$emit('delete')
-    },
-    onSubmit(): void {
-      this.$emit('submit', {
-        username: this.username,
-        email: this.email,
-        password: this.password,
-      })
-    },
-  },
-})
+const onDeleteButtonClicked = () => {
+  emit('delete')
+}
+
+
+const onSubmit = () => {
+  emit('submit', {
+    username: username.value,
+    email: email.value,
+    password: password.value,
+  })
+}
 </script>
+
+<style scoped>
+form .el-input, form .el-button {
+  margin: 0.5rem;
+  width: 100%;
+}
+
+.el-popover.el-popper {
+  word-break: normal;
+}
+</style>

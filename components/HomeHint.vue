@@ -5,23 +5,21 @@
   </div>
 </template>
 
-<script type="ts">
-export default {
-  props: {
-    image: {
-      type: String,
-      required: true,
-    },
-    alt: {
-      type: String,
-      required: true,
-    },
-    content: {
-      type: String,
-      required: true,
-    }
+<script setup type="ts">
+const { image, alt, content } = defineProps({
+  image: {
+    type: String,
+    required: true,
   },
-}
+  alt: {
+    type: String,
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  }
+})
 </script>
 
 <style scoped>

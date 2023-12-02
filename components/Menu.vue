@@ -1,70 +1,68 @@
 <template>
-  <v-app-bar
-    class="app-bar"
-    :color="$colors.primary"
-    :flat="transparent"
-    dark
-    app
-  >
-    <bar-logo />
-    <v-toolbar-title>
-      <nuxt-link v-if="$route.path !== '/'" :to="$routes.home()">
-        Dentest
-      </nuxt-link>
+  <el-menu mode="horizontal" :ellipsis="false">
+    <BarLogo />
+    <el-menu-item index="0" class="title">
+      <NuxtLink v-if="$route.path !== '/'" :to="$routes.home()">Dentest</NuxtLink>
       <h1 v-else>Dentest</h1>
-    </v-toolbar-title>
-    <v-spacer />
-    <div v-if="$auth.loggedIn">
-      <v-btn
-        class="menu-username"
-        :to="$routes.updateProfile()"
-        :color="$colors.primary"
-        small
-      >
-        {{ $auth.user.username }}
-      </v-btn>
-      <a class="menu-logout" href="#" @click.prevent="logout">Log out</a>
-    </div>
-    <div v-else>
+    </el-menu-item>
+    <div class="spacer" />
+    <el-menu-item class="switch">
+      <DarkModeSwitch :model-value="lightMode" @update:modelValue="v => $emit('update:lightModeValue', v)" />
+    </el-menu-item>
+    <el-menu-item index="2">
       <a href="https://docs.dentest.tech" target="_blank">Docs</a>
-      <nuxt-link :to="$routes.login()">Log in</nuxt-link>
-    </div>
-  </v-app-bar>
+    </el-menu-item>
+    <el-menu-item v-if="loggedIn" index="3">
+      <NuxtLink :to="toUpdateProfile">{{ username }}</NuxtLink>
+    </el-menu-item>
+    <el-menu-item v-if="loggedIn" index="4">
+      <a class="menu-logout" href="#" @click.prevent="() => signOut({ callbackUrl: '/' })">Log out</a>
+    </el-menu-item>
+    <el-menu-item v-else index="3">
+      <NuxtLink :to="$routes.login()">Log in</NuxtLink>
+    </el-menu-item>
+  </el-menu>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import BarLogo from '~/components/logos/BarLogo.vue'
-import Logo from '~/components/logos/Logo.vue'
+<script setup lang="ts">
+import { isAuthenticated, loggedInUser } from '~/helpers/auth'
 
-export default Vue.extend({
-  components: { BarLogo, Logo },
-  props: {
-    transparent: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  methods: {
-    async logout() {
-      await this.$auth.logout()
-    },
-  },
-})
+const { signOut, data, status } = useAuth()
+const { $routes } = useNuxtApp()
+
+const props = defineProps<{
+  lightMode: 'light' | 'dark'
+}>()
+
+const username = computed(() => isAuthenticated(status.value) ? loggedInUser(data.value).username : '')
+
+const loggedIn = computed(() => isAuthenticated(status.value))
+
+const toUpdateProfile = computed(() => $routes.updateProfile())
 </script>
 
 <style scoped>
-.app-bar a,
-.app-bar h1 {
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 1rem;
-  padding: 0;
-  margin-left: 0.3rem;
-  font-weight: normal;
+.spacer {
+  flex-grow: 1;
 }
 
-.menu-logout {
+a {
+  text-decoration: none;
+}
+
+.title a {
   font-weight: bold;
+}
+
+.title h1 {
+  font-size: var(--el-menu-item-font-size);
+  padding: 0;
+}
+
+.switch {
+  height: var(--el-menu-item-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

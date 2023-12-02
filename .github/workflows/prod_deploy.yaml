@@ -1,7 +1,8 @@
 name: Prod deploy
-on:
-  push:
-    tags: [ '*' ]
+#on:
+#  push:
+#    tags: [ '*' ]
+on: workflow_dispatch
 jobs:
   deploy:
     name: Deploy

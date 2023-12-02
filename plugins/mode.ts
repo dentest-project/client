@@ -1,18 +1,16 @@
-import Vue from 'vue'
-import { Mode } from '~/types';
-
-declare module 'vue/types/vue' {
-  interface Vue {
-    $modes: Modes
-  }
-}
+import { defineNuxtPlugin } from 'nuxt/app'
+import { Mode } from '~/types'
 
 interface Modes {
   view: Mode,
   edit: Mode
 }
 
-Vue.prototype.$modes = {
-  view: Mode.View,
-  edit: Mode.Edit
-} as Modes;
+export default defineNuxtPlugin(() => ({
+  provide: {
+    'modes': (): Modes => ({
+      view: Mode.View,
+      edit: Mode.Edit
+    })
+  }
+}))

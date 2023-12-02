@@ -1,6 +1,6 @@
 interface TreeElement {
   id: string,
-  name: string,
+  label: string,
   disabled: boolean,
   children: Array<TreeElement>
 }

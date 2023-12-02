@@ -1,13 +1,5 @@
 <template>
-  <main>
-    <home-hero />
-  </main>
+  <el-main>
+    <HomeHero />
+  </el-main>
 </template>
-
-<script type="ts">
-import HomeHero from '~/components/HomeHero.vue';
-
-export default {
-  components: { HomeHero }
-};
-</script>

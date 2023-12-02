@@ -1,7 +1,7 @@
 <template>
-  <v-row class="actions-bar">
+  <el-row class="actions-bar">
     <slot />
-  </v-row>
+  </el-row>
 </template>
 
 <style scoped>

@@ -1,35 +1,17 @@
 <template>
-  <div
-    class="breadcrumb"
-    :style="`border-bottom: 1px solid ${$colors.primary}`"
-  >
-    <v-breadcrumbs :items="items">
-      <template v-slot:divider>
-        <v-icon>mdi-chevron-right</v-icon>
-      </template>
-      <template v-slot:item="{ item }">
-        <v-breadcrumbs-item :href="item.href" :nuxt="true">{{ item.text }}</v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs>
-  </div>
+  <el-breadcrumb :separator-icon="ArrowRight">
+    <el-breadcrumb-item v-for="item in items">
+      <NuxtLink v-if="item.href && !item.disabled" :to="item.href">{{ item.text }}</NuxtLink>
+      <span v-else>{{ item.text }}</span>
+    </el-breadcrumb-item>
+  </el-breadcrumb>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import { Breadcrumb } from '~/types'
+<script setup lang="ts">
+import type { BreadcrumbItems } from '~/types'
+import { ArrowRight } from '@element-plus/icons-vue'
 
-export default Vue.extend({
-  props: {
-    items: {
-      type: Array,
-      required: true,
-    } as PropOptions<Breadcrumb>,
-  },
-})
+const props = defineProps<{
+  items: BreadcrumbItems
+}>()
 </script>
-
-<style scoped>
-.breadcrumb {
-  margin-bottom: 1rem;
-}
-</style>

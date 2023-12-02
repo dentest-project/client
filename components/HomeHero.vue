@@ -1,33 +1,33 @@
 <template>
   <section class="home-hero">
-    <h2>A Behavior Driven Development platform</h2>
+    <h2>A Behavior Driven Development solution</h2>
 
     <div class="home-hero-badges">
-      <home-badge
+      <HomeBadge
         title="Specify"
         description="Write your specifications online"
       />
-      <home-badge
+      <HomeBadge
         title="Code"
         description="Pull them as Gherkin features and start coding"
       />
-      <home-badge
+      <HomeBadge
         title="Validate"
         description="They are now acting as automated tests"
       />
-      <home-badge
+      <HomeBadge
         title="Document"
         description="Then, after release, as online documentation"
       />
     </div>
 
     <div class="home-hero-hints">
-      <home-hint
+      <HomeHint
         image="/cucumber-logo.png"
         alt="Gherkin"
         content="Uses Gherkin to adapt to any project"
       />
-      <home-hint
+      <HomeHint
         image="/jetbrains-logo.png"
         alt="Jetbrains"
         content="JetBrains IDEs integration"
@@ -36,22 +36,10 @@
   </section>
 </template>
 
-<script>
-import CucumberLogo from '~/components/logos/CucumberLogo.vue'
-import HomeBadge from '~/components/HomeBadge.vue';
-import Logo from '~/components/logos/Logo'
-import HomeHint from '~/components/HomeHint.vue';
-
-export default {
-  components: {HomeHint, CucumberLogo, HomeBadge, Logo },
-}
-</script>
-
 <style scoped>
 .home-hero {
-  color: #000000;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;

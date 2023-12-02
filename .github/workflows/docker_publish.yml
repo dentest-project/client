@@ -1,0 +1,29 @@
+name: Publish Docker image
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  publish-docker-image:
+    name: Push Docker image to Github Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Gather release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the Docker image
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker build . -f ./.github/resources/publish/Dockerfile --tag ghcr.io/dentest-project/client:${{ env.RELEASE_VERSION }} --tag ghcr.io/dentest-project/client:latest --no-cache
+          docker push ghcr.io/dentest-project/client:${{ env.RELEASE_VERSION }}
+          docker push ghcr.io/dentest-project/client:latest

@@ -1,66 +1,53 @@
 <template>
-  <v-autocomplete
-    v-model="select"
-    :loading="isAutocompleteLoading"
-    :items="items"
-    :search-input.sync="search"
-    :item-text="getItemText"
-    :item-value="getItemValue"
-    :label="label"
-    solo
-    hide-no-data
-    hide-details
-    clearable
-    @input="(user) => $emit('selected', user)"
+  <el-autocomplete
+    v-model="state"
+    :fetch-suggestions="querySearchAsync"
+    placeholder="Search users to add..."
+    value-key="username"
+    class="user-search"
+    @select="handleSelect"
   />
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { BaseUser } from '~/types'
+<script setup lang="ts">
+import type { BaseUser } from '~/types'
 
-export default Vue.extend({
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    searchWithinOrganization: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      isAutocompleteLoading: false,
-      items: [] as Array<BaseUser>,
-      search: null,
-      select: null,
-    }
-  },
-  methods: {
-    getItemText: function (user: BaseUser): string {
-      return user.username
-    },
-    getItemValue: function (user: BaseUser): BaseUser {
-      return user
-    },
-    doSearch: async function (q: string) {
-      this.isAutocompleteLoading = true
-      this.items = await this.$api.searchUsers(
-        q,
-        this.searchWithinOrganization
-          ? this.$route.params.organization_slug
-          : null,
-        this.$axios
-      )
-      this.isAutocompleteLoading = false
-    },
-  },
-  watch: {
-    search: function (val) {
-      val && val !== this.select && this.doSearch(val)
-    },
-  },
-})
+const { $api } = useNuxtApp()
+const { params } = useRoute()
+
+const props = defineProps<{
+  searchWithinOrganization: boolean
+}>()
+
+const emit = defineEmits(['selected'])
+
+const state = ref('')
+
+const querySearchAsync = async (queryString: string, cb: (arg: any) => void) => {
+  if (queryString.trim().length === 0) {
+    cb([])
+    return
+  }
+
+  const items = await $api.searchUsers(queryString, props.searchWithinOrganization ? params.organizationSlug : null)
+
+  cb(items)
+}
+
+const handleSelect = (item: BaseUser) => {
+  emit('selected', item)
+}
 </script>
+
+<style>
+.el-autocomplete.user-search,
+.el-autocomplete.user-search .el-input,
+.el-autocomplete.user-search input,
+.el-autocomplete.user-search .el-input__wrapper {
+  width: 100%;
+}
+
+.el-autocomplete.user-search {
+  margin-bottom: 1rem;
+}
+</style>

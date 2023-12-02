@@ -1,0 +1,26 @@
+name: Docker deploy
+on: workflow_dispatch
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy
+        env:
+          DEPLOYER_AGENT_PRIVATE_KEY: ${{ secrets.PROD_DEPLOYER_AGENT_PRIVATE_KEY }}
+          DEPLOY_TO: ${{ secrets.PROD_SERVER }}
+          DEPLOY_DIR: "/var/www/dockerize-dentest"
+          ACTOR: ${{ github.actor }}
+          CR_PAT: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "Adding deployer agent identity" &&
+          eval `ssh-agent -s` && ssh-add <(echo "$DEPLOYER_AGENT_PRIVATE_KEY") &&
+          echo "Creating directories on server" &&
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "mkdir -p $DEPLOY_DIR" &&
+          echo "Uploading installer to server" &&
+          scp -o StrictHostKeyChecking=no -r installer deployer-agent@$DEPLOY_TO:$DEPLOY_DIR/ &&
+          echo "Logging Docker in Github package registry" &&
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "echo $CR_PAT | docker login ghcr.io -u $ACTOR --password-stdin" &&
+          echo "Running container" &&
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "cd $DEPLOY_DIR && API_URL=https://api.2.dentest.tech HTTP_PORT=8001 COMPOSE_PROJECT_NAME=dentest_client SERVER_NAME=http://127.0.0.1 docker compose -f ./installer/prod/docker-compose.yml up -d --remove-orphans --build"

@@ -4,9 +4,20 @@ enum FeatureStatus {
   Live = 'live'
 }
 
+enum SaveStatus {
+  Saved = 'saved',
+  Saving = 'saving',
+  NotSaved = 'not_saved'
+}
+
 enum Mode {
   View,
   Edit
+}
+
+enum Context {
+  Project,
+  Organization
 }
 
 enum OrganizationPermission {
@@ -173,7 +184,8 @@ interface PathFeature {
 
 interface PathProject {
   id: string,
-  title: string
+  title: string,
+  organization?: Organization
 }
 
 interface Project extends PathProject {
@@ -238,6 +250,18 @@ interface SelectItem {
   disabled: boolean
 }
 
+interface Session {
+  user: User
+}
+
+interface CreateStep {
+  project: StepProject,
+  type: StepType,
+  extraParamType: StepParamType,
+  parts: Array<StepPart>,
+  tags: Array<Tag>
+}
+
 interface Step {
   id?: number,
   project: StepProject,
@@ -258,21 +282,24 @@ interface StepPart {
   content: string,
   priority: number,
   strategy?: StepPartStrategy,
-  choices: Array<String> | null
+  choices?: Array<string> | null
 }
 
 interface StepProject {
   id: string
 }
 
-interface TableStepParam extends StepParam {
-  content: Array<Array<string>>,
+interface TableParamOptions {
   headerColumn: boolean,
   headerRow: boolean
 }
 
+interface TableStepParam extends StepParam, TableParamOptions {
+  content: Array<Array<string>>
+}
+
 function isTableStepParam(object: any): object is TableStepParam {
-  return 'headerColumn' in object && 'headerRow' in object;
+  return !!object && 'headerColumn' in object && 'headerRow' in object;
 }
 
 interface Tag {
@@ -286,7 +313,8 @@ interface UpdateFeature {
   path: UpdateFeaturePath,
   title: string,
   description: string,
-  scenarios: Array<Scenario>
+  scenarios: Array<Scenario>,
+  tags: Tag[]
 }
 
 interface UpdateFeatureParentPath {
@@ -335,7 +363,7 @@ interface User extends BaseUser {
   roles: RoleList
 }
 
-type Breadcrumb = Array<BreadcrumbItem>
+type BreadcrumbItems = Array<BreadcrumbItem>
 type OrganizationList = Array<Organization>
 type OrganizationUserList = Array<OrganizationUser>
 type PathList = Array<Path>
@@ -349,10 +377,12 @@ function isInlineStepParam(param: StepParam): param is InlineStepParam {
 
 export {
   BaseUser,
-  Breadcrumb,
+  BreadcrumbItems,
+  Context,
   CreateFeature,
   CreatePath,
   CreateProject,
+  CreateStep,
   CreateTag,
   Feature,
   FeatureStatus,
@@ -380,10 +410,12 @@ export {
   Register,
   ResetPassword,
   ResetPasswordRequest,
+  SaveStatus,
   Scenario,
   ScenarioStep,
   ScenarioType,
   SelectItem,
+  Session,
   Step,
   StepAdverb,
   StepParam,
@@ -392,6 +424,7 @@ export {
   StepPartStrategy,
   StepPartType,
   StepType,
+  TableParamOptions,
   TableStepParam,
   Tag,
   UpdateFeature,

@@ -1,391 +1,206 @@
 <template>
-  <v-col cols="12" sm="12" :md="isBackground ? 12 : 6" :lg="isBackground ? 12 : 6">
-    <v-sheet
-      class="scenario"
-      :class="{ 'scenario--background': isBackground, 'scenario--dragged': draggedOver, 'scenario--pointer-frozen': shouldFreezePointer }"
-      :color="mode === $modes.view ? '#f0f0f0' : $colors.lightSecondary"
-      @dragenter.prevent="() => {}"
-      @dragover.prevent="onDragOver"
-      @dragleave="onDragLeave"
-      @drop.prevent="onDrop"
+  <el-col
+    :class="['ScenarioContent', (draggedOver && 'ScenarioContent--draggedOver')]"
+    :span="24"
+    :sm="24"
+    :md="24"
+    :lg="modelValue.type === ScenarioType.Background ? 24 : 12"
+    @dragenter.prevent="() => {}"
+    @dragover.prevent="draggedOver = true"
+    @dragleave.prevent="draggedOver = false"
+    @drop.prevent="onDrop"
+  >
+    <el-card
+      :class="[
+        'ScenarioContent-card',
+        `ScenarioContent-card--${mode === Mode.View ? 'view' : 'edit'}`,
+        modelValue.type === ScenarioType.Background && 'ScenarioContent-card--background',
+        (canWrite && 'ScenarioContent-card--canWrite')
+      ]"
+      @click="onScenarioClick"
+      v-on-click-outside="onScenarioClickedOutside"
     >
-      <up-button
-        v-if="canWrite && canMoveUp"
-        class="scenario-up"
-        @click="$emit('up')"
+      <template #header>
+        <h2 v-if="!canWrite && modelValue.type !== ScenarioType.Background">{{ modelValue.title }}</h2>
+        <EditableSubtitle v-else-if="canWrite && modelValue.type !== ScenarioType.Background" label="Scenario title" empty-label="Untitled scenario" v-model="title" @submit="onTitleUpdate" />
+        <BackgroundChip v-else class="ScenarioContent-backgroundChip" />
+        <div v-if="canWrite" class="ScenarioContent-actions">
+          <SwitchToBackgroundButton v-if="shouldDisplayBackgroundSwitch" :current-type="modelValue.type" @click="onTypeChange" />
+          <MoveUpButton v-if="canMoveUp" @click="onMoveUp" />
+          <MoveDownButton v-if="canMoveDown" @click="onMoveDown" />
+          <DuplicateButton v-if="modelValue.type !== ScenarioType.Background" @click="onDuplicate" />
+          <DeleteButton label="Delete" size="small" @deleted="onDelete" />
+        </div>
+      </template>
+      <ScenarioStepList
+        v-model="steps"
+        :mode="canWrite ? mode : Mode.View"
+        @update:model-value="onStepsUpdate"
       />
-      <down-button
-        v-if="canWrite && canMoveDown"
-        class="scenario-down"
-        @click="$emit('down')"
+      <ExamplesContent
+        v-if="modelValue.examples"
+        :mode="canWrite ? mode : Mode.View"
+        :model-value="modelValue.examples"
+        @update:model-value="onExamplesUpdate"
       />
-      <copy-button
-        v-if="canWrite && !isBackground"
-        class="scenario-copy"
-        @click="$emit('copy')"
-      />
-      <edit-button
-        v-if="canWrite && mode === $modes.view"
-        class="scenario-edit"
-        @click="switchToEditMode"
-      />
-      <view-button
-        v-else-if="canWrite && mode === $modes.edit"
-        class="scenario-edit"
-        @click="switchToViewMode"
-      />
-      <delete-button
-        v-if="canWrite"
-        class="scenario-delete"
-        @click="onDeleteClick"
-      />
-      <switch-scenario-type-chip
-        v-if="shouldDisplayTypeSwitch"
-        :value="scenario.type"
-        :mode="mode"
-        @input="onTypeChanged"
-      />
-      <tags-selector
-        v-if="mode === $modes.edit"
-        :project="project"
-        :value="scenario.tags"
-        @input="onTagsChanged"
-      />
-      <tags-list v-else :tags="scenario.tags" />
-      <editable-subtitle
-        v-if="mode === $modes.edit && !isBackground"
-        label="Scenario title"
-        :value="scenario.title"
-        @input="onTitleChanged"
-      />
-      <h2 v-else>{{ scenario.title }}</h2>
-      <step-list :mode="mode" :steps="scenario.steps" @input="onStepsChanged" />
-      <examples-content
-        v-if="scenario.examples"
-        class="scenario-examples"
-        :examples="scenario.examples"
-        :mode="mode"
-        @input="onExamplesChanged"
-      />
-      <create-table-step-param-dialog
-        v-model="createTableStepParamDialog"
-        @selected="onTableStepParamDimensionsSelected"
-      />
-    </v-sheet>
-  </v-col>
+      <div v-if="canWrite && steps.length === 0" class="ScenarioContent-empty">
+        To build a scenario, drag'n'drop steps from the steps bank on the right
+      </div>
+    </el-card>
+  </el-col>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import CopyButton from '~/components/buttons/CopyButton.vue'
-import DeleteButton from '~/components/buttons/DeleteButton.vue'
-import DownButton from '~/components/buttons/DownButton.vue'
-import EditButton from '~/components/buttons/EditButton.vue'
-import UpButton from '~/components/buttons/UpButton.vue'
-import ViewButton from '~/components/buttons/ViewButton.vue'
-import SwitchScenarioTypeChip from '~/components/chips/SwitchScenarioTypeChip.vue'
-import CreateTableStepParamDialog from '~/components/dialogs/CreateTableStepParamDialog.vue'
-import EditableSubtitle from '~/components/EditableSubtitle.vue'
-import ExamplesContent from '~/components/ExamplesContent.vue'
-import StepList from '~/components/StepList.vue'
-import TagsList from '~/components/TagsList.vue'
-import TagsSelector from '~/components/TagsSelector.vue'
-import createScenarioStepFromStep from '~/helpers/createScenarioStepFromStep'
-import {
-  isInlineStepParam,
-  Mode,
-  Project,
-  Scenario,
-  ScenarioStep,
-  ScenarioType,
-  StepParamType,
-  Tag,
-} from '~/types'
+<script setup lang="ts">
+import { vOnClickOutside } from '@vueuse/components'
+import { extractExamplesFromSteps } from '~/helpers/extractExamplesFromSteps'
+import { useScenarioContentFocusManagementStore } from '~/store/scenario-content-focus-management'
+import { useStepStore } from '~/store/step'
+import { Mode, type Project, type Scenario, type ScenarioStep, ScenarioType, StepParamType } from '~/types'
+import createScenarioStepFromStep from '../helpers/createScenarioStepFromStep'
 
-interface Dimensions {
-  width: number
-  height: number
+const { getMovingStep } = useStepStore()
+const { isFocusHeld } = useScenarioContentFocusManagementStore()
+
+const props = defineProps<{
+  modelValue: Scenario,
+  canMoveUp: boolean,
+  canMoveDown: boolean,
+  canBeBackground: boolean,
+  canWrite: boolean,
+  project: Project
+}>()
+
+const emit = defineEmits(['update:modelValue', 'up', 'down', 'duplicate', 'delete'])
+
+const title = ref(props.modelValue.title)
+const steps = ref(props.modelValue.steps)
+const draggedOver = ref(false)
+const mode = ref(Mode.View)
+
+const onTitleUpdate = () => {
+  emit('update:modelValue', {
+    ...props.modelValue,
+    title: title.value
+  })
 }
 
-export default Vue.extend({
-  components: {
-    TagsList,
-    TagsSelector,
-    CreateTableStepParamDialog,
-    CopyButton,
-    DeleteButton,
-    DownButton,
-    EditButton,
-    EditableSubtitle,
-    ExamplesContent,
-    StepList,
-    SwitchScenarioTypeChip,
-    UpButton,
-    ViewButton,
-  },
-  model: {
-    prop: 'scenario',
-  },
-  props: {
-    canMoveUp: {
-      type: Boolean,
-      required: true,
-    },
-    canMoveDown: {
-      type: Boolean,
-      required: true,
-    },
-    backgroundable: {
-      type: Boolean,
-      required: true,
-    },
-    canWrite: {
-      type: Boolean,
-      required: true,
-    },
-    scenario: {
-      type: Object,
-      required: true,
-    } as PropOptions<Scenario>,
-    project: {
-      type: Object,
-      required: true,
-    } as PropOptions<Project>,
-  },
-  data() {
-    return {
-      mode: Mode.View,
-      draggedOver: false,
-      createTableStepParamDialog: false,
-      tableParamStepIndex: null as number | null,
+const onTypeChange = () => {
+  emit('update:modelValue', {
+    ...props.modelValue,
+    type: props.modelValue.type === ScenarioType.Background
+      ? (props.modelValue.examples ? ScenarioType.Outline : ScenarioType.Regular)
+      : ScenarioType.Background,
+    title: props.modelValue.type === ScenarioType.Background ? 'Scenario title' : '',
+  })
+}
+
+const onDrop = () => {
+  draggedOver.value = false
+
+  const droppedStep = getMovingStep()
+
+  if (!droppedStep) {
+    return
+  }
+
+  const step = createScenarioStepFromStep(steps.value, droppedStep)
+
+  if (step.withTableParam) {
+    const tableParamIndex = step.scenarioStep.params.findIndex((s) => s.type === StepParamType.Table)
+
+    if (tableParamIndex !== -1) {
+      step.scenarioStep.params[tableParamIndex].content = [['', ''], ['', '']]
     }
-  },
-  methods: {
-    onDeleteClick(): void {
-      this.$emit('deleted')
-    },
-    onDragOver(): void {
-      this.draggedOver = !this.draggedOver ? this.$store.state.stepsDrawer.draggedStep !== null : true
-    },
-    onDragLeave(): void {
-      this.draggedOver = false
-    },
-    onDrop(): void {
-      const droppedStep = this.$store.state.stepsDrawer.draggedStep
-      this.draggedOver = false
+  }
 
-      if (null === droppedStep) {
-        return
-      }
+  steps.value.splice(step.insertingIndex, 0, step.scenarioStep)
 
-      const steps = this.scenario.steps
-      const step = createScenarioStepFromStep(steps, droppedStep)
+  emit('update:modelValue', {
+    ...props.modelValue,
+    steps
+  })
+}
 
-      if (step.withTableParam) {
-        const tableParamIndex = step.scenarioStep.params.findIndex(
-          (s) => s.type === StepParamType.Table
-        )
+const onStepsUpdate = (steps: ScenarioStep[]) => {
+  const examples = extractExamplesFromSteps(steps, props.modelValue.examples)
 
-        if (tableParamIndex !== -1) {
-          step.scenarioStep.params[tableParamIndex].content = []
-          this.createTableStepParamDialog = true
-          this.tableParamStepIndex = step.insertingIndex
-        }
-      }
+  emit('update:modelValue', {
+    ...props.modelValue,
+    steps,
+    examples,
+    type: examples ? ScenarioType.Outline : ScenarioType.Regular
+  })
+}
 
-      steps.splice(step.insertingIndex, 0, step.scenarioStep)
-      this.onStepsChanged(steps)
-    },
-    onExamplesChanged(examples: Record<string, Array<string>>): void {
-      this.$emit('input', {
-        ...this.scenario,
-        examples,
-      })
-    },
-    onStepsChanged(steps: Array<ScenarioStep>): void {
-      let examples = null
-      let type = this.scenario.type
+const onExamplesUpdate = (examples: Record<string, string[]>) => {
+  emit('update:modelValue', {
+    ...props.modelValue,
+    examples
+  })
+}
 
-      if (this.scenario.type !== ScenarioType.Background) {
-        examples = this.updateExamples(steps)
-        type = examples ? ScenarioType.Outline : ScenarioType.Regular
-      }
+const onMoveUp = () => {
+  emit('up')
+}
 
-      this.$emit('input', {
-        ...this.scenario,
-        type,
-        steps,
-        examples,
-      })
-    },
-    onTableStepParamDimensionsSelected(dimensions: Dimensions) {
-      if (null === this.tableParamStepIndex) {
-        return
-      }
+const onMoveDown = () => {
+  emit('down')
+}
 
-      const steps = [...this.scenario.steps]
-      const params = [...steps[this.tableParamStepIndex].params]
-      params[
-        params.findIndex((p) => !isInlineStepParam(p))
-      ].content = new Array(dimensions.height + 1)
-        .fill(null)
-        .map(() => new Array(dimensions.width + 1).fill(''))
-      steps[this.tableParamStepIndex].params = params
+const onDuplicate = () => {
+  emit('duplicate')
+}
 
-      this.createTableStepParamDialog = false
-      this.tableParamStepIndex = null
+const onDelete = () => {
+  emit('delete')
+}
 
-      this.onStepsChanged(steps)
-    },
-    onTagsChanged(tags: Array<Tag>): void {
-      this.$emit('input', {
-        ...this.scenario,
-        tags,
-      })
-    },
-    onTitleChanged(title: string): void {
-      this.$emit('input', {
-        ...this.scenario,
-        title,
-      })
-    },
-    onTypeChanged(type: string): void {
-      this.$emit('input', {
-        ...this.scenario,
-        type: this.scenario.examples ? ScenarioType.Outline : type,
-        title: type === ScenarioType.Background ? '' : 'Scenario title',
-      })
-    },
-    updateExamples(
-      steps: Array<ScenarioStep>
-    ): Record<string, Array<string>> | null {
-      const newExamples: Record<string, Array<string>> = {}
-      const keys: Array<string> = []
-      const re = new RegExp('<([^<>]+)>', 'g')
+const onScenarioClick = () => {
+  if (props.canWrite && mode.value === Mode.View) {
+    mode.value = Mode.Edit
+  }
+}
 
-      steps.forEach((step: ScenarioStep) => {
-        step.params.forEach((param) => {
-          if (typeof param.content === 'string') {
-            param.content.replace(re, function (): string {
-              keys.push(arguments[1])
+const onScenarioClickedOutside = () => {
+  if (!isFocusHeld()) {
+    mode.value = Mode.View
+  }
+}
 
-              return arguments[1]
-            })
-          } else {
-            param.content.forEach((row) => {
-              row.forEach((cell) => {
-                cell.replace(re, function (): string {
-                  keys.push(arguments[1])
-
-                  return arguments[1]
-                })
-              })
-            })
-          }
-        })
-      })
-
-      if (keys.length === 0) {
-        return null
-      }
-
-      const currentValues = this.scenario.examples
-        ? Object.values(this.scenario.examples)
-        : []
-      const newValuesLength =
-        currentValues.length > 0 ? currentValues[0].length : 1
-      keys.forEach((k) => {
-        if (
-          this.scenario.examples &&
-          Object.keys(this.scenario.examples).indexOf(k) !== -1
-        ) {
-          newExamples[k] = this.scenario.examples[k]
-          return
-        }
-        newExamples[k] = new Array(newValuesLength).fill('')
-      })
-
-      return newExamples
-    },
-    switchToEditMode() {
-      this.mode = Mode.Edit
-    },
-    switchToViewMode() {
-      this.mode = Mode.View
-    },
-  },
-  computed: {
-    isBackground(): boolean {
-      return (this as any).scenario.type === ScenarioType.Background
-    },
-    shouldDisplayTypeSwitch(): boolean {
-      return (
-        ((this as any).scenario.examples === undefined ||
-          (this as any).scenario.examples === null) &&
-        (this as any).backgroundable &&
-        (this.mode === Mode.Edit ||
-          this.scenario.type === ScenarioType.Background)
-      )
-    },
-    shouldFreezePointer(): boolean {
-      return (this as any).$store.state.stepsDrawer.draggedStep !== null
-    }
-  },
-})
+const shouldDisplayBackgroundSwitch = computed(() => !props.modelValue.examples && props.canBeBackground)
 </script>
 
 <style scoped>
-.scenario {
-  padding: 1rem;
-  margin: 2rem 0;
-  width: 100%;
+.ScenarioContent {
+  margin-bottom: 20px;
+}
+
+.ScenarioContent-card--canWrite.ScenarioContent-card--view:hover {
+  cursor: pointer;
+  background-color: var(--el-fill-color-light);
+}
+
+.ScenarioContent-actions {
+  margin-top: 0;
+}
+
+h2 + .ScenarioContent-actions, .ScenarioContent-backgroundChip + .ScenarioContent-actions {
+  margin-top: 1rem;
+}
+
+.ScenarioContent .ScenarioContent-card--background {
+  background-color: rgba(128, 128, 128, 0.2);
+}
+
+.ScenarioContent--draggedOver .ScenarioContent-card {
+  background-color: var(--el-color-success-light-7);
+}
+
+.ScenarioContent-card {
   height: 100%;
-  position: relative;
 }
 
-.scenario.scenario--background {
-  background-color: #dadada !important;
-}
-
-.scenario.scenario--dragged, .scenario.scenario--background.scenario.scenario--dragged {
-  background-color: #a4b0be !important;
-}
-
-.scenario.scenario--pointer-frozen * {
-  pointer-events: none;
-}
-
-.scenario .scenario-up {
-  position: absolute;
-  left: 96px;
-  top: -16px;
-}
-
-.scenario .scenario-down {
-  position: absolute;
-  left: 144px;
-  top: -16px;
-}
-
-.scenario .scenario-copy {
-  position: absolute;
-  left: 48px;
-  top: -16px;
-}
-
-.scenario .scenario-edit {
-  position: absolute;
-  left: 0;
-  top: -16px;
-}
-
-.scenario .scenario-delete {
-  position: absolute;
-  left: 192px;
-  top: -16px;
-}
-
-.scenario .scenario-examples {
-  margin-top: 2rem;
+.ScenarioContent-empty {
+  color: var(--el-color-info);
 }
 </style>

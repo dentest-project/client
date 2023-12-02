@@ -1,46 +1,28 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <v-text-field
-      v-model="username"
-      label="Username"
-      :rules="[rules.required]"
-    />
-    <v-text-field
-      v-model="password"
-      label="Password"
-      :rules="[rules.required]"
-      type="password"
-    />
-    <v-btn type="submit" :color="$colors.primary" dark>Login</v-btn>
+    <el-input v-model="username" placeholder="Username" required />
+    <el-input v-model="password" placeholder="Password" type="password" show-password required />
+    <el-input type="submit" value="Login" />
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script setup lang="ts">
+const username = ref('')
+const password = ref('')
 
-export default Vue.extend({
-  data() {
-    return {
-      username: '',
-      password: '',
-      rules: {
-        required(value: string): boolean | string {
-          if (value) {
-            return true
-          }
+const emit = defineEmits(['submit'])
 
-          return 'This field is required'
-        },
-      },
-    }
-  },
-  methods: {
-    onSubmit(): void {
-      this.$emit('submit', {
-        username: this.username,
-        password: this.password,
-      })
-    },
-  },
-})
+const onSubmit = () => {
+  emit('submit', {
+    username: username.value,
+    password: password.value,
+  })
+}
 </script>
+
+<style scoped>
+form .el-input {
+  margin: 0.5rem;
+  display: block;
+}
+</style>

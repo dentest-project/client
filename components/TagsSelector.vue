@@ -1,98 +1,78 @@
 <template>
-  <div>
-    <tags-autocomplete
-      :project="project"
-      :items="items"
-      :value="value"
-      @new="onNewTagRequested"
-      @input="onInput"
-    />
-    <create-tag-dialog
-      :project="project"
-      :initial-name="initialTagName"
-      :value="createTagDialogOpened"
-      @created="onTagCreated"
-      @errored="onTagCreationErrored"
-    />
-    <v-snackbar v-model="createdTagSnackbarOpened" :color="$colors.success">
-      Tag created
-    </v-snackbar>
-    <v-snackbar v-model="creationTagErrorSnackbarOpened" :color="$colors.error">
-      An error occurred while creating the tag
-    </v-snackbar>
-  </div>
+  <el-select-v2
+    class="TagsSelector"
+    label="Select tags"
+    placeholder="Select tags"
+    :model-value="selectValue"
+    :options="allTags.map(tag => ({ value: tag.id, label: tag.name, color: tag.color, selected: selectValue.some((v) => v === tag.id) }))"
+    filterable
+    multiple
+    allow-create
+    @update:model-value="onUpdate"
+  >
+    <template #default="{ item }">
+      <TagChip :tag="{ id: item.value, name: item.label, color: item.color ?? '#CCCCCC' }" :outline="item.selected" :hoverable="false" />
+    </template>
+  </el-select-v2>
+  <CreateTagDialog
+    v-model="createTagDialog"
+    :project="project"
+    :initial-tag-name="newTagName"
+    @created="onTagCreated"
+  />
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import CreateTagDialog from '~/components/dialogs/CreateTagDialog.vue'
-import TagsAutocomplete from '~/components/TagsAutocomplete.vue'
-import { Project, Tag } from '~/types'
+<script setup lang="ts">
+import type { Project, Tag } from '~/types'
 
-interface Data {
-  createTagDialogOpened: boolean
-  createdTagSnackbarOpened: boolean
-  creationTagErrorSnackbarOpened: boolean
-  initialTagName: string
-  items: Array<Tag>
+const props = defineProps<{
+  modelValue: Tag[],
+  project: Project
+}>()
+
+const { $api } = useNuxtApp()
+
+const createTagDialog = ref(false)
+const newTagName = ref('')
+const allTags = ref<Tag[]>([])
+
+const emit = defineEmits(['update:modelValue'])
+
+const onUpdate = (newValue: string[]) => {
+  if (newValue.length > 0 && !allTags.value.find((tag) => tag.id === newValue[newValue.length - 1])) {
+    newTagName.value = newValue[newValue.length - 1]
+    createTagDialog.value = true
+
+    return
+  }
+
+  emit('update:modelValue', allTags.value.filter((tag) => newValue.find((val) => val === tag.id)))
 }
 
-export default Vue.extend({
-  components: {
-    CreateTagDialog,
-    TagsAutocomplete,
-  },
-  model: {
-    prop: 'value',
-  },
-  props: {
-    project: {
-      type: Object,
-      required: true,
-    } as PropOptions<Project>,
-    value: {
-      type: Array,
-      required: true,
-    } as PropOptions<Array<Tag>>,
-  },
-  data: function (): Data {
-    return {
-      createTagDialogOpened: false,
-      createdTagSnackbarOpened: false,
-      creationTagErrorSnackbarOpened: false,
-      initialTagName: '',
-      items: [],
-    }
-  },
-  async created() {
-    await this.loadItems()
-  },
-  methods: {
-    activateCreateTagDialog(): void {
-      this.createTagDialogOpened = true
-    },
-    deactivateCreateTagDialog(): void {
-      this.createTagDialogOpened = false
-    },
-    async loadItems(): Promise<void> {
-      this.items = await this.$api.getTags(this.project.id, this.$axios)
-    },
-    onNewTagRequested(name: string): void {
-      this.initialTagName = name
-      this.activateCreateTagDialog()
-    },
-    onTagCreated(): void {
-      this.deactivateCreateTagDialog()
-      this.createdTagSnackbarOpened = true
-      this.loadItems()
-    },
-    onTagCreationErrored(): void {
-      this.deactivateCreateTagDialog()
-      this.creationTagErrorSnackbarOpened = true
-    },
-    onInput(v: Array<Tag>): void {
-      this.$emit('input', v)
-    },
-  },
+const onTagCreated = (tag: Tag) => {
+  createTagDialog.value = false
+  newTagName.value = ''
+
+  allTags.value.push(tag)
+
+  emit('update:modelValue', [...props.modelValue, tag])
+}
+
+onMounted(async () => {
+  allTags.value = await $api.getTags(props.project.id)
 })
+
+const selectValue = computed(() => props.modelValue.map((tag) => tag.id))
 </script>
+
+<style scoped>
+.TagsSelector {
+  width: 100%;
+}
+
+.TagSelector-tag {
+  font-size: 12px;
+  padding: 0.3rem;
+  border-radius: 2px;
+}
+</style>

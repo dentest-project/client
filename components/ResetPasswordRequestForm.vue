@@ -1,45 +1,28 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <v-text-field
+    <el-input
       v-model="email"
-      label="Email"
-      :rules="[rules.email, rules.required]"
+      type="email"
+      placeholder="Email"
+      required
     />
-    <v-btn type="submit" :color="$colors.primary" dark
-      >Send me an email to reset my password</v-btn
-    >
+    <el-input type="submit" value="Send me an email to reset my password" />
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script setup lang="ts">
+const email = ref('')
+const emit = defineEmits(['submit'])
 
-export default Vue.extend({
-  data() {
-    return {
-      email: '',
-      rules: {
-        email(value: string): boolean | string {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-          return pattern.test(value) || 'Invalid e-mail.'
-        },
-        required(value: string): boolean | string {
-          if (value) {
-            return true
-          }
-
-          return 'This field is required'
-        },
-      },
-    }
-  },
-  methods: {
-    onSubmit(): void {
-      this.$emit('submit', {
-        email: this.email,
-      })
-    },
-  },
-})
+const onSubmit = () => {
+  emit('submit', {
+    email: email.value,
+  })
+}
 </script>
+
+<style scoped>
+form .el-input {
+  margin: 0.5rem;
+}
+</style>

@@ -1,31 +1,35 @@
 <template>
-  <div>
-    <v-text-field v-if="param.stepPart.strategy === 'free'" :value="param.content" @input="onUpdated" solo dense />
-    <v-select v-else :items="param.stepPart.choices" :value="param.content" @input="onUpdated" solo dense />
-  </div>
+  <el-input v-if="modelValue.stepPart.strategy === StepPartStrategy.Free" size="small" :model-value="modelValue.content" @update:model-value="onUpdate" />
+  <el-select v-else size="small" :model-value="modelValue.content" @update:model-value="onUpdate" @focus="onFocus" @blur="onBlur">
+    <el-option v-for="choice in modelValue.stepPart.choices" :value="choice" :label="choice" />
+  </el-select>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import { InlineStepParam } from '~/types'
+<script setup lang="ts">
+import { useScenarioContentFocusManagementStore } from '~/store/scenario-content-focus-management'
+import { type InlineStepParam, StepPartStrategy } from '~/types'
 
-export default Vue.extend({
-  model: {
-    prop: 'param',
-  },
-  props: {
-    param: {
-      type: Object,
-      required: true,
-    } as PropOptions<InlineStepParam>,
-  },
-  methods: {
-    onUpdated(content: string): void {
-      this.$emit('input', {
-        ...this.param,
-        content: content,
-      })
-    },
-  }
-})
+const { holdFocus, releaseFocus } = useScenarioContentFocusManagementStore()
+
+const props = defineProps<{
+  modelValue: InlineStepParam
+}>()
+
+const emit = defineEmits(['update:modelValue'])
+
+const onUpdate = (content: string) => {
+  emit('update:modelValue', {
+    ...props.modelValue,
+    content,
+  })
+  releaseFocus()
+}
+
+const onFocus = () => {
+  holdFocus()
+}
+
+const onBlur = () => {
+  releaseFocus()
+}
 </script>

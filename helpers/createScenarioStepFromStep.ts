@@ -1,16 +1,16 @@
-import getCorrespondingAdverb from '~/helpers/getCorrespondingAdverb';
+import { getCorrespondingAdverb } from './getCorrespondingAdverb'
 import {
-  InlineStepParam,
-  MultilineStepParam,
-  ScenarioStep,
-  Step,
+  type InlineStepParam,
+  type MultilineStepParam,
+  type ScenarioStep,
+  type Step,
   StepAdverb,
   StepParamType,
-  StepPart,
+  type StepPart,
   StepPartStrategy,
   StepPartType,
-  TableStepParam
-} from '~/types';
+  type TableStepParam
+} from '~/types'
 
 interface GenerateParamsOutput {
   withTableParam: boolean,
@@ -24,7 +24,7 @@ interface CreateScenarioStepFromStepOutput {
 }
 
 const getDefaultValueForStepPart = (part: StepPart) => {
-  if (part.strategy === StepPartStrategy.Choices && part.choices !== null && part.choices.length > 0) {
+  if (part.strategy === StepPartStrategy.Choices && part.choices) {
     return part.choices[0]
   }
 
@@ -32,7 +32,8 @@ const getDefaultValueForStepPart = (part: StepPart) => {
 }
 
 const generateParams = (step: Step): GenerateParamsOutput => {
-  let withTableParam = false;
+  let withTableParam = false
+
   const params: Array<InlineStepParam | MultilineStepParam | TableStepParam> = step
     .parts
     .filter(p => p.type === StepPartType.Param)
@@ -46,29 +47,29 @@ const generateParams = (step: Step): GenerateParamsOutput => {
     return {
       withTableParam,
       params
-    };
+    }
   }
 
   if (step.extraParamType === StepParamType.Multiline) {
     params.push({
       type: step.extraParamType,
       content: ''
-    });
+    })
   } else {
-    withTableParam = true;
+    withTableParam = true
     params.push({
       type: step.extraParamType,
       content: [] as Array<Array<string>>,
       headerColumn: false,
       headerRow: false
-    });
+    })
   }
 
   return {
     withTableParam,
     params
-  };
-};
+  }
+}
 
 const findBestIndexForStep = (scenarioSteps: Array<ScenarioStep>, adverb: StepAdverb): [number, boolean] => {
   const firstGivenIndex = scenarioSteps.findIndex(s => s.adverb === StepAdverb.Given)
@@ -111,11 +112,11 @@ export default function createScenarioStepFromStep(scenarioSteps: Array<Scenario
     adverb: shouldUseAdverb ? correspondingAdverb : StepAdverb.And,
     step,
     params: generatedParams.params
-  };
+  }
 
   return {
     scenarioStep,
     withTableParam: generatedParams.withTableParam,
     insertingIndex
-  };
+  }
 }

@@ -1,68 +1,64 @@
 <template>
-  <form v-if="mode === $modes.edit" @submit.prevent="onSubmit">
-    <input
-      type="text"
-      :value="value"
+  <h2 v-if="mode === Mode.View" class="editableSubtitle" @click="mode = Mode.Edit">{{ modelValue.trim().length > 0 ? modelValue : emptyLabel }}</h2>
+  <form v-else @submit.prevent="onSubmit">
+    <el-input
+      class="editableSubtitle-input"
+      :model-value="modelValue"
       :placeholder="label"
       autofocus
-      @input="onChanged"
+      @update:modelValue="v => { $emit('update:modelValue', v) }"
       @blur="onSubmit"
     />
   </form>
-  <h2 v-else @click="switchToEdit">{{ value }}</h2>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script setup lang="ts">
 import { Mode } from '~/types'
 
-interface Data {
-  mode: Mode
-}
+const props = defineProps<{
+  modelValue: string,
+  label: string,
+  emptyLabel?: string
+}>()
 
-export default Vue.extend({
-  model: {
-    prop: 'value',
-  },
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    value: {
-      type: String,
-      required: true,
-    },
-  },
-  data: function (): Data {
-    return {
-      mode: Mode.View,
-    }
-  },
-  methods: {
-    switchToEdit(): void {
-      this.mode = Mode.Edit
-    },
-    onSubmit(): void {
-      this.mode = Mode.View
-    },
-    onChanged(e: InputEvent): void {
-      this.$emit('input', (e.currentTarget as HTMLInputElement).value)
-    },
-  },
+const emit = defineEmits(['cancel', 'submit', 'update:modelValue'])
+
+const mode = ref(Mode.View)
+let initialValue: string
+
+onMounted(() => {
+  initialValue = props.modelValue
 })
+
+const onSubmit = () => {
+  mode.value = Mode.View
+
+  if (props.modelValue === initialValue) {
+    emit('cancel')
+
+    return
+  }
+
+  initialValue = props.modelValue
+  emit('submit')
+}
 </script>
 
-<style scoped>
-h2:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+<style>
+h2.editableSubtitle:hover {
   cursor: pointer;
+  background-color: var(--el-color-primary-light-9);
 }
-input[type='text'] {
-  padding: 0.5rem;
-  font-size: 1.5em;
+
+.el-input.editableSubtitle-input {
+  font-size: 24px;
+  width: 100%;
+}
+
+.el-input.editableSubtitle-input input {
+  padding: 1rem;
+  height: auto;
   font-weight: bold;
-  border: 1px solid #aaaaaa;
   width: 100%;
 }
 </style>

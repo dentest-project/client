@@ -1,64 +1,43 @@
 <template>
-  <v-speed-dial v-model="activated" direction="right">
-    <template v-slot:activator>
-      <v-btn v-model="activated" :color="$colors.secondary" dark fab x-small>
-        <v-icon v-if="activated">mdi-close</v-icon>
-        <v-icon
-          v-else-if="stepParamType === 'multiline'"
-          title="With multiline param"
-          >mdi-text-box</v-icon
-        >
-        <v-icon v-else-if="stepParamType === 'table'" title="With table param"
-          >mdi-table-large</v-icon
-        >
-        <v-icon v-else title="With no param">mdi-circle-off-outline</v-icon>
-      </v-btn>
+  <el-select-v2
+    placeholder="Type of the extra parameter"
+    :model-value="modelValue"
+    :options="options"
+    style="width: 100%;"
+    @update:model-value="v => emit('update:modelValue', v)"
+  >
+    <template #default="{ item }">
+      <div style="display: flex; align-items: center">
+        <StepParamIcon :step-param-type="item.value" />
+        <span style="margin-left: 0.5rem; display: inline-block;">
+        {{ item.label }}
+      </span>
+      </div>
     </template>
-    <none-step-param-type-button @click="onNoneSelected" />
-    <multiline-step-param-button @click="onMultilineSelected" />
-    <table-step-param-button @click="onTableSelected" />
-  </v-speed-dial>
+  </el-select-v2>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import MultilineStepParamButton from '~/components/buttons/MultilineStepParamButton.vue'
-import NoneStepParamTypeButton from '~/components/buttons/NoneStepParamTypeButton.vue'
-import TableStepParamButton from '~/components/buttons/TableStepParamButton.vue'
-import InlineStepParamForm from '~/components/InlineStepParamForm.vue'
+<script setup lang="ts">
 import { StepParamType } from '~/types'
 
-export default Vue.extend({
-  model: {
-    prop: 'stepParamType',
+defineProps<{
+  modelValue: StepParamType
+}>()
+
+const emit = defineEmits(['update:modelValue'])
+
+const options = [
+  {
+    label: 'The step requires no extra parameter',
+    value: StepParamType.None
   },
-  components: {
-    TableStepParamButton,
-    MultilineStepParamButton,
-    NoneStepParamTypeButton,
-    InlineStepParamForm,
+  {
+    label: 'The step requires a paragraph after the sentence',
+    value: StepParamType.Multiline
   },
-  props: {
-    stepParamType: {
-      type: String,
-      required: true,
-    } as PropOptions<StepParamType>,
-  },
-  data() {
-    return {
-      activated: false,
-    }
-  },
-  methods: {
-    onNoneSelected() {
-      this.$emit('input', StepParamType.None)
-    },
-    onMultilineSelected() {
-      this.$emit('input', StepParamType.Multiline)
-    },
-    onTableSelected() {
-      this.$emit('input', StepParamType.Table)
-    },
-  },
-})
+  {
+    label: 'The step requires a data table after the sentence',
+    value: StepParamType.Table
+  }
+]
 </script>

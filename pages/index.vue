@@ -1,161 +1,80 @@
 <template>
-  <home-content v-if="!$auth.loggedIn" />
-  <v-main class="home" v-else>
-    <actions-bar>
-      <add-organization-button @click.stop="activateCreateOrganizationDialog" />
-      <add-project-button @click.stop="activateCreateProjectDialog" />
-    </actions-bar>
-    <grid3 class="home-cards">
-      <organization-card
-        v-for="organization in organizations"
-        :key="organization.id"
-        :organization="organization"
-      />
-    </grid3>
-    <grid3 class="home-cards">
-      <project-card
-        v-for="project in projects"
-        :key="project.id"
-        :project="project"
-      />
-    </grid3>
-    <p v-if="shouldDisplayEmptyMessage">
-      You don't have any project nor organization.
-    </p>
-    <create-organization-dialog
-      v-model="createOrganizationDialog"
-      @close="deactivateCreateOrganizationDialog"
-      @created="onOrganizationCreated"
-      @errored="onOrganizationErrored"
-    />
-    <create-project-dialog
-      v-model="createProjectDialog"
-      @close="deactivateCreateProjectDialog"
-      @created="onProjectCreated"
-      @errored="onProjectErrored"
-    />
-    <v-snackbar
-      v-model="organizationCreatedSnackbarOpened"
-      :color="$colors.success"
-    >
-      Organization created
-    </v-snackbar>
-    <v-snackbar
-      v-model="organizationCreationErrorSnackbarOpened"
-      :color="$colors.error"
-    >
-      An error occurred while creating the organization
-    </v-snackbar>
-    <v-snackbar v-model="projectCreatedSnackbarOpened" :color="$colors.success">
-      Project created
-    </v-snackbar>
-    <v-snackbar
-      v-model="projectCreationErrorSnackbarOpened"
-      :color="$colors.error"
-    >
-      An error occurred while creating the project
-    </v-snackbar>
-  </v-main>
+  <HomeContent v-if="!isLoggedIn" />
+  <el-main v-else>
+    <ActionsBar>
+      <AddOrganizationButton @click="createOrganizationDialog = true" />
+      <AddProjectButton @click="createProjectDialog = true" />
+    </ActionsBar>
+    <el-row :gutter="20">
+      <el-col v-for="organization in organizations" :span="6" :md="6" :sm="12" :xs="24">
+        <OrganizationCard :organization="organization" />
+      </el-col>
+      <el-col v-for="project in projects" :span="6" :md="6" :sm="12" :xs="24">
+        <ProjectCard :project="project" />
+      </el-col>
+    </el-row>
+    <Panel v-if="shouldDisplayEmptyMessage" type="warning">
+      <el-text size="default">
+        You're not part of any project nor organization on Dentest. If you joined Dentest via your company, please ask an
+        administrator to add you to the company's organization or project.<br><br>
+        Otherwise, you can start by creating your first project by clicking on the according button. You'll then be
+        able to create directories, specify features, manage collaborators, and, if you are a developer, pull the features
+        as Gherkin files alongside your code.
+      </el-text>
+    </Panel>
+  </el-main>
+  <CreateOrganizationDialog v-model="createOrganizationDialog" @created="onOrganizationCreated" />
+  <CreateProjectDialog v-model="createProjectDialog" @created="onProjectCreated" />
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import ActionsBar from '~/components/ActionsBar.vue'
-import AddOrganizationButton from '~/components/buttons/AddOrganizationButton.vue'
-import AddProjectButton from '~/components/buttons/AddProjectButton.vue'
-import CreateOrganizationDialog from '~/components/dialogs/CreateOrganizationDialog.vue'
-import CreateProjectDialog from '~/components/dialogs/CreateProjectDialog.vue'
-import Grid3 from '~/components/Grid3.vue'
-import HomeContent from '~/components/HomeContent.vue'
-import OrganizationCard from '~/components/cards/OrganizationCard.vue'
-import ProjectCard from '~/components/cards/ProjectCard.vue'
-import { OrganizationList, ProjectList } from '~/types'
+<script setup async lang="ts">
+import { isAuthenticated } from '~/helpers/auth'
+import type { OrganizationList, ProjectList } from '~/types'
 
-interface InitialData {
-  organizations: OrganizationList
-  projects: ProjectList
+useHead({
+  title: 'Dentest, a BDD solution'
+})
+
+definePageMeta({
+  auth: false
+})
+
+const { $api } = useNuxtApp()
+const { status } = useAuth()
+
+const organizations = ref<OrganizationList>([])
+const projects = ref<ProjectList>([])
+const createOrganizationDialog = ref(false)
+const createProjectDialog = ref(false)
+
+const loadOrganizations = async () => {
+  organizations.value = await $api.getOrganizations()
 }
 
-export default Vue.extend({
-  auth: false,
-  components: {
-    HomeContent,
-    AddProjectButton,
-    AddOrganizationButton,
-    ActionsBar,
-    CreateOrganizationDialog,
-    CreateProjectDialog,
-    Grid3,
-    OrganizationCard,
-    ProjectCard,
-  },
-  async mounted(): Promise<void> {
-    if (this.$auth.loggedIn) {
-      await Promise.all([this.loadOrganizations(), this.loadProjects()])
-    }
-    this.loading = false
-  },
-  data: function () {
-    return {
-      loading: true,
-      organizations: [] as OrganizationList,
-      projects: [] as ProjectList,
-      createOrganizationDialog: false,
-      createProjectDialog: false,
-      organizationCreatedSnackbarOpened: false,
-      organizationCreationErrorSnackbarOpened: false,
-      projectCreatedSnackbarOpened: false,
-      projectCreationErrorSnackbarOpened: false,
-    }
-  },
-  methods: {
-    activateCreateOrganizationDialog(): void {
-      this.createOrganizationDialog = true
-    },
-    deactivateCreateOrganizationDialog(): void {
-      this.createOrganizationDialog = false
-    },
-    activateCreateProjectDialog(): void {
-      this.createProjectDialog = true
-    },
-    deactivateCreateProjectDialog(): void {
-      this.createProjectDialog = false
-    },
-    async loadOrganizations(): Promise<void> {
-      this.organizations = await this.$api.getOrganizations(this.$axios)
-    },
-    async loadProjects(): Promise<void> {
-      this.projects = await this.$api.getProjects(this.$axios)
-    },
-    onOrganizationCreated(): void {
-      this.deactivateCreateOrganizationDialog()
-      this.organizationCreatedSnackbarOpened = true
-      this.loadOrganizations()
-    },
-    onOrganizationErrored(): void {
-      this.deactivateCreateOrganizationDialog()
-      this.organizationCreationErrorSnackbarOpened = true
-    },
-    onProjectCreated(): void {
-      this.deactivateCreateProjectDialog()
-      this.projectCreatedSnackbarOpened = true
-      this.loadProjects()
-    },
-    onProjectErrored(): void {
-      this.deactivateCreateProjectDialog()
-      this.projectCreationErrorSnackbarOpened = true
-    },
-  },
-  computed: {
-    shouldDisplayEmptyMessage(): boolean {
-      return (this as any).organizations.length === 0 && (this as any).projects.length === 0 && !(this as any).loading
-    }
-  },
-})
+const loadProjects = async () => {
+  projects.value = await $api.getProjects()
+}
+
+const onOrganizationCreated = () => {
+  loadOrganizations()
+}
+
+const onProjectCreated = () => {
+  loadProjects()
+}
+
+if (isAuthenticated(status.value)) {
+  await loadOrganizations()
+  await loadProjects()
+}
+
+const isLoggedIn = computed(() => isAuthenticated(status.value))
+
+const shouldDisplayEmptyMessage = computed(() => organizations.value.length === 0 && projects.value.length === 0)
 </script>
 
 <style scoped>
-.home-cards {
-  margin-top: 2rem;
+.el-col {
+  margin-bottom: 1rem;
 }
 </style>

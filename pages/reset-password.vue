@@ -1,93 +1,81 @@
 <template>
-  <v-main>
+  <el-main>
     <h1 v-if="isRequest">Password forgotten</h1>
     <h1 v-else>Reset password</h1>
 
-    <reset-password-request-form v-if="isRequest" @submit="onRequestSubmit" />
-    <reset-password-form v-else @submit="onSubmit" />
-
-    <v-snackbar v-model="requestedSnackbarOpened" :color="$colors.success">
-      If the address exists on Dentest, an email has been sent to it with a link
-      for password reset
-    </v-snackbar>
-    <v-snackbar v-model="resetSnackbarOpened" :color="$colors.success">
-      Your password has been successfully reset!
-    </v-snackbar>
-    <v-snackbar v-model="resetErrorSnackbarOpened" :color="$colors.error"
-      >We couldn't reset your password</v-snackbar
-    >
-    <v-snackbar v-model="errorSnackbarOpened" :color="$colors.error"
-      >An error occurred</v-snackbar
-    >
-  </v-main>
+    <ResetPasswordRequestForm v-if="isRequest" @submit="onRequestSubmit" />
+    <ResetPasswordForm v-else @submit="onSubmit" />
+  </el-main>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import ResetPasswordForm from '~/components/ResetPasswordForm.vue'
-import ResetPasswordRequestForm from '~/components/ResetPasswordRequestForm.vue'
-import { ResetPasswordRequest } from '~/types'
+<script setup lang="ts">
+import { ElNotification } from 'element-plus'
+import type { ResetPasswordRequest } from '~/types'
 
 interface ResetPasswordFormOutput {
   password: string
 }
 
-export default Vue.extend({
-  auth: 'guest',
-  components: { ResetPasswordForm, ResetPasswordRequestForm },
-  head: function () {
-    return {
-      title: `Password forgotten | Dentest`
-    };
-  },
-  data: function () {
-    return {
-      requestedSnackbarOpened: false,
-      resetSnackbarOpened: false,
-      resetErrorSnackbarOpened: false,
-      errorSnackbarOpened: false,
-    }
-  },
-  methods: {
-    async onRequestSubmit(data: ResetPasswordRequest): Promise<void> {
-      try {
-        await this.$api.resetPasswordRequest(data, this.$axios)
-        this.requestedSnackbarOpened = true
-      } catch (error) {
-        this.errorSnackbarOpened = true
-      }
-    },
-    async onSubmit(data: ResetPasswordFormOutput): Promise<void> {
-      try {
-        await this.$api.resetPassword(
-          {
-            code: this.code,
-            newPassword: data.password,
-          },
-          this.$axios
-        )
-        this.resetSnackbarOpened = true
-        setTimeout(() => {
-          this.$router.push('/login')
-        }, 2000)
-      } catch (error) {
-        if (error.response.status === 404) {
-          this.resetErrorSnackbarOpened = true
-        } else {
-          this.errorSnackbarOpened = true
-        }
-      }
-    },
-  },
-  computed: {
-    code(): string {
-      const code = this.$route.query.code;
+const { query } = useRoute()
+const { $api, $router } = useNuxtApp()
 
-      return typeof code === 'string' ? code : ''
-    },
-    isRequest(): boolean {
-      return !(this as any).$route.query.code
-    },
-  },
+useHead({
+  title: 'Password forgotten | Dentest',
 })
+
+definePageMeta({
+  auth: {
+    unauthenticatedOnly: true,
+    navigateAuthenticatedTo: '/'
+  }
+})
+
+const code = typeof query.code === 'string' ? query.code : ''
+const isRequest: boolean = !code
+
+const onRequestSubmit = async (data: ResetPasswordRequest): Promise<void> => {
+  try {
+    await $api.resetPasswordRequest(data)
+    ElNotification({
+      title: 'Request sent',
+      message: 'We sent you a link to reset your password. Check your emails.',
+      type: 'success',
+    })
+  } catch (error) {
+    ElNotification({
+      title: 'An error occurred',
+      message: 'An error occurred while attempting to request a password reset',
+      type: 'error',
+    })
+  }
+}
+
+const onSubmit = async (data: ResetPasswordFormOutput): Promise<void> => {
+  try {
+    await $api.resetPassword({
+      code,
+      newPassword: data.password,
+    })
+    ElNotification({
+      title: 'Password reset!',
+      message: 'Your password was successfully reset',
+      type: 'success',
+    })
+    setTimeout(() => { $router.push('/login') }, 2000)
+  } catch (error) {
+    if (error.statusCode === 404) {
+      ElNotification({
+        title: 'We couldn\'t reset your password',
+        message: 'It seems the link you used was not valid',
+        type: 'error',
+      })
+    } else {
+      ElNotification({
+        title: 'An error occurred',
+        message: 'An error occurred while attempting to reset your password',
+        type: 'error',
+      })
+    }
+  }
+}
 </script>

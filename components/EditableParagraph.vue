@@ -1,66 +1,86 @@
 <template>
-  <form v-if="mode === $modes.edit" @submit.prevent="onSubmit">
-    <input
-      type="text"
-      :value="value"
-      :placeholder="label"
-      autofocus
-      @input="onChanged"
-      @blur="onSubmit"
-    />
-  </form>
-  <p v-else @click="switchToEdit">{{ value }}</p>
+  <div v-if="mode === Mode.View" class="EditableParagraph" :class="editable ? 'EditableParagraph--editable' : ''" @click="onParagraphClicked">
+    <div v-for="line in lines">
+      {{ line }}
+    </div>
+  </div>
+  <el-input
+    v-else
+    class="EditableParagraph-textarea"
+    :autosize="{ minRows: 3 }"
+    type="textarea"
+    :placeholder="placeholder"
+    :model-value="modelValue"
+    autofocus
+    @update:modelValue="onChanged"
+    @blur="onInputBlur"
+  />
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Mode } from '~/types'
-
-interface Data {
-  mode: Mode
+<script setup lang="ts">
+enum Mode {
+  View,
+  Edit
 }
 
-export default Vue.extend({
-  model: {
-    prop: 'value',
-  },
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    value: {
-      type: String,
-      required: true,
-    },
-  },
-  data: function (): Data {
-    return {
-      mode: Mode.View,
-    }
-  },
-  methods: {
-    switchToEdit(): void {
-      this.mode = Mode.Edit
-    },
-    onSubmit(): void {
-      this.mode = Mode.View
-    },
-    onChanged(e: InputEvent): void {
-      this.$emit('input', (e.target as HTMLTextAreaElement).value)
-    },
-  },
+const props = defineProps<{
+  modelValue: string,
+  placeholder: string,
+  editable: boolean
+}>()
+
+const mode = ref(Mode.View)
+
+let initialValue: string
+
+onMounted(() => {
+  initialValue = props.modelValue
+})
+
+const emit = defineEmits(['cancel', 'update:modelValue', 'submit'])
+
+const onChanged = (newValue: string) => {
+  emit('update:modelValue', newValue)
+}
+
+const onInputBlur = () => {
+  mode.value = Mode.View
+
+  if (props.modelValue === initialValue) {
+    emit('cancel')
+
+    return
+  }
+
+  emit('submit')
+}
+
+const onParagraphClicked = () => {
+  if (props.editable) {
+    mode.value = Mode.Edit
+  }
+}
+
+const lines = computed(() => props.modelValue.split('\n'))
+
+watch(props, () => {
+  if (!props.editable) {
+    mode.value = Mode.View
+  }
 })
 </script>
 
-<style scoped>
-h2:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+<style>
+.EditableParagraph, .EditableParagraph-textarea textarea {
+  padding: 1rem;
 }
-input[type='text'] {
-  padding: 0.5rem;
-  border: 1px solid #aaaaaa;
-  width: 100%;
+
+.EditableParagraph--editable:hover, .EditableParagraph-textarea textarea {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: inherit;
+}
+
+.EditableParagraph--editable:hover {
+  cursor: pointer;
 }
 </style>

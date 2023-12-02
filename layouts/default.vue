@@ -1,35 +1,50 @@
 <template>
-  <div>
-    <v-app>
-      <Menu :transparent="isHomeAndLoggedOut" />
-      <v-container v-if="!isHomeAndLoggedOut">
-        <Nuxt />
-      </v-container>
-      <Nuxt v-else />
-    </v-app>
-  </div>
+  <Menu :light-mode="lightMode" @update:lightModeValue="v => { lightMode = v }" />
+  <slot />
 </template>
 
-<script lang="ts">
-import Menu from '~/components/Menu.vue';
 
-export default {
-  middleware: 'auth',
-  components: {
-    Menu
-  },
-  computed: {
-    isHomeAndLoggedOut(): boolean {
-      return (this as any).$route.name === 'index' && !(this as any).$auth.loggedIn
-    }
+<script setup lang="ts">
+import 'element-plus/theme-chalk/dark/css-vars.css'
+import { useThemeStore } from '~/store/theme'
+
+const { getTheme, setTheme } = useThemeStore()
+
+const preferredDark = usePreferredDark()
+
+const lightMode = ref<'light' | 'dark'>(getTheme() ?? (preferredDark.value ? 'dark' : 'light'))
+
+useHead({
+  htmlAttrs: {
+    class: lightMode
   }
-}
+})
+
+watch(lightMode, (newV, oldV) => {
+  if (!oldV) {
+    return
+  }
+
+  setTheme(lightMode.value)
+})
 </script>
 
 <style>
 @font-face {
   font-family: 'Nunito';
   src: url("/Nunito-SemiBold.ttf") format("truetype");
+}
+
+:root {
+  --el-color-primary: #686de0 !important;
+  --el-color-primary-dark-2: #9599e9 !important;
+  --el-color-primary-light-3: #7f83e5 !important;
+  --el-color-primary-light-5: #8e91e8 !important;
+  --el-button-active-bg-color: #8e91e8 !important;
+}
+
+.el-input {
+  --el-input-width: auto !important;
 }
 
 html {
@@ -52,6 +67,10 @@ html {
   box-sizing: border-box;
 }
 
+html.light {
+  background-color: #EEEEEE;
+}
+
 *,
 *::before,
 *::after {
@@ -61,37 +80,11 @@ html {
 
 h1 {
   padding: 1rem 0;
+  font-size: 32px;
 }
 
 h2 {
   padding: 0.5rem 0;
-}
-
-.v-textarea.v-text-field--enclosed textarea {
-  line-height: initial;
-  margin-top: 48px;
-}
-
-.v-text-field.v-text-field--enclosed .v-input__slot {
-  margin-bottom: 0;
-}
-
-.v-text-field.v-text-field--enclosed .v-text-field__details {
-  margin-bottom: 0;
-  height: 0;
-  min-height: 0;
-}
-
-.theme--light.v-input input {
-  color: inherit;
-}
-
-.v-application {
-  font-family: 'Nunito', sans-serif;
-}
-
-.v-application a {
-  color: #4834d4;
 }
 
 .vjs-value__string {

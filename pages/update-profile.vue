@@ -1,97 +1,64 @@
 <template>
-  <v-main>
+  <el-main>
     <h1>Update profile</h1>
-    <update-me-form @submit="onSubmit" @delete="onDeleteRequest" />
-    <delete-me-dialog
-      v-model="deleteDialogOpened"
-      @close="deleteDialogOpened = false"
-      @deleted="onDeleted"
-      @errored="onDeleteError"
-    />
-    <v-snackbar
-      v-model="updatedSnackbarOpened"
-      :color="$colors.success"
-    >
-      Profile updated
-    </v-snackbar>
-    <v-snackbar
-      v-model="deletedSnackbarOpened"
-      :color="$colors.success"
-    >
-      Your account has been deleted
-    </v-snackbar>
-    <v-snackbar
-      v-model="updateConflictErrorSnackbarOpened"
-      :color="$colors.error"
-    >
-      This email or username is already existing.
-    </v-snackbar>
-    <v-snackbar
-      v-model="updateErrorSnackbarOpened"
-      :color="$colors.error"
-    >
-      An error occurred while updating your profile
-    </v-snackbar>
-    <v-snackbar
-      v-model="deleteErrorSnackbarOpened"
-      :color="$colors.error"
-    >
-      An error occurred while deleting your account
-    </v-snackbar>
-  </v-main>
+    <UpdateMeForm @submit="onSubmit" @delete="onDelete" />
+  </el-main>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import DeleteMeDialog from '~/components/dialogs/DeleteMeDialog.vue';
-import UpdateMeForm from '~/components/UpdateMeForm.vue';
-import { UpdateMe } from '~/types'
+<script setup lang="ts">
+import { ElNotification } from 'element-plus'
+import type { UpdateMe } from '~/types'
 
-export default Vue.extend({
-  components: { DeleteMeDialog, UpdateMeForm },
-  head: function () {
-    return {
-      title: `Update profile | Dentest`
-    };
-  },
-  data: function () {
-    return {
-      deleteDialogOpened: false,
-      deletedSnackbarOpened: false,
-      deleteErrorSnackbarOpened: false,
-      updatedSnackbarOpened: false,
-      updateErrorSnackbarOpened: false,
-      updateConflictErrorSnackbarOpened: false,
-    }
-  },
-  methods: {
-    onDeleted(): void {
-      this.deleteDialogOpened = false;
-      this.deletedSnackbarOpened = true;
-      this.$auth.logout()
-      window.setTimeout(() => {
-        this.$router.push(this.$routes.home())
-      }, 2000)
-    },
-    onDeleteError(): void {
-      this.deleteDialogOpened = false;
-      this.deleteErrorSnackbarOpened = true;
-    },
-    onDeleteRequest(): void {
-      this.deleteDialogOpened = true;
-    },
-    async onSubmit(data: UpdateMe): Promise<void> {
-      try {
-        await this.$api.updateMe(data, this.$axios)
-        this.updatedSnackbarOpened = true
-      } catch (error) {
-        if (error.response.status === 409) {
-          this.updateConflictErrorSnackbarOpened = true
-        } else {
-          this.updateErrorSnackbarOpened = true
-        }
-      }
-    },
-  },
+const { $api } = useNuxtApp()
+const { signOut } = useAuth()
+
+useHead({
+  title: 'Update profile | Dentest'
 })
+
+const onDelete = async () => {
+  try {
+    await $api.deleteMe()
+
+    ElNotification({
+      title: 'Account deleted',
+      message: 'Your account has been successfully deleted',
+      type: 'success',
+    })
+
+    await signOut({ callbackUrl: '/' })
+  } catch (error) {
+    ElNotification({
+      title: 'An error occurred',
+      message: 'An error occurred while deleting your account',
+      type: 'error',
+    })
+  }
+}
+
+const onSubmit = async (data: UpdateMe) => {
+  try {
+    await $api.updateMe(data)
+
+    ElNotification({
+      title: 'Account updated',
+      message: 'Your account has been successfully updated',
+      type: 'success',
+    })
+  } catch (error) {
+    if (error.statusCode === 409) {
+      ElNotification({
+        title: 'Already taken',
+        message: 'This email or username is already existing.',
+        type: 'error',
+      })
+    } else {
+      ElNotification({
+        title: 'An error occurred',
+        message: 'An error occurred while updating your profile.',
+        type: 'error',
+      })
+    }
+  }
+}
 </script>

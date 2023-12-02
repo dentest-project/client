@@ -5,19 +5,17 @@
   </div>
 </template>
 
-<script type="ts">
-export default {
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
+<script setup type="ts">
+const { title, description } = defineProps({
+  title: {
+    type: String,
+    required: true,
   },
-}
+  description: {
+    type: String,
+    required: true,
+  }
+})
 </script>
 
 <style scoped>

@@ -1,75 +1,46 @@
 <template>
-  <div>
-    <user-search
-      label="Add user..."
-      :search-within-organization="searchUsersWithinOrganization"
-      @selected="onUserAdd"
+  <UserSearch :search-within-organization="searchUsersWithinOrganization" @selected="onUserAdd" />
+  <table class="el-table el-table--striped">
+    <tbody>
+    <UsersTableRow
+      v-for="user in users"
+      :user="user"
+      :context="context"
+      @update:permissions="onUserUpdated"
+      @remove="onUserRemoved"
     />
-    <v-simple-table dense>
-      <template v-slot:default>
-        <tbody>
-          <users-table-row
-            v-for="(user, i) in users"
-            :key="i"
-            :user="user"
-            :mode="mode"
-            @change="onUserChanged"
-            @delete="onUserDelete"
-          />
-        </tbody>
-      </template>
-    </v-simple-table>
-  </div>
+    </tbody>
+  </table>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import UserSearch from '~/components/UserSearch.vue'
-import UsersTableRow from '~/components/UsersTableRow.vue'
-import {
-  BaseUser,
-  OrganizationUser,
-  OrganizationUserList,
-  ProjectUser,
-  ProjectUserList,
-} from '~/types'
+<script setup lang="ts">
+import { type BaseUser, Context, type OrganizationUser, type OrganizationUserList, type ProjectUser, type ProjectUserList } from '~/types'
 
-enum Mode {
-  Project = 'project',
-  Organization = 'organization',
+const props = defineProps<{
+  users: OrganizationUserList | ProjectUserList,
+  context: Context,
+  searchUsersWithinOrganization: boolean
+}>()
+
+const emit = defineEmits(['added', 'updated', 'removed'])
+
+const onUserAdd = (user?: BaseUser) => {
+  if (user) {
+    emit('added', user)
+  }
 }
 
-export default Vue.extend({
-  components: {
-    UserSearch,
-    UsersTableRow,
-  },
-  props: {
-    users: {
-      type: Array,
-      required: true,
-    } as PropOptions<OrganizationUserList | ProjectUserList>,
-    mode: {
-      type: String,
-      required: true,
-    } as PropOptions<Mode>,
-    searchUsersWithinOrganization: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  methods: {
-    onUserAdd: function (user?: BaseUser) {
-      if (user) {
-        this.$emit('add', user)
-      }
-    },
-    onUserChanged: function (user: ProjectUser | OrganizationUser) {
-      this.$emit('change', user)
-    },
-    onUserDelete: function (user: ProjectUser | OrganizationUser) {
-      this.$emit('delete', user)
-    },
-  },
-})
+const onUserUpdated = (user: ProjectUser | OrganizationUser) => {
+  emit('updated', user)
+}
+
+const onUserRemoved = (user: ProjectUser | OrganizationUser) => {
+  emit('removed', user)
+}
 </script>
+
+<style scoped>
+table {
+  width: 100%;
+}
+</style>

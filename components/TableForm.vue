@@ -2,178 +2,173 @@
   <table class="TableForm">
     <thead v-if="headers">
       <tr>
+        <th v-for="header in headers">{{ header }}</th>
         <th />
-        <th v-for="(header, hi) in headers" :key="hi">{{ header }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-if="value.length > 0 && deletableColumns">
+      <tr v-if="nbRows > 0 && deletableColumns">
+        <td v-for="(_, i) in modelValue.content[0]" class="TableForm-settingsRow">
+          <span v-if="headerable && i === 0">
+            <el-icon title="Make/unmake header" size="small" @click="onToggleHeaderColumn"><CollectionTag /></el-icon>
+          </span>
+          <el-icon title="Insert a column before" size="small" @click="onInsertColumnBefore(i as number)"><ArrowLeft /></el-icon>
+          <el-icon title="Delete the column" v-if="nbColumns > 1" size="small" @click="onDeleteColumn(i as number)"><Delete /></el-icon>
+          <el-icon title="Insert a column after" size="small" @click="onInsertColumnAfter(i as number)"><ArrowRight /></el-icon>
+        </td>
         <td />
-        <td
-          v-for="(cell, i) in value[0]"
-          :key="`del-col-${i}`"
-          class="delete-column-cell"
-        >
-          <insert-column-before-chip @click="onInsertColumnBefore(i)" />
-          <delete-chip v-if="value[0].length > 1" @click="onDeleteColumn(i)" />
-          <insert-column-after-chip @click="onInsertColumnAfter(i)" />
-        </td>
       </tr>
-      <tr v-for="(row, i) in value" :key="i" :class="{ 'head': headerable && headerRow && i === 0 }">
-        <td class="delete-row-cell">
-          <insert-row-before-chip @click="onInsertRowBefore(i)" /><br />
-          <delete-chip v-if="value.length > 1" @click="onDeleteRow(i)" /><br />
-          <insert-row-after-chip @click="onInsertRowAfter(i)" />
+      <tr v-for="(row, i) in modelValue.content" :class="[ headerable && modelValue.headerRow && i === 0 && 'TableForm-header' ]">
+        <td v-for="(cell, j) in row" class="cell" :class="[ headerable && modelValue.headerColumn && j === 0 && 'TableForm-header' ]">
+          <el-input :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue)" />
         </td>
-        <td v-for="(cell, j) in row" :key="`${i}-${j}`" class="cell" :class="{ 'head': headerable && headerColumn && j === 0 }">
-          <v-text-field
-            :value="cell"
-            filled
-            @input="(e) => onCellUpdated(i, j, e)"
-          />
+        <td class="TableForm-settingsColumn">
+          <div class="TableForm-settingsColumn-addRow">
+            <el-icon title="Insert a row before" size="small" @click="onInsertRowBefore(i as number)"><ArrowUp /></el-icon>
+            <el-icon title="Insert a row after" size="small" @click="onInsertRowAfter(i as number)"><ArrowDown /></el-icon>
+          </div>
+          <el-icon title="Delete the row" v-if="nbRows > 1" size="small" @click="onDeleteRow(i as number)"><Delete /></el-icon>
+          <span v-if="headerable && i === 0">
+            <el-icon title="Make/unmake header" size="small" @click="onToggleHeaderRow"><CollectionTag /></el-icon>
+          </span>
         </td>
-        <td v-if="headerable && i === 0">
-          <table-header-chip @click="onToggleHeaderRow"/>
-        </td>
-      </tr>
-      <tr v-if="headerable && value.length > 0">
-        <td />
-        <td class="head-toggler">
-          <table-header-chip @click="onToggleHeaderColumn"/>
-        </td>
-        <td v-if="value[0].length > 1" :colspan="value[0].length - 1" />
       </tr>
     </tbody>
   </table>
 </template>
 
-<script lang="ts">
-import Vue, { PropOptions } from 'vue'
-import DeleteChip from '~/components/chips/DeleteChip.vue'
-import InsertColumnAfterChip from '~/components/chips/InsertColumnAfterChip.vue'
-import InsertColumnBeforeChip from '~/components/chips/InsertColumnBeforeChip.vue'
-import InsertRowAfterChip from '~/components/chips/InsertRowAfterChip.vue'
-import InsertRowBeforeChip from '~/components/chips/InsertRowBeforeChip.vue'
-import TableHeaderChip from '~/components/chips/TableHeaderChip.vue';
+<script setup lang="ts">
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CollectionTag, Delete } from '@element-plus/icons-vue'
 
-export default Vue.extend({
-  components: {
-    TableHeaderChip,
-    InsertRowAfterChip,
-    InsertRowBeforeChip,
-    InsertColumnAfterChip,
-    InsertColumnBeforeChip,
-    DeleteChip,
-  },
-  model: {
-    prop: 'value',
-  },
-  props: {
-    deletableColumns: {
-      type: Boolean,
-      required: true,
-    },
-    headerable: {
-      type: Boolean,
-      required: true,
-    },
-    headers: {
-      type: Array,
-      required: false,
-    },
-    headerColumn: {
-      type: Boolean,
-      required: false,
-    },
-    headerRow: {
-      type: Boolean,
-      required: false,
-    },
-    value: {
-      type: Array,
-      required: true,
-    } as PropOptions<Array<Array<string>>>,
-  },
-  methods: {
-    onCellUpdated(y: number, x: number, content: string): void {
-      const value = [...this.value]
+const props = defineProps<{
+  deletableColumns: boolean,
+  headerable: boolean,
+  headers?: string[],
+  modelValue: {
+    headerColumn: boolean,
+    headerRow: boolean,
+    content: string[][]
+  }
+}>()
 
-      value[y][x] = content
+const emit = defineEmits(['update:modelValue'])
 
-      this.$emit('input', value, { headerColumn: this.headerColumn, headerRow: this.headerRow })
-    },
-    onDeleteColumn(columnId: number) {
-      const value = [...this.value]
+const onCellUpdated = (y: number, x: number, newContent: string) => {
+  const content = [...props.modelValue.content]
 
-      value.map((r) => r.splice(columnId, 1))
+  content[y][x] = newContent
 
-      this.$emit('input', value, { headerColumn: this.headerColumn, headerRow: this.headerRow })
-    },
-    onDeleteRow(rowId: number) {
-      const value = [...this.value]
+  emit('update:modelValue', { ...props.modelValue, content })
+}
 
-      value.splice(rowId, 1)
 
-      this.$emit('input', value, { headerColumn: this.headerColumn, headerRow: this.headerRow })
-    },
-    onInsertColumnAfter(columnId: number) {
-      const value = [...this.value]
+const onDeleteColumn = (columnId: number) => {
+  const content = [...props.modelValue.content]
 
-      value.map((r) => r.splice(columnId + 1, 0, ''))
+  content.forEach((r) => r.splice(columnId, 1))
 
-      this.$emit('input', value, { headerColumn: this.headerColumn, headerRow: this.headerRow })
-    },
-    onInsertColumnBefore(columnId: number) {
-      const value = [...this.value]
+  emit('update:modelValue', { ...props.modelValue, content })
+}
 
-      value.map((r) => r.splice(columnId, 0, ''))
 
-      this.$emit('input', value, { headerColumn: this.headerColumn, headerRow: this.headerRow })
-    },
-    onInsertRowAfter(rowId: number) {
-      const value = [...this.value]
+const onDeleteRow = (rowId: number) => {
+  const content = [...props.modelValue.content]
 
-      value.splice(rowId + 1, 0, new Array(value[rowId].length).fill(''))
+  content.splice(rowId, 1)
 
-      this.$emit('input', value, { headerColumn: this.headerColumn, headerRow: this.headerRow })
-    },
-    onInsertRowBefore(rowId: number) {
-      const value = [...this.value]
+  emit('update:modelValue', { ...props.modelValue, content })
+}
 
-      value.splice(rowId, 0, new Array(value[rowId].length).fill(''))
 
-      this.$emit('input', value, { headerColumn: this.headerColumn, headerRow: this.headerRow })
-    },
-    onToggleHeaderRow() {
-      this.$emit('input', this.value, { headerColumn: this.headerColumn, headerRow: !this.headerRow })
-    },
-    onToggleHeaderColumn() {
-      this.$emit('input', this.value, { headerColumn: !this.headerColumn, headerRow: this.headerRow })
-    }
-  },
-})
+const onInsertColumnAfter = (columnId: number) => {
+  const content = [...props.modelValue.content]
+
+  content.forEach((r) => r.splice(columnId + 1, 0, ''))
+
+  emit('update:modelValue', { ...props.modelValue, content })
+}
+
+const onInsertColumnBefore = (columnId: number) => {
+  const content = [...props.modelValue.content]
+
+  content.forEach((r) => r.splice(columnId, 0, ''))
+
+  emit('update:modelValue', { ...props.modelValue, content })
+}
+
+
+const onInsertRowAfter = (rowId: number) => {
+  const content = [...props.modelValue.content]
+
+  content.splice(rowId + 1, 0, new Array(nbColumns.value).fill(''))
+
+  emit('update:modelValue', { ...props.modelValue, content })
+}
+
+const onInsertRowBefore = (rowId: number) => {
+  const content = [...props.modelValue.content]
+
+  content.splice(rowId, 0, new Array(nbColumns.value).fill(''))
+
+  emit('update:modelValue', { ...props.modelValue, content })
+}
+
+const onToggleHeaderRow = () => {
+  emit('update:modelValue', { ...props.modelValue, headerRow: !props.modelValue.headerRow })
+}
+
+const onToggleHeaderColumn = () => {
+  emit('update:modelValue', { ...props.modelValue, headerColumn: !props.modelValue.headerColumn })
+}
+
+const nbRows = computed(() => props.modelValue.content.length)
+
+const nbColumns = computed(() => props.modelValue.content[0].length)
 </script>
 
-<style scoped>
-table {
-  padding-top: 1rem;
-}
-
-.delete-column-cell {
+<style>
+.TableForm {
   text-align: center;
 }
 
-.delete-row-cell {
-  width: fit-content;
-  line-height: 1rem;
+.TableForm-settingsColumn {
+  padding: 0.5rem;
 }
 
-.head-toggler {
-  text-align: center;
+.TableForm-settingsColumn {
+  text-align: left;
+  display: flex;
+  align-items: center;
 }
 
-.head .cell, .head.cell {
-  background-color: rgba(0, 0, 0, 0.1);
+.TableForm-settingsColumn-addRow {
+  display: flex;
+  flex-direction: column;
+  margin-right: 0.2rem;
+}
+
+.TableForm th,
+.TableForm .TableForm-header,
+.TableForm .TableForm-header td,
+.TableForm .TableForm-header .el-input__wrapper,
+.TableForm .TableForm-header input {
+  background-color: var(--el-fill-color-darker);
   font-weight: bold;
+}
+
+.TableForm .el-icon:hover {
+  cursor: pointer;
+}
+
+.TableForm .el-icon {
+  fill: var(--el-color-secondary)
+}
+
+.TableForm td, .TableForm td .el-input__wrapper, .TableForm td input {
+  background-color: var(--el-fill-color);
+}
+
+.TableForm th {
+  padding: 1rem;
 }
 </style>
