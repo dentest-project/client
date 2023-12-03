@@ -1,5 +1,9 @@
 name: Docker deploy
-on: workflow_dispatch
+on:
+  workflow_run:
+    workflows: ["Publish Docker image"]
+    types:
+      - completed
 jobs:
   deploy:
     name: Deploy
