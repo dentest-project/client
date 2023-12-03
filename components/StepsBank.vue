@@ -159,7 +159,7 @@ h3 {
 }
 
 .StepsBank-adverbCollection li + li {
-  border-top: 1px solid var(--el-border-color-light);
+  border-top: 1px solid var(--el-border-color-dark);
 }
 
 .StepsBank-stepPart {
@@ -186,6 +186,7 @@ h3 {
 
 .StepsBank-stepsParameterIcon {
   color: var(--el-color-info);
+  margin-right: 0.5rem;
 }
 
 .StepsBank-tagsFilters {
