@@ -39,7 +39,7 @@ const extraParamValue = computed(() => props.step.params.find(p => !isInlineStep
 
 <style scoped>
 .ScenarioStepDisplay {
-  margin: 0.5rem;
+  margin: 0.7rem;
 }
 
 .ScenarioStepDisplay-adverb {

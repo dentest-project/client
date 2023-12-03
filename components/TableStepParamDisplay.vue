@@ -35,7 +35,8 @@ defineProps<{
 }
 
 .TableStepParamDisplay td, .TableStepParamDisplay th {
-  padding: 1rem;
+  padding: 0.5rem;
+  font-size: 0.8rem;
   margin: 0;
   min-width: 3rem;
 }

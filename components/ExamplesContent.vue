@@ -49,9 +49,10 @@ const tableValue = computed(() => Object.values(props.modelValue)[0].map((keyExa
 
 <style scoped>
 .ExamplesContent-table td, .ExamplesContent-table th {
-  padding: 1rem;
+  padding: 0.5rem;
   margin: 0;
   min-width: 3rem;
+  font-size: 0.8rem;
 }
 
 .ExamplesContent-table td {
