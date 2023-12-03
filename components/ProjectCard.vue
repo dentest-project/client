@@ -1,5 +1,5 @@
 <template>
-  <el-card shadow="always">
+  <el-card shadow="always" class="card">
     <template #header>
       <div class="card-header">
         <el-icon><DataBoard /></el-icon>
@@ -38,6 +38,10 @@ a {
 .title {
   display: inline-block;
   margin: 0 1rem;
+}
+
+.card {
+  margin-bottom: 1rem;
 }
 
 .card-header {

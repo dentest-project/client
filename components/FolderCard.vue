@@ -1,5 +1,5 @@
 <template>
-  <el-card shadow="always">
+  <el-card shadow="always" class="card">
     <template #header>
       <div class="card-header">
         <el-icon><Folder /></el-icon>
@@ -30,6 +30,10 @@ defineEmits(['moved'])
 <style scoped>
 a {
   text-decoration: none;
+}
+
+.card {
+  margin-bottom: 1rem;
 }
 
 .title {
