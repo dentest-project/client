@@ -27,6 +27,10 @@ definePageMeta({
   }
 })
 
+useHead({
+  title: `Login | Dentest`
+})
+
 const onSubmit = async (data: Login) => {
   try {
     await signIn(data, { callbackUrl: '/' })
