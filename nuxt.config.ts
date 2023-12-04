@@ -18,7 +18,6 @@ export default defineNuxtConfig({
       '~/plugins/mode.ts',
       '~/plugins/routes.ts',
       '~/plugins/vue-json-pretty.ts',
-      // { src: '~/plugins/polyfill-dnd.js', mode: 'client' }
     ],
     /*
     ** Nuxt.js dev-modules
@@ -42,23 +41,6 @@ export default defineNuxtConfig({
             'vue-slider-component'
         ]
     },
-    hooks: {
-      // replace with definePageMeta on given pages: https://nuxt.com/docs/guide/directory-structure/pages#special-metadata
-      // 'pages:extend' (routes) {
-      //   routes.push({
-      //     path: '/project/:project_slug/path/:path_slug/:path_id',
-      //     component: resolve(__dirname, 'pages/organization/_organization_slug/project/_project_slug/path/_path_slug/_path_id/index.vue')
-      //   });
-      //   routes.push({
-      //     path: '/project/:project_slug/path/:path_slug/:path_id/feature/:feature_slug',
-      //     component: resolve(__dirname, 'pages/organization/_organization_slug/project/_project_slug/path/_path_slug/_path_id/feature/_feature_slug/index.vue')
-      //   });
-      //   routes.push({
-      //     path: '/project/:project_slug/users',
-      //     component: resolve(__dirname, 'pages/organization/_organization_slug/project/_project_slug/users/index.vue')
-      //   });
-      // }
-    },
     auth: {
       baseURL: `${process.env.API_URL}/`,
       globalAppMiddleware: true,
@@ -70,7 +52,10 @@ export default defineNuxtConfig({
           signUp: { path: '/register', method: 'post' },
           getSession: { path: '/me', method: 'get' }
         },
-        sessionDataType: Session
+        sessionDataType: Session,
+        token: {
+          maxAgeInSeconds: 31557600
+        }
       },
       addDefaultCallbackUrl: '/'
     },
