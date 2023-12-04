@@ -179,7 +179,8 @@ interface Path extends ProjectRootPath {
 
 interface PathFeature {
   id: string,
-  title: string
+  title: string,
+  status: FeatureStatus
 }
 
 interface PathProject {

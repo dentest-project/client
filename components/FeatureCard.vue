@@ -8,6 +8,7 @@
     </template>
     <NuxtLink :to="$routes.feature(path, feature)" class="el-button el-button--primary">Open feature</NuxtLink>
     <MoveButton v-if="canWrite" @click="moveDialog = true" />
+    <FeatureStatusChip class="card-featureStatus" :status="feature.status" />
   </el-card>
   <MoveFeatureDialog v-if="canWrite" v-model="moveDialog" :feature="feature" :path="path" @moved="$emit('moved')" />
 </template>
@@ -44,5 +45,9 @@ a {
 .card-header {
   display: flex;
   align-items: center;
+}
+
+.card-featureStatus {
+  margin-left: 12px;
 }
 </style>
