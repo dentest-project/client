@@ -27,4 +27,4 @@ jobs:
           echo "Logging Docker in Github package registry" &&
           ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "echo $CR_PAT | docker login ghcr.io -u $ACTOR --password-stdin" &&
           echo "Running container" &&
-          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "cd $DEPLOY_DIR && API_URL=https://api.2.dentest.tech HTTP_PORT=8001 COMPOSE_PROJECT_NAME=dentest_client SERVER_NAME=http://127.0.0.1 docker compose -f ./installer/prod/docker-compose.yml up -d --remove-orphans --build"
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "cd $DEPLOY_DIR && API_URL=https://api.dentest.tech HTTP_PORT=8001 COMPOSE_PROJECT_NAME=dentest_client SERVER_NAME=http://127.0.0.1 docker compose -f ./installer/prod/docker-compose.yml up -d --remove-orphans --build"
