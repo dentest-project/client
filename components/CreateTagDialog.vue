@@ -75,7 +75,8 @@ watch(props, () => {
 </script>
 
 <style>
-.CreateTagDialog-input input {
+.CreateTagDialog-input input, .CreateTagDialog-input .el-input__wrapper {
   color: inherit;
+  background-color: inherit;
 }
 </style>

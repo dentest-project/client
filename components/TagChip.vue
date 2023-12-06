@@ -15,7 +15,7 @@ import type { Tag } from '~/types'
 
 defineProps<{
   tag: Tag,
-  outline: boolean,
+  outline?: boolean,
   hoverable: boolean
 }>()
 </script>
