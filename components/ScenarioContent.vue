@@ -31,6 +31,10 @@
           <DuplicateButton v-if="modelValue.type !== ScenarioType.Background" @click="onDuplicate" />
           <DeleteButton label="Delete" size="small" @deleted="onDelete" />
         </div>
+        <div v-if="modelValue.type !== ScenarioType.Background" class="ScenarioContent-tags">
+          <TagsSelector v-if="canWrite && mode === Mode.Edit" :project="project" v-model="modelValue.tags" @update:model-value="onTagsUpdate" />
+          <TagsList v-else :tags="modelValue.tags" />
+        </div>
       </template>
       <ScenarioStepList
         v-model="steps"
@@ -55,7 +59,7 @@ import { vOnClickOutside } from '@vueuse/components'
 import { extractExamplesFromSteps } from '~/helpers/extractExamplesFromSteps'
 import { useScenarioContentFocusManagementStore } from '~/store/scenario-content-focus-management'
 import { useStepStore } from '~/store/step'
-import { Mode, type Project, type Scenario, type ScenarioStep, ScenarioType, StepParamType } from '~/types'
+import { Mode, type Project, type Scenario, type ScenarioStep, ScenarioType, StepParamType, type Tag } from '~/types'
 import createScenarioStepFromStep from '../helpers/createScenarioStepFromStep'
 
 const { getMovingStep } = useStepStore()
@@ -74,6 +78,7 @@ const emit = defineEmits(['update:modelValue', 'up', 'down', 'duplicate', 'delet
 
 const title = ref(props.modelValue.title)
 const steps = ref(props.modelValue.steps)
+const tags = ref(props.modelValue.tags)
 const draggedOver = ref(false)
 const mode = ref(Mode.View)
 
@@ -136,6 +141,13 @@ const onExamplesUpdate = (examples: Record<string, string[]>) => {
   emit('update:modelValue', {
     ...props.modelValue,
     examples
+  })
+}
+
+const onTagsUpdate = (tags: Tag[]) => {
+  emit('update:modelValue', {
+    ...props.modelValue,
+    tags
   })
 }
 
@@ -202,5 +214,9 @@ h2 + .ScenarioContent-actions, .ScenarioContent-backgroundChip + .ScenarioConten
 
 .ScenarioContent-empty {
   color: var(--el-color-info);
+}
+
+.ScenarioContent-tags {
+  padding-top: 1rem;
 }
 </style>
