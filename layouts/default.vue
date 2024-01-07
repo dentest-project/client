@@ -47,11 +47,14 @@ watch(lightMode, (newV, oldV) => {
   --el-color-primary-light-5: #8e91e8 !important;
   --el-button-active-bg-color: #8e91e8 !important;
   --el-font-family: Luciole !important;
-  --el-button-font-weight: bold;
 }
 
 .el-input {
   --el-input-width: auto !important;
+}
+
+.el-button {
+  --el-button-font-weight: bold !important;
 }
 
 html {
