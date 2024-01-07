@@ -46,6 +46,7 @@ watch(lightMode, (newV, oldV) => {
   --el-color-primary-light-3: #7f83e5 !important;
   --el-color-primary-light-5: #8e91e8 !important;
   --el-button-active-bg-color: #8e91e8 !important;
+  --el-font-family: Luciole !important;
 }
 
 .el-input {
