@@ -35,6 +35,11 @@ watch(lightMode, (newV, oldV) => {
   src: url("/Nunito-SemiBold.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: 'Luciole';
+  src: url("/Luciole.ttf") format("truetype");
+}
+
 :root {
   --el-color-primary: #686de0 !important;
   --el-color-primary-dark-2: #9599e9 !important;
@@ -49,6 +54,7 @@ watch(lightMode, (newV, oldV) => {
 
 html {
   font-family:
+    'Luciole',
     'Nunito',
     'Source Sans Pro',
     -apple-system,
