@@ -9,6 +9,8 @@
     multiple
     allow-create
     @update:model-value="onUpdate"
+    @focus="onFocus"
+    @visible-change="onVisibleChange"
   >
     <template #default="{ item }">
       <TagChip :tag="{ id: item.value, name: item.label, color: item.color ?? '#CCCCCC' }" :outline="item.selected" :hoverable="false" />
@@ -23,7 +25,10 @@
 </template>
 
 <script setup lang="ts">
+import { useScenarioContentFocusManagementStore } from '~/store/scenario-content-focus-management'
 import type { Project, Tag } from '~/types'
+
+const { holdFocus, releaseFocus } = useScenarioContentFocusManagementStore()
 
 const props = defineProps<{
   modelValue: Tag[],
@@ -56,6 +61,16 @@ const onTagCreated = (tag: Tag) => {
   allTags.value.push(tag)
 
   emit('update:modelValue', [...props.modelValue, tag])
+}
+
+const onFocus = () => {
+  holdFocus()
+}
+
+const onVisibleChange = (change: boolean) => {
+  if (!change) {
+    releaseFocus()
+  }
 }
 
 onMounted(async () => {
