@@ -60,6 +60,7 @@ const extraParamValue = computed(() => props.step.params.find(p => !isInlineStep
   background-color: var(--el-fill-color);
   min-height: 75px;
   padding: 0.5rem;
-  color: var(--el-text-color-regular)
+  color: var(--el-text-color-regular);
+  font-size: 0.8rem;
 }
 </style>
