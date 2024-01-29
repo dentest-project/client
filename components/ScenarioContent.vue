@@ -18,9 +18,13 @@
         (canWrite && 'ScenarioContent-card--canWrite')
       ]"
       @click="onScenarioClick"
-      v-on-click-outside="onScenarioClickedOutside"
     >
       <template #header>
+        <el-button size="small" class="ScenarioContent-close" v-if="mode === Mode.Edit" @click.stop="mode = Mode.View">
+          <el-icon>
+            <Close />
+          </el-icon>
+        </el-button>
         <h2 v-if="!canWrite && modelValue.type !== ScenarioType.Background">{{ modelValue.title }}</h2>
         <EditableSubtitle v-else-if="canWrite && modelValue.type !== ScenarioType.Background" label="Scenario title" empty-label="Untitled scenario" v-model="title" @submit="onTitleUpdate" />
         <BackgroundChip v-else class="ScenarioContent-backgroundChip" />
@@ -55,15 +59,13 @@
 </template>
 
 <script setup lang="ts">
-import { vOnClickOutside } from '@vueuse/components'
 import { extractExamplesFromSteps } from '~/helpers/extractExamplesFromSteps'
-import { useScenarioContentFocusManagementStore } from '~/store/scenario-content-focus-management'
 import { useStepStore } from '~/store/step'
 import { Mode, type Project, type Scenario, type ScenarioStep, ScenarioType, StepParamType, type Tag } from '~/types'
+import { Close } from '@element-plus/icons-vue'
 import createScenarioStepFromStep from '../helpers/createScenarioStepFromStep'
 
 const { getMovingStep } = useStepStore()
-const { isFocusHeld } = useScenarioContentFocusManagementStore()
 
 const props = defineProps<{
   modelValue: Scenario,
@@ -173,18 +175,13 @@ const onScenarioClick = () => {
   }
 }
 
-const onScenarioClickedOutside = () => {
-  if (!isFocusHeld()) {
-    mode.value = Mode.View
-  }
-}
-
 const shouldDisplayBackgroundSwitch = computed(() => !props.modelValue.examples && props.canBeBackground)
 </script>
 
 <style scoped>
 .ScenarioContent {
   margin-bottom: 20px;
+  position: relative;
 }
 
 .ScenarioContent-card--canWrite.ScenarioContent-card--view:hover {
@@ -218,5 +215,11 @@ h2 + .ScenarioContent-actions, .ScenarioContent-backgroundChip + .ScenarioConten
 
 .ScenarioContent-tags {
   padding-top: 1rem;
+}
+
+.ScenarioContent-close {
+  position: absolute;
+  top: 0;
+  right: 11px;
 }
 </style>

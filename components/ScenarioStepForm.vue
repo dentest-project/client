@@ -6,8 +6,6 @@
         size="small"
         class="ScenarioStepForm-adverbSelect"
         @update:model-value="onAdverbUpdate"
-        @focus="onAdverbFocus"
-        @blur="onAdverbBlur"
       >
         <el-option v-for="adverb in availableAdverbs" :label="adverb.label" :value="adverb.value" />
       </el-select>
@@ -45,7 +43,6 @@
 
 <script setup lang="ts">
 import { Delete } from '@element-plus/icons-vue'
-import { useScenarioContentFocusManagementStore } from '~/store/scenario-content-focus-management'
 import {
   type InlineStepParam,
   isInlineStepParam,
@@ -63,29 +60,23 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue', 'delete'])
 
-const { holdFocus, releaseFocus } = useScenarioContentFocusManagementStore()
-
 const onAdverbUpdate = (adverb: StepAdverb) => {
   emit('update:modelValue', {
     ...props.modelValue,
     adverb
   })
-  releaseFocus()
 }
 
-const onAdverbFocus = () => {
-  holdFocus()
-}
-
-const onAdverbBlur = () => {
-  releaseFocus()
-}
-
-const onInlineParamUpdated = (param: InlineStepParam) => {
-  const updatedParamIndex = props.modelValue.params.findIndex((param) => isInlineStepParam(param) && (param.stepPart as InlineStepParam).id === param.stepPart.id)
+const onInlineParamUpdated = (newValue: InlineStepParam) => {
   const params = [...props.modelValue.params]
 
-  params[updatedParamIndex] = param
+  const paramIndex = props
+    .modelValue
+    .params
+    .filter(isInlineStepParam)
+    .findIndex((param: InlineStepParam) => param.stepPart.id === newValue.stepPart.id)
+
+  params[paramIndex].content = newValue.content
 
   emit('update:modelValue', {
     ...props.modelValue,
