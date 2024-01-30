@@ -47,7 +47,7 @@ const extraParamValue = computed(() => props.step.params.find(p => !isInlineStep
 }
 
 .ScenarioStepDisplay-part--param {
-  color: var(--el-color-primary);
+  color: var(--el-color-primary-light-5);
   font-weight: bold;
 }
 
