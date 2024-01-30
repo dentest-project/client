@@ -20,7 +20,7 @@
       @click="onScenarioClick"
     >
       <template #header>
-        <el-button size="small" class="ScenarioContent-close" v-if="mode === Mode.Edit" @click.stop="mode = Mode.View">
+        <el-button size="small" class="ScenarioContent-close" v-if="mode === Mode.Edit && canWrite" @click.stop="mode = Mode.View">
           <el-icon>
             <Close />
           </el-icon>
