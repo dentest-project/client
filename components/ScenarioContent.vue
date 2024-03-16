@@ -29,10 +29,10 @@
         <EditableSubtitle v-else-if="canWrite && modelValue.type !== ScenarioType.Background" label="Scenario title" empty-label="Untitled scenario" v-model="title" @submit="onTitleUpdate" />
         <BackgroundChip v-else class="ScenarioContent-backgroundChip" />
         <div v-if="canWrite" class="ScenarioContent-actions">
-          <SwitchToBackgroundButton v-if="shouldDisplayBackgroundSwitch" :current-type="modelValue.type" @click="onTypeChange" />
-          <MoveUpButton v-if="canMoveUp" @click="onMoveUp" />
-          <MoveDownButton v-if="canMoveDown" @click="onMoveDown" />
-          <DuplicateButton v-if="modelValue.type !== ScenarioType.Background" @click="onDuplicate" />
+          <SwitchToBackgroundButton v-if="shouldDisplayBackgroundSwitch" :current-type="modelValue.type" @click.stop="onTypeChange" />
+          <MoveUpButton v-if="canMoveUp" @click.stop="onMoveUp" />
+          <MoveDownButton v-if="canMoveDown" @click.stop="onMoveDown" />
+          <DuplicateButton v-if="modelValue.type !== ScenarioType.Background" @click.stop="onDuplicate" />
           <DeleteButton label="Delete" size="small" @deleted="onDelete" />
         </div>
         <div v-if="modelValue.type !== ScenarioType.Background" class="ScenarioContent-tags">
