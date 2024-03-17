@@ -1,5 +1,5 @@
 import { defineNuxtPlugin } from 'nuxt/app'
-import type { Feature, Path, Project } from '~/types'
+import type { Feature, Organization, Path, Project } from '~/types'
 
 export default defineNuxtPlugin(() => ({
   provide: {
@@ -23,6 +23,7 @@ export default defineNuxtPlugin(() => ({
           : `/project/${project.slug}/path/${project.rootPath.slug}/${project.rootPath.id}`
       },
       organizationUsers: (organizationSlug: string) => `/organization/${organizationSlug}/users`,
+      organizationIssueTrackers: (organization: Organization) => `/organization/${organization.slug}/issue-trackers`,
       projectUsers: function (project: Project): string {
         return project.organization
           ? `/organization/${project.organization.slug}/project/${project.slug}/users`

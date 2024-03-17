@@ -7,7 +7,7 @@
     @confirm="$emit('deleted')"
   >
     <template #reference>
-      <el-button type="danger" plain :size="size ?? 'default'">
+      <el-button type="danger" plain :size="size ?? 'default'" :disabled="disabled ?? false">
         <el-icon><DeleteFilled /></el-icon>
         <span class="label">{{ label }}</span>
       </el-button>
@@ -21,6 +21,7 @@ import { DeleteFilled, WarningFilled } from '@element-plus/icons-vue'
 defineProps<{
   label: string,
   size?: 'small' | 'large'
+  disabled?: boolean
 }>()
 
 defineEmits(['deleted'])

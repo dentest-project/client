@@ -4,6 +4,10 @@ enum FeatureStatus {
   Live = 'live'
 }
 
+enum IssueTracker {
+  Jira = 'jira'
+}
+
 enum SaveStatus {
   Saved = 'saved',
   Saving = 'saving',
@@ -161,7 +165,22 @@ interface Organization {
   id?: string,
   slug?: string,
   name: string,
-  permissions: Array<OrganizationPermission>
+  permissions: OrganizationPermission[]
+  issueTrackerConfigurations: OrganizationIssueTrackerConfigurationEmbedded[]
+}
+
+interface OrganizationIssueTrackerConfigurationEmbedded {
+  issueTracker: IssueTracker
+  id: string
+}
+
+interface OrganizationIssueTrackerConfigurationDetailed extends OrganizationIssueTrackerConfigurationEmbedded {
+  apiUrl: string
+  userIdentifier: string
+  accessToken: string
+  organization: {
+    id: string
+  }
 }
 
 interface OrganizationUser {
@@ -388,11 +407,13 @@ export {
   Feature,
   FeatureStatus,
   InlineStepParam,
+  IssueTracker,
   Login,
   LoginResponse,
   Mode,
   MultilineStepParam,
   Organization,
+  OrganizationIssueTrackerConfigurationDetailed,
   OrganizationList,
   OrganizationPermission,
   OrganizationUser,

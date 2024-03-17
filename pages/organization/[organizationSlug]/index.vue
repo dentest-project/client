@@ -5,6 +5,7 @@
     <ActionsBar>
       <AddProjectButton v-if="canCreateProject" @click="createProjectDialog = true" />
       <UsersLink v-if="canAdministrateOrganization" :to="`/organization/${organization.slug}/users`" />
+      <OrganizationIssueTrackersLink v-if="canAdministrateOrganization" :organization="organization" />
       <LeaveButton v-if="isOrganizationUser" label="Leave organization" @left="onOrganizationLeft" />
       <DeleteButton v-if="canAdministrateOrganization" label="Delete organization" @deleted="onOrganizationDeleted" />
     </ActionsBar>

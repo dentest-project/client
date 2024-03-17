@@ -7,7 +7,7 @@ import {
   type Feature,
   type Login,
   type LoginResponse,
-  type Organization,
+  type Organization, OrganizationIssueTrackerConfigurationDetailed,
   type OrganizationList,
   OrganizationPermission,
   type OrganizationUser,
@@ -78,6 +78,7 @@ export default defineNuxtPlugin(() => ({
       deleteMe: async (): Promise<void> => del('me'),
       deleteOrganization: async (id: string): Promise<void> => del(`organizations/${id}`),
       deleteOrganizationUser: async (organizationId: string, userId: string): Promise<void> => del(`organizations/${organizationId}/users/${userId}`),
+      deleteOrganizationIssueTrackerConfiguration: async (organizationIssueTrackerConfigurationId: string): Promise<void> => del(`organization-issue-tracker-configurations/${organizationIssueTrackerConfigurationId}`),
       deletePath: async (id: string): Promise<void> => del(`paths/${id}`),
       deleteProject: async (id: string): Promise<void> => del(`projects/${id}`),
       deleteProjectUser: async (projectId: string, userId: string): Promise<void> => del(`projects/${projectId}/users/${userId}`),
@@ -86,6 +87,7 @@ export default defineNuxtPlugin(() => ({
       getOrganizations: async (): Promise<OrganizationList> => get(`organizations`),
       getOrganization: async (slug: string): Promise<Organization> => get(`organizations/${slug}`),
       getOrganizationProjects: async (id: string): Promise<ProjectList> => get(`organizations/${id}/projects`),
+      getOrganizationIssueTrackerConfigurations: async (organizationSlug: string): Promise<OrganizationIssueTrackerConfigurationDetailed[]> => get(`organizations/${organizationSlug}/issue-tracker-configurations`),
       getOrganizationUsers: async (organizationSlug: string): Promise<OrganizationUserList> => get(`organizations/${organizationSlug}/users`),
       getPath: async (id: string): Promise<Path> => get(`paths/${id}`),
       getPathRoot: async (id: string): Promise<Path> => get(`paths/${id}/root`),
@@ -120,6 +122,7 @@ export default defineNuxtPlugin(() => ({
 
         return get(`paths/${feat.path.id}/features/${feat.slug}`)
       },
+      saveOrganizationIssueTrackerConfiguration: async (organizationIssueTrackerConfiguration: OrganizationIssueTrackerConfigurationDetailed): Promise<OrganizationIssueTrackerConfigurationDetailed> => put('organization-issue-tracker-configurations', organizationIssueTrackerConfiguration),
       searchUsers: async (query: string, organizationSlug?: string | null): Promise<Array<BaseUser>> => get(`users?q=${query}${organizationSlug ? `&organization=${organizationSlug}` : ''}`),
       updateFeaturePath: async (featurePath: UpdateFeatureParentPath): Promise<Path> => put('features', { id: featurePath.id, path: { id: featurePath.newParentId } }),
       updateFeatureStatus: async (featureStatus: UpdateFeatureStatus): Promise<Path> => put('features', { id: featureStatus.id, status: featureStatus.status }),
