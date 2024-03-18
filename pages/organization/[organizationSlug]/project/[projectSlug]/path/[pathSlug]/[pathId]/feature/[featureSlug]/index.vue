@@ -18,6 +18,14 @@
           <SaveStatusChip v-if="canWrite && feature.status === FeatureStatus.Draft" :status="saveStatus" />
           <DeleteButton v-if="canWrite && feature.status === FeatureStatus.Draft" label="Delete feature" @deleted="onDeleted" />
         </ActionsBar>
+        <div>
+          <FeatureIssuesCollection
+            v-model="feature.issues"
+            :mode="isLoggedIn && canWrite && feature.status === FeatureStatus.Draft ? Mode.Edit : Mode.View"
+            :issue-trackers="issueTrackerConfigurations.map(c => c.issueTracker)"
+            @update:model-value="prepareSave"
+          />
+        </div>
         <TagsSelector v-if="canWrite && feature.status === FeatureStatus.Draft" :project="feature.rootProject as Project" v-model="feature.tags" @update:model-value="prepareSave" />
         <TagsList v-else :tags="feature.tags" />
         <Panel type="info">
@@ -51,6 +59,7 @@ import {
   type BreadcrumbItems,
   type Feature,
   FeatureStatus,
+  Mode,
   OrganizationPermission,
   type Path,
   type Project,
@@ -68,6 +77,7 @@ const { params } = useRoute()
 const { status } = useAuth()
 
 const feature = ref<Feature>(await $api.getFeature(params.pathId, params.featureSlug));
+const issueTrackerConfigurations = ref(await $api.getFeatureIssueTrackerConfigurations(params.pathId, params.featureSlug))
 const saveStatus = ref(SaveStatus.Saved)
 
 let saveTimeout;
@@ -150,6 +160,7 @@ const save = async () => {
       description: feature.value.description,
       scenarios: feature.value.scenarios,
       tags: feature.value.tags,
+      issues: feature.value.issues,
       path: {
         id: feature.value.path.id
       }
@@ -160,6 +171,8 @@ const save = async () => {
     if (savedFeature.slug !== params.featureSlug) {
       $router.push($routes.feature(savedFeature.path, savedFeature))
     }
+
+    feature.value = savedFeature
   } catch (error) {
     saveStatus.value = SaveStatus.NotSaved
     ElNotification({

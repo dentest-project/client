@@ -123,8 +123,6 @@ const onTitleSubmitted = async () => {
         await $router.push($routes.path(updatedPath))
       }
     } catch (error) {
-      console.log(error)
-
       ElNotification({
         title: 'An error occurred',
         message: 'An error occurred while updating the folder title',

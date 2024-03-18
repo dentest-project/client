@@ -10,8 +10,6 @@ export const useThemeStore = defineStore('theme', {
   }),
   actions: {
     setTheme(theme: 'dark' | 'light') {
-      console.log(theme)
-
       this.theme = theme
     },
 

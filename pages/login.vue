@@ -40,7 +40,6 @@ const onSubmit = async (data: Login) => {
       type: 'success',
     })
   } catch (error) {
-    console.log({error})
     if (error.statusCode === 401) {
       ElNotification({
         title: 'Invalid credentials',

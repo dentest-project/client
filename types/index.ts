@@ -141,11 +141,18 @@ interface Feature {
   rootProject?: Project,
   priority: number,
   tags: Array<Tag>
+  issues: Array<Issue>
 }
 
 interface InlineStepParam extends StepParam {
   content: string,
   stepPart: StepPart
+}
+
+interface Issue {
+  id?: string
+  issueTracker: IssueTracker
+  link: string
 }
 
 interface Login {
@@ -335,6 +342,7 @@ interface UpdateFeature {
   description: string,
   scenarios: Array<Scenario>,
   tags: Tag[]
+  issues: Issue[]
 }
 
 interface UpdateFeatureParentPath {
@@ -407,6 +415,7 @@ export {
   Feature,
   FeatureStatus,
   InlineStepParam,
+  Issue,
   IssueTracker,
   Login,
   LoginResponse,
@@ -414,6 +423,7 @@ export {
   MultilineStepParam,
   Organization,
   OrganizationIssueTrackerConfigurationDetailed,
+  OrganizationIssueTrackerConfigurationEmbedded,
   OrganizationList,
   OrganizationPermission,
   OrganizationUser,

@@ -7,7 +7,7 @@
       </h3>
     </template>
     <el-form class="IssueTrackerConfigurationForm-inputs" @submit.prevent="onSave">
-      <el-input label="API URL" placeholder="API URL" v-model="apiUrl" />
+      <el-input label="Tracker URL" placeholder="Tracker URL" v-model="apiUrl" />
       <el-input label="User identifier" placeholder="User identifier" v-model="userIdentifier" />
       <el-input label="Access token" placeholder="Access token" type="password" v-model="accessToken" />
     </el-form>
