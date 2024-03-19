@@ -32,6 +32,11 @@
         alt="Jetbrains"
         content="JetBrains IDEs integration"
       />
+      <HomeHint
+        image="/jira-logo.png"
+        alt="Jira"
+        content="Jira integration"
+      />
     </div>
   </section>
 </template>
@@ -92,3 +97,5 @@
   }
 }
 </style>
+<script setup lang="ts">
+</script>
