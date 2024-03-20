@@ -7,7 +7,7 @@ import {
   StepAdverb,
   StepParamType,
   type StepPart,
-  StepPartStrategy,
+  ContentStrategy,
   StepPartType,
   type TableStepParam
 } from '~/types'
@@ -24,7 +24,7 @@ interface CreateScenarioStepFromStepOutput {
 }
 
 const getDefaultValueForStepPart = (part: StepPart) => {
-  if (part.strategy === StepPartStrategy.Choices && part.choices) {
+  if (part.strategy === ContentStrategy.Choices && part.choices) {
     return part.choices[0]
   }
 

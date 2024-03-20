@@ -31,12 +31,12 @@
           </el-input>
           <SplitStepButton v-if="selection && selection.inputId === i" @click="onSplitButtonClicked" />
           <div v-else-if="part.type === StepPartType.Param">
-            <InlineStepParamChoicesInput
-              v-if="part.strategy === StepPartStrategy.Choices"
+            <ContentChoicesInput
+              v-if="part.strategy === ContentStrategy.Choices"
               v-model="parts[i].choices"
               @update:model-value="onPartsUpdate"
             />
-            <InlineStepParamStrategySelector
+            <ContentStrategySelector
               v-model="parts[i].strategy"
               @update:model-value="(newStrategy) => onStrategyUpdate(i, newStrategy)"
             />
@@ -49,6 +49,12 @@
       <div class="AddStepDialog-paramType">
         <StepParamIcon :step-param-type="type" class="AddStepDialog-stepParamIcon" />
         <StepParamTypeSelector v-model="type" />
+      </div>
+      <div v-if="type === StepParamType.Table" class="AddStepDialog-tableStepParam">
+        <el-button v-if="stepParamTemplate === null" size="small" @click="onStepParamTemplateRequest">
+          Add data template
+        </el-button>
+        <TableParamTemplate v-else v-model="stepParamTemplate" />
       </div>
       <div class="AddStepDialog-tags">
         <TagsSelector v-model="tags" :project="project" />
@@ -66,7 +72,16 @@
 <script setup lang="ts">
 import { CloseBold } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
-import { type Project, StepParamType, type StepPart, StepPartStrategy, StepPartType, StepType, type Tag } from '~/types'
+import {
+  type Project,
+  StepParamType,
+  type StepPart,
+  ContentStrategy,
+  StepPartType,
+  StepType,
+  type TableStepParamTemplate,
+  type Tag
+} from '~/types'
 
 interface InputSelection {
   inputId: number
@@ -95,6 +110,7 @@ const parts = ref<StepPart[]>([
 ])
 const selection = ref<InputSelection>()
 const type = ref(StepParamType.None)
+const stepParamTemplate = ref<TableStepParamTemplate | null>(null)
 const tags = ref<Tag[]>([])
 const isSubmitEnabled = ref(true)
 
@@ -141,7 +157,7 @@ const onSplitButtonClicked = () => {
     type: StepPartType.Param,
     priority: selection.value?.inputId + 1,
     content: selected,
-    strategy: StepPartStrategy.Free,
+    strategy: ContentStrategy.Free,
     choices: null
   })
   if (before !== '') {
@@ -208,8 +224,17 @@ const onPartsUpdate = () => {
   parts.value = parts.value.map((part, i) => ({ ...part, priority: i }))
 }
 
-const onStrategyUpdate = (i: number, newStrategy: StepPartStrategy) => {
-  parts.value[i].choices = newStrategy === StepPartStrategy.Choices ? [] : null
+const onStrategyUpdate = (i: number, newStrategy: ContentStrategy) => {
+  parts.value[i].choices = newStrategy === ContentStrategy.Choices ? [] : null
+}
+
+const onStepParamTemplateRequest = () => {
+  if (type.value === StepParamType.Table) {
+    stepParamTemplate.value = [{
+      header: '',
+      strategy: ContentStrategy.Free
+    }]
+  }
 }
 
 const onSubmit = async () => {
@@ -223,7 +248,8 @@ const onSubmit = async () => {
         },
         extraParamType: type.value,
         parts: parts.value.map((part, i) => ({ ...part, priority: i })),
-        tags: tags.value
+        tags: tags.value,
+        extraParamTemplate: stepParamTemplate.value
       }
     )
 
@@ -246,6 +272,7 @@ const onSubmit = async () => {
     type.value = StepParamType.None
     selection.value = undefined
     tags.value = []
+    stepParamTemplate.value = null
     isSubmitEnabled.value = true
     emit('update:modelValue', false)
   } catch (error) {

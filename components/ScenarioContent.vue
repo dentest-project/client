@@ -61,7 +61,15 @@
 <script setup lang="ts">
 import { extractExamplesFromSteps } from '~/helpers/extractExamplesFromSteps'
 import { useStepStore } from '~/store/step'
-import { Mode, type Project, type Scenario, type ScenarioStep, ScenarioType, StepParamType, type Tag } from '~/types'
+import {
+  Mode,
+  type Project,
+  type Scenario,
+  type ScenarioStep,
+  ScenarioType,
+  StepParamType, type TableStepParam,
+  type Tag
+} from '~/types'
 import { Close } from '@element-plus/icons-vue'
 import createScenarioStepFromStep from '../helpers/createScenarioStepFromStep'
 
@@ -110,13 +118,19 @@ const onDrop = () => {
     return
   }
 
-  const step = createScenarioStepFromStep(steps.value, droppedStep)
+  const step = createScenarioStepFromStep([...steps.value], droppedStep)
 
   if (step.withTableParam) {
     const tableParamIndex = step.scenarioStep.params.findIndex((s) => s.type === StepParamType.Table)
 
     if (tableParamIndex !== -1) {
-      step.scenarioStep.params[tableParamIndex].content = [['', ''], ['', '']]
+      (step.scenarioStep.params[tableParamIndex]).content = droppedStep.extraParamTemplate
+        ? [
+            droppedStep.extraParamTemplate.map((item) => item.header),
+            droppedStep.extraParamTemplate.map((item) => item.choices ? item.choices[0] : '')
+          ]
+        : [['', ''], ['', '']];
+      (step.scenarioStep.params[tableParamIndex] as TableStepParam).headerRow = !!droppedStep.extraParamTemplate
     }
   }
 

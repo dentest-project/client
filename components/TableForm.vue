@@ -20,7 +20,10 @@
       </tr>
       <tr v-for="(row, i) in modelValue.content" :class="[ headerable && modelValue.headerRow && i === 0 && 'TableForm-header' ]">
         <td v-for="(cell, j) in row" class="cell" :class="[ headerable && modelValue.headerColumn && j === 0 && 'TableForm-header' ]">
-          <el-input :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue)" />
+          <el-select v-if="(cellChoices ?? [])[j]" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue)">
+            <el-option v-for="choice in (cellChoices ?? [])[j]" :value="choice" :label="choice" />
+          </el-select>
+          <el-input v-else :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue)" />
         </td>
         <td class="TableForm-settingsColumn">
           <div class="TableForm-settingsColumn-addRow">
@@ -44,6 +47,7 @@ const props = defineProps<{
   deletableColumns: boolean,
   headerable: boolean,
   headers?: string[],
+  cellChoices?: (string[] | null)[]
   modelValue: {
     headerColumn: boolean,
     headerRow: boolean,
@@ -170,5 +174,6 @@ const nbColumns = computed(() => props.modelValue.content[0].length)
 
 .TableForm th {
   padding: 1rem;
+  font-size: 12px;
 }
 </style>

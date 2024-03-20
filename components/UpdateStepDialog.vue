@@ -8,13 +8,19 @@
         <div v-for="(part, i) in parts" class="UpdateStepDialog-input">
           <el-input v-model="parts[i].content" :class="`UpdateStepDialog-input--${part.type}`" />
           <div v-if="part.type === StepPartType.Param">
-            <InlineStepParamChoicesInput v-if="part.strategy === StepPartStrategy.Choices" v-model="parts[i].choices" :key="step.id" />
-            <InlineStepParamStrategySelector
+            <ContentChoicesInput v-if="part.strategy === ContentStrategy.Choices" v-model="parts[i].choices" :key="step.id" />
+            <ContentStrategySelector
               v-model="parts[i].strategy"
               @update:model-value="(newStrategy) => onStrategyUpdate(i, newStrategy)"
             />
           </div>
         </div>
+      </div>
+      <div v-if="step.extraParamType === StepParamType.Table" class="UpdateStepDialog-tableStepParam">
+        <el-button v-if="extraParamTemplate === null" size="small" @click="onExtraParamTemplateRequest">
+          Add data template
+        </el-button>
+        <TableParamTemplate v-else v-model="extraParamTemplate" />
       </div>
       <div class="UpdateStepDialog-tags">
         <TagsSelector v-model="tags" :project="project" />
@@ -36,9 +42,9 @@ import {
   type Project,
   type Step,
   type StepPart,
-  StepPartStrategy,
+  ContentStrategy,
   StepPartType,
-  type Tag
+  StepParamType
 } from '~/types'
 
 const props = defineProps<{
@@ -52,7 +58,8 @@ const { $api } = useNuxtApp()
 const emit = defineEmits(['update:modelValue', 'updated', 'deleted'])
 
 const parts = ref<StepPart[]>([...props.step.parts])
-const tags = ref<Tag[]>([...props.step.tags])
+const tags = ref([...props.step.tags])
+const extraParamTemplate = ref(props.step.extraParamTemplate ?? null)
 
 const isSubmitEnabled = ref(true)
 
@@ -60,8 +67,17 @@ const onDialogStatusChanged = (e: boolean) => {
   emit('update:modelValue', e)
 }
 
-const onStrategyUpdate = (i: number, newStrategy: StepPartStrategy) => {
-  parts.value[i].choices = newStrategy === StepPartStrategy.Choices ? [] : null
+const onStrategyUpdate = (i: number, newStrategy: ContentStrategy) => {
+  parts.value[i].choices = newStrategy === ContentStrategy.Choices ? [] : null
+}
+
+const onExtraParamTemplateRequest = () => {
+  if (props.step.extraParamType === StepParamType.Table) {
+    extraParamTemplate.value = [{
+      header: '',
+      strategy: ContentStrategy.Free
+    }]
+  }
 }
 
 const onSubmit = async () => {
@@ -71,7 +87,8 @@ const onSubmit = async () => {
     await $api.updateStep({
       id: props.step.id,
       parts: parts.value.map((part, i) => ({ ...part, priority: i })),
-      tags: tags.value
+      tags: [...tags.value],
+      extraParamTemplate: extraParamTemplate.value
     })
 
     ElNotification({

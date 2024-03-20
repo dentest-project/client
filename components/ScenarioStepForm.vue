@@ -27,9 +27,11 @@
       />
       <TableForm
         v-else-if="tableParam"
-        :model-value="tableParam"
-        :deletable-columns="true"
-        :headerable="true"
+        :model-value="modelValue.step?.extraParamTemplate ? { ...tableParam, content: tableParam.content.slice(1) } : tableParam"
+        :deletable-columns="!modelValue.step?.extraParamTemplate"
+        :headers="headers"
+        :headerable="!modelValue.step?.extraParamTemplate"
+        :cell-choices="cellChoices"
         @update:model-value="onTableParamUpdate"
       />
     </div>
@@ -100,9 +102,23 @@ const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] 
   const params = [...props.modelValue.params]
   const updatedParamIndex = props.modelValue.params.findIndex((param) => !isInlineStepParam(param))
 
-  params[updatedParamIndex] = {
-    ...params[updatedParamIndex],
-    ...newValue
+  if (props.modelValue.step?.extraParamTemplate) {
+    const firstRow: string[] = newValue.content.length > 0
+      ? newValue.content[0].map((_, i) => props.modelValue.step?.extraParamTemplate?.[i].header ?? '')
+      : props.modelValue.step?.extraParamTemplate.map((item) => item.header)
+
+    params[updatedParamIndex] = {
+      ...params[updatedParamIndex] as TableStepParam,
+      content: [
+        firstRow,
+        ...newValue.content
+      ]
+    }
+  } else {
+    params[updatedParamIndex] = {
+      ...params[updatedParamIndex],
+      ...newValue
+    }
   }
 
   emit('update:modelValue', {
@@ -128,6 +144,10 @@ const parts = computed(() => props.modelValue.step?.parts.map((part) => ({
 const multilineParam = computed(() => props.modelValue.step?.extraParamType === StepParamType.Multiline && props.modelValue.params.find((param) => !isInlineStepParam(param)))
 
 const tableParam = computed(() => props.modelValue.step?.extraParamType === StepParamType.Table && props.modelValue.params.find((param) => !isInlineStepParam(param)) as TableStepParam)
+
+const cellChoices = computed(() => props.modelValue.step?.extraParamTemplate?.map((col) => col.choices ?? null))
+
+const headers = computed(() => props.modelValue.step?.extraParamTemplate ? (props.modelValue.params.find((param) => !isInlineStepParam(param)) as TableStepParam).content[0] : undefined)
 </script>
 
 <style>

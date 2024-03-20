@@ -58,7 +58,7 @@ enum StepAdverb {
   But = 'but'
 }
 
-enum StepPartStrategy {
+enum ContentStrategy {
   Free = 'free',
   Choices = 'choices'
 }
@@ -286,7 +286,8 @@ interface CreateStep {
   type: StepType,
   extraParamType: StepParamType,
   parts: Array<StepPart>,
-  tags: Array<Tag>
+  tags: Array<Tag>,
+  extraParamTemplate?: TableStepParamTemplate | null
 }
 
 interface Step {
@@ -295,7 +296,8 @@ interface Step {
   type: StepType,
   extraParamType: StepParamType,
   parts: Array<StepPart>,
-  tags: Array<Tag>
+  tags: Array<Tag>,
+  extraParamTemplate?: TableStepParamTemplate | null
 }
 
 interface StepParam {
@@ -308,7 +310,7 @@ interface StepPart {
   type: StepPartType,
   content: string,
   priority: number,
-  strategy?: StepPartStrategy,
+  strategy?: ContentStrategy,
   choices?: Array<string> | null
 }
 
@@ -328,6 +330,12 @@ interface TableStepParam extends StepParam, TableParamOptions {
 function isTableStepParam(object: any): object is TableStepParam {
   return !!object && 'headerColumn' in object && 'headerRow' in object;
 }
+
+type TableStepParamTemplate = {
+  header: string,
+  strategy: ContentStrategy,
+  choices?: string[]
+}[]
 
 interface Tag {
   id: string,
@@ -383,7 +391,8 @@ interface UpdateProject {
 interface UpdateStep {
   id: number,
   parts: Array<StepPart>,
-  tags: Array<Tag>
+  tags: Array<Tag>,
+  extraParamTemplate: TableStepParamTemplate | null
 }
 
 interface User extends BaseUser {
@@ -406,6 +415,7 @@ function isInlineStepParam(param: StepParam): param is InlineStepParam {
 export {
   BaseUser,
   BreadcrumbItems,
+  ContentStrategy,
   Context,
   CreateFeature,
   CreatePath,
@@ -453,12 +463,12 @@ export {
   StepParam,
   StepParamType,
   StepPart,
-  StepPartStrategy,
   StepPartType,
   StepType,
   TableParamOptions,
   TableStepParam,
   Tag,
+  TableStepParamTemplate,
   UpdateFeature,
   UpdateFeaturePath,
   UpdateFeatureParentPath,
