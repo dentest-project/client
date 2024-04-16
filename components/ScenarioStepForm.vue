@@ -1,22 +1,24 @@
 <template>
   <div class="ScenarioStepForm">
     <div class="ScenarioStepForm-inner">
-      <el-select
-        :model-value="modelValue.adverb"
-        size="small"
-        class="ScenarioStepForm-adverbSelect"
-        @update:model-value="onAdverbUpdate"
-      >
-        <el-option v-for="adverb in availableAdverbs" :label="adverb.label" :value="adverb.value" />
-      </el-select>
-      <span v-for="part in parts" :class="['ScenarioStepForm-part', 'ScenarioStepForm-part--' + part.type]">
-        <span v-if="part.type === StepPartType.Sentence">{{ part.content }}</span>
-        <InlineStepParamForm
-          v-else
-          :model-value="part.param as InlineStepParam"
-          @update:model-value="onInlineParamUpdated"
-        />
-      </span>
+      <div class="ScenarioStepForm-parts">
+        <el-select
+          :model-value="modelValue.adverb"
+          size="small"
+          class="ScenarioStepForm-adverbSelect"
+          @update:model-value="onAdverbUpdate"
+        >
+          <el-option v-for="adverb in availableAdverbs" :label="adverb.label" :value="adverb.value" />
+        </el-select>
+        <span v-for="part in parts" :class="['ScenarioStepForm-part', 'ScenarioStepForm-part--' + part.type]">
+          <span v-if="part.type === StepPartType.Sentence">{{ part.content }}</span>
+          <InlineStepParamForm
+            v-else
+            :model-value="part.param as InlineStepParam"
+            @update:model-value="onInlineParamUpdated"
+          />
+        </span>
+      </div>
       <el-input
         v-if="multilineParam"
         class="ScenarioStepForm-multilineParam"
@@ -175,11 +177,17 @@ const headers = computed(() => props.modelValue.step?.extraParamTemplate ? (prop
 .ScenarioStepForm-part--param {
   color: var(--el-color-primary);
   font-weight: bold;
+  min-width: 7rem;
+  margin: 0 0.5rem;
 }
 
 .ScenarioStepForm-adverbSelect, .ScenarioStepForm-part {
   display: inline-block;
   margin-right: 0.3rem;
+}
+
+.ScenarioStepForm-adverbSelect {
+  width: 5rem;
 }
 
 .ScenarioStepForm-adverbSelect .el-input__inner {
