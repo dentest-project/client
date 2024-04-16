@@ -31,6 +31,11 @@ watch(lightMode, (newV, oldV) => {
 
 <style>
 @font-face {
+  font-family: 'Roboto';
+  src: url("/Roboto-Regular.ttf") format("truetype");
+}
+
+@font-face {
   font-family: 'Nunito';
   src: url("/Nunito-SemiBold.ttf") format("truetype");
 }
@@ -46,7 +51,7 @@ watch(lightMode, (newV, oldV) => {
   --el-color-primary-light-3: #7f83e5 !important;
   --el-color-primary-light-5: #8e91e8 !important;
   --el-button-active-bg-color: #8e91e8 !important;
-  --el-font-family: Luciole !important;
+  --el-font-family: Roboto !important;
 }
 
 .el-input {
@@ -59,6 +64,7 @@ watch(lightMode, (newV, oldV) => {
 
 html {
   font-family:
+    'Roboto',
     'Luciole',
     'Nunito',
     'Source Sans Pro',
@@ -96,6 +102,11 @@ h1 {
 
 h2 {
   padding: 0.5rem 0;
+}
+
+.el-button {
+  font-family: 'Roboto', 'Luciole', 'Nunito', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: bold;
 }
 
 .vjs-value__string {

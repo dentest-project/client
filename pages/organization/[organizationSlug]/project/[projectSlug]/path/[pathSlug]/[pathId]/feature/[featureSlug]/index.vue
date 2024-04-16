@@ -28,7 +28,7 @@
         </div>
         <TagsSelector v-if="canWrite && feature.status === FeatureStatus.Draft" :project="feature.rootProject as Project" v-model="feature.tags" @update:model-value="prepareSave" />
         <TagsList v-else :tags="feature.tags" />
-        <Panel type="info">
+        <Panel type="info" bold>
           <EditableParagraph
             placeholder="Feature description"
             :editable="canWrite && feature.status === FeatureStatus.Draft"
