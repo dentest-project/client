@@ -149,7 +149,9 @@ const onStepsUpdate = (steps: ScenarioStep[]) => {
     ...props.modelValue,
     steps,
     examples,
-    type: examples ? ScenarioType.Outline : ScenarioType.Regular
+    type: examples
+      ? ScenarioType.Outline
+      : (props.modelValue.type === ScenarioType.Background ? ScenarioType.Background : ScenarioType.Regular)
   })
 }
 
