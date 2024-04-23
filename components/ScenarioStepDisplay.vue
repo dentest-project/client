@@ -3,7 +3,7 @@
     <span class="ScenarioStepDisplay-adverb">{{ adverb }}</span>
     <span v-for="part in parts" :class="['ScenarioStepDisplay-part', 'ScenarioStepDisplay-part--' + part.type]">{{ part.content }}</span>
     <div v-if="step.step?.extraParamType === StepParamType.Multiline" class="ScenarioStepDisplay-extraParam--multiline">
-      <VueJsonPretty v-if="isExtraParamJson" :data="JSON.parse(extraParamValue.content)" />
+      <vueJsonPretty v-if="isExtraParamJson" :data="JSON.parse(extraParamValue.content)" showLength />
       <div v-else v-for="line in (extraParamValue.content as string).split('\n')">
         {{ line }}
       </div>
