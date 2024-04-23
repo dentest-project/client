@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     ** Global CSS
     */
     css: [
-      'vue-json-pretty/lib/styles.css'
+      // 'vue-json-pretty/lib/styles.css'
     ],
     /*
     ** Plugins to load before mounting the App

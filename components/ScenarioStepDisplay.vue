@@ -2,8 +2,9 @@
   <div class="ScenarioStepDisplay">
     <span class="ScenarioStepDisplay-adverb">{{ adverb }}</span>
     <span v-for="part in parts" :class="['ScenarioStepDisplay-part', 'ScenarioStepDisplay-part--' + part.type]">{{ part.content }}</span>
-    <div v-if="props.step.step?.extraParamType === StepParamType.Multiline" class="ScenarioStepDisplay-extraParam--multiline">
-      <div v-for="line in (extraParamValue.content as string).split('\n')">
+    <div v-if="step.step?.extraParamType === StepParamType.Multiline" class="ScenarioStepDisplay-extraParam--multiline">
+      <VueJsonPretty v-if="isExtraParamJson" :data="JSON.parse(extraParamValue.content)" />
+      <div v-else v-for="line in (extraParamValue.content as string).split('\n')">
         {{ line }}
       </div>
     </div>
@@ -12,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import isJson from '~/helpers/isJson'
 import { isInlineStepParam, isTableStepParam, type ScenarioStep, StepParamType, StepPartType } from '~/types'
 
 const props = defineProps<{
@@ -35,6 +37,8 @@ const parts = computed(() => props.step.step?.parts.map((part) => {
 }))
 
 const extraParamValue = computed(() => props.step.params.find(p => !isInlineStepParam(p)))
+
+const isExtraParamJson = computed(() => props.step.step?.extraParamType === StepParamType.Multiline && isJson(extraParamValue.value.content))
 </script>
 
 <style scoped>

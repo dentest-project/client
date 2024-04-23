@@ -1,4 +1,7 @@
-import Vue from 'vue'
-import VueJsonPretty from 'vue-json-pretty'
+import { defineNuxtPlugin } from 'nuxt/app'
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
-Vue.component("vue-json-pretty", VueJsonPretty)
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.vueApp.component('VueJsonPretty', VueJsonPretty);
+})
