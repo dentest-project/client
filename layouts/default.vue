@@ -112,9 +112,8 @@ h2 {
 .vjs-tree-node.is-highlight, .vjs-tree-node:hover {
   background-color: rgba(128, 128, 128, 0.2) !important;
 }
-.vjs-value__string {
-  color: #2814b4 !important;
-  font-weight: bold;
+.vjs-value-string {
+  color: var(--el-color-primary) !important;
 }
 .vjs-value__boolean, .vjs-value__number {
   font-weight: bold;
