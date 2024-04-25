@@ -172,6 +172,10 @@ const nbColumns = computed(() => props.modelValue.content[0].length)
   background-color: var(--el-fill-color);
 }
 
+.TableForm .cell {
+  min-width: 9rem;
+}
+
 .TableForm th {
   padding: 1rem;
   font-size: 12px;

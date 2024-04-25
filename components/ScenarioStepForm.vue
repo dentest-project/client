@@ -177,7 +177,7 @@ const headers = computed(() => props.modelValue.step?.extraParamTemplate ? (prop
 .ScenarioStepForm-part--param {
   color: var(--el-color-primary);
   font-weight: bold;
-  min-width: 7rem;
+  min-width: 9rem;
   margin: 0 0.5rem;
 }
 
