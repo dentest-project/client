@@ -133,6 +133,7 @@ const onDelete = async () => {
 watch(props, () => {
   parts.value = props.step.parts
   tags.value = props.step.tags
+  extraParamTemplate.value = props.step.extraParamTemplate ?? null
 })
 </script>
 
