@@ -28,10 +28,10 @@ const props = defineProps<{
   canWrite: boolean
 }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'scenarioAdded'])
 
 const onAdd = () => {
-  emit('update:modelValue', [
+  emit('scenarioAdded', [
     ...props.modelValue,
     {
       type: ScenarioType.Regular,

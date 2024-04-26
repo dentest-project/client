@@ -43,6 +43,7 @@
           :project="feature.rootProject as Project"
           :can-write="canWrite && feature.status === FeatureStatus.Draft"
           @update:modelValue="prepareSave"
+          @scenario-added="saveScenariosInstantly"
         />
       </div>
     </el-main>
@@ -64,7 +65,7 @@ import {
   type Path,
   type Project,
   ProjectPermission,
-  SaveStatus
+  SaveStatus, type Scenario
 } from '~/types'
 
 definePageMeta({
@@ -148,6 +149,18 @@ const prepareSave = () => {
   saveTimeout = setTimeout(() => {
     save()
   }, 2000)
+}
+
+const saveScenariosInstantly = (scenarios: Scenario[]) => {
+  feature.value.scenarios = scenarios
+
+  saveStatus.value = SaveStatus.NotSaved
+
+  if (saveTimeout) {
+    clearTimeout(saveTimeout)
+  }
+
+  save()
 }
 
 const save = async () => {
