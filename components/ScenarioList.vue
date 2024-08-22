@@ -106,6 +106,8 @@ const onDuplicate = (i: number) => {
                   ? p.content
                   : p.content.map((row) => [...row]),
               type: p.type,
+              headerColumn: p.headerColumn,
+              headerRow: p.headerRow
             } as MultilineStepParam | TableStepParam
           }),
         ],
