@@ -49,10 +49,11 @@ const onUpdate = (newValue: string[]) => {
   emit('update:modelValue', allTags.value.filter((tag) => newValue.find((val) => val === tag.id)))
 }
 
-const onTagCreated = (tag: Tag) => {
+const onTagCreated = async (tag: Tag) => {
   createTagDialog.value = false
   newTagName.value = ''
-  allTags.value.push(tag)
+
+  allTags.value = await $api.getTags(props.project.id)
 
   emit('update:modelValue', [...props.modelValue, tag])
 }
