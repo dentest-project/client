@@ -7,14 +7,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-if="nbRows > 0 && deletableColumns">
+      <tr v-if="nbRows > 0">
         <td v-for="(_, i) in modelValue.content[0]" class="TableForm-settingsRow">
           <span v-if="headerable && i === 0">
             <el-icon title="Make/unmake header" size="small" @click="onToggleHeaderColumn"><CollectionTag /></el-icon>
           </span>
-          <el-icon title="Insert a column before" size="small" @click="onInsertColumnBefore(i as number)"><ArrowLeft /></el-icon>
-          <el-icon title="Delete the column" v-if="nbColumns > 1" size="small" @click="onDeleteColumn(i as number)"><Delete /></el-icon>
-          <el-icon title="Insert a column after" size="small" @click="onInsertColumnAfter(i as number)"><ArrowRight /></el-icon>
+          <el-icon v-if="creatableColumns" title="Insert a column before" size="small" @click="onInsertColumnBefore(i as number)"><ArrowLeft /></el-icon>
+          <el-icon title="Delete the column" v-if="nbColumns > 1 && deletableColumns" size="small" @click="onDeleteColumn(i as number)"><Delete /></el-icon>
+          <el-icon v-if="creatableColumns" title="Insert a column after" size="small" @click="onInsertColumnAfter(i as number)"><ArrowRight /></el-icon>
         </td>
         <td />
       </tr>
@@ -45,6 +45,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CollectionTag, Delete } from
 
 const props = defineProps<{
   deletableColumns: boolean,
+  creatableColumns: boolean,
   headerable: boolean,
   headers?: string[],
   cellChoices?: (string[] | null)[]

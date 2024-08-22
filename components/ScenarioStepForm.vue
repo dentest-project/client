@@ -30,7 +30,8 @@
       <TableForm
         v-else-if="tableParam"
         :model-value="modelValue.step?.extraParamTemplate ? { ...tableParam, content: tableParam.content.slice(1) } : tableParam"
-        :deletable-columns="!modelValue.step?.extraParamTemplate"
+        :creatable-columns="!modelValue.step?.extraParamTemplate"
+        :deletable-columns="true"
         :headers="headers"
         :headerable="!modelValue.step?.extraParamTemplate"
         :cell-choices="cellChoices"

@@ -14,6 +14,7 @@
   </table>
   <TableForm
     v-else
+    :creatable-columns="false"
     :deletable-columns="false"
     :headers="headers"
     :headerable="false"
