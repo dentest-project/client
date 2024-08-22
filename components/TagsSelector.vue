@@ -9,7 +9,6 @@
     multiple
     allow-create
     @update:model-value="onUpdate"
-    @focus="onFocus"
   >
     <template #default="{ item }">
       <TagChip :tag="{ id: item.value, name: item.label, color: item.color ?? '#CCCCCC' }" :outline="item.selected" :hoverable="false" />
@@ -53,14 +52,9 @@ const onUpdate = (newValue: string[]) => {
 const onTagCreated = (tag: Tag) => {
   createTagDialog.value = false
   newTagName.value = ''
-
   allTags.value.push(tag)
 
   emit('update:modelValue', [...props.modelValue, tag])
-}
-
-const onFocus = () => {
-  holdFocus()
 }
 
 onMounted(async () => {
