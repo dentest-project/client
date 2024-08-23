@@ -26,7 +26,12 @@
             @update:model-value="prepareSave"
           />
         </div>
-        <TagsSelector v-if="canWrite && feature.status === FeatureStatus.Draft" :project="feature.rootProject as Project" v-model="feature.tags" @update:model-value="prepareSave" />
+        <TagsSelector
+          v-if="canWrite && feature.status === FeatureStatus.Draft"
+          :project="feature.rootProject as Project"
+          :model-value="feature.tags"
+          @update:model-value="onTagsSelected"
+        />
         <TagsList v-else :tags="feature.tags" />
         <Panel type="info" bold>
           <EditableParagraph
@@ -65,7 +70,7 @@ import {
   type Path,
   type Project,
   ProjectPermission,
-  SaveStatus, type Scenario
+  SaveStatus, type Scenario, type Tag
 } from '~/types'
 
 definePageMeta({
@@ -137,6 +142,14 @@ const markUnsaved = () => {
 
 const markSaved = () => {
   saveStatus.value = SaveStatus.Saved
+}
+
+const onTagsSelected = async (tags: Tag[]) => {
+  feature.value.tags = await new Promise((resolve) => {
+    resolve(tags)
+  })
+
+  prepareSave()
 }
 
 const prepareSave = () => {

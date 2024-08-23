@@ -57,7 +57,11 @@ const onTagCreated = async (tag: Tag) => {
 
   allTags.value = await $api.getTags(props.project.id)
 
-  emit('update:modelValue', [...props.modelValue, tag])
+  const newValue = await new Promise((resolve) => {
+    resolve([...props.modelValue, tag])
+  })
+
+  emit('update:modelValue', newValue)
 }
 
 onMounted(async () => {
