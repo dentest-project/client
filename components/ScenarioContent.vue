@@ -1,6 +1,6 @@
 <template>
   <el-col
-    :class="['ScenarioContent', (draggedOver && 'ScenarioContent--draggedOver')]"
+    :class="['ScenarioContent', (draggedOver && getMovingStep() && 'ScenarioContent--draggedOver')]"
     :span="24"
     :sm="24"
     :md="24"
