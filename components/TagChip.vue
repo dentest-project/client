@@ -2,7 +2,7 @@
   <el-tag
     :color="tag.color + (outline ? '55' : '')"
     :class="['TagChip', (hoverable && 'TagChip--hoverable')]"
-    :style="{ color: blackOrWhite(tag.color) + (outline ? '55' : '') }"
+    :style="{ color: `${textColor}${outline ? '55': ''}` }"
     disable-transitions
   >
     {{ tag.name }}
@@ -13,11 +13,13 @@
 import { blackOrWhite } from '~/helpers/blackOrWhite'
 import type { Tag } from '~/types'
 
-defineProps<{
+const props = defineProps<{
   tag: Tag,
   outline?: boolean,
-  hoverable: boolean
+  hoverable?: boolean
 }>()
+
+const textColor = computed(() => blackOrWhite(props.tag.color))
 </script>
 
 <style>

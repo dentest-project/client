@@ -63,8 +63,8 @@ const onParagraphClicked = () => {
 
 const lines = computed(() => props.modelValue.split('\n'))
 
-watch(props, () => {
-  if (!props.editable) {
+watch(() => props.editable, (editable) => {
+  if (!editable) {
     mode.value = Mode.View
   }
 })

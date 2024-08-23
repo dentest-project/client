@@ -1,25 +1,27 @@
 <template>
-  <el-select-v2
-    class="TagsSelector"
-    label="Select tags"
-    placeholder="Select tags"
-    :model-value="selectValue"
-    :options="allTags.map(tag => ({ value: tag.id, label: tag.name, color: tag.color, selected: selectValue.some((v) => v === tag.id) }))"
-    filterable
-    multiple
-    allow-create
-    @update:model-value="onUpdate"
-  >
-    <template #default="{ item }">
-      <TagChip :tag="{ id: item.value, name: item.label, color: item.color ?? '#CCCCCC' }" :outline="item.selected" :hoverable="false" />
-    </template>
-  </el-select-v2>
-  <CreateTagDialog
-    v-model="createTagDialog"
-    :project="project"
-    :initial-tag-name="newTagName"
-    @created="onTagCreated"
-  />
+  <client-only>
+    <el-select-v2
+      class="TagsSelector"
+      label="Select tags"
+      placeholder="Select tags"
+      :model-value="selectValue"
+      :options="allTags.map(tag => ({ value: tag.id, label: tag.name, color: tag.color, selected: selectValue.some((v) => v === tag.id) }))"
+      filterable
+      multiple
+      allow-create
+      @update:model-value="onUpdate"
+    >
+      <template #default="{ item }">
+        <TagChip :tag="{ id: item.value, name: item.label, color: item.color ?? '#CCCCCC' }" :outline="item.selected" :hoverable="false" />
+      </template>
+    </el-select-v2>
+    <CreateTagDialog
+      v-model="createTagDialog"
+      :project="project"
+      :initial-tag-name="newTagName"
+      @created="onTagCreated"
+    />
+  </client-only>
 </template>
 
 <script setup lang="ts">
