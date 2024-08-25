@@ -32,8 +32,10 @@
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "prettier": "^3.2.5",
+    "remeda": "^2.11.0",
     "vue": "^3.4.24",
-    "vue-json-pretty": "^2.4.0"
+    "vue-json-pretty": "^2.4.0",
+    "vue-slicksort": "^2.0.5"
   },
   "eslintConfig": {
     "root": true,

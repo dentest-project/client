@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     plugins: [
       '~/plugins/api.ts',
       '~/plugins/colors.ts',
+      '~/plugins/draggable.ts',
       '~/plugins/mode.ts',
       '~/plugins/routes.ts',
       '~/plugins/vue-json-pretty.ts',

@@ -1,5 +1,8 @@
 <template>
   <div class="ScenarioStepForm">
+    <el-button size="small">
+      <DragHandle><el-icon><Sort /></el-icon></DragHandle>
+    </el-button>
     <div class="ScenarioStepForm-inner">
       <div class="ScenarioStepForm-parts">
         <el-select
@@ -10,12 +13,12 @@
         >
           <el-option v-for="adverb in availableAdverbs" :label="adverb.label" :value="adverb.value" />
         </el-select>
-        <span v-for="part in parts" :class="['ScenarioStepForm-part', 'ScenarioStepForm-part--' + part.type]">
+        <span v-for="(part, i) in parts" :class="['ScenarioStepForm-part', 'ScenarioStepForm-part--' + part.type]">
           <span v-if="part.type === StepPartType.Sentence">{{ part.content }}</span>
           <InlineStepParamForm
             v-else
             :model-value="part.param as InlineStepParam"
-            @update:model-value="onInlineParamUpdated"
+            @update:model-value="(v) => onInlineParamUpdated(part.paramIndex, v)"
           />
         </span>
       </div>
@@ -47,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { Delete } from '@element-plus/icons-vue'
+import { Sort, Delete } from '@element-plus/icons-vue'
 import {
   type InlineStepParam,
   isInlineStepParam,
@@ -72,14 +75,8 @@ const onAdverbUpdate = (adverb: StepAdverb) => {
   })
 }
 
-const onInlineParamUpdated = (newValue: InlineStepParam) => {
+const onInlineParamUpdated = (paramIndex: number, newValue: InlineStepParam) => {
   const params = [...props.modelValue.params]
-
-  const paramIndex = props
-    .modelValue
-    .params
-    .filter(isInlineStepParam)
-    .findIndex((param: InlineStepParam) => param.stepPart.id === newValue.stepPart.id)
 
   params[paramIndex].content = newValue.content
 
@@ -141,6 +138,7 @@ const availableAdverbs = computed(() => [
 
 const parts = computed(() => props.modelValue.step?.parts.map((part) => ({
   ...part,
+  paramIndex: (part.type === StepPartType.Param && props.modelValue.params.findIndex((param) => isInlineStepParam(param) && (param as InlineStepParam).stepPart.id === part.id)),
   param: (part.type === StepPartType.Param && props.modelValue.params.find((param) => isInlineStepParam(param) && (param as InlineStepParam).stepPart.id === part.id))
 })))
 
@@ -169,6 +167,9 @@ const headers = computed(() => props.modelValue.step?.extraParamTemplate ? (prop
 
 .ScenarioStepForm-inner {
   flex-grow: 1;
+  width: 100%;
+  overflow-x: auto;
+  padding-left: 0.4rem;
 }
 
 .ScenarioStepForm-adverbSelect {
