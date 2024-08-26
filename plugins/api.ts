@@ -18,7 +18,7 @@ import {
   ProjectPermission,
   type ProjectUser,
   type ProjectUserList,
-  type ProjectUserToken,
+  type ProjectUserToken, PulledFeature,
   type Register, type ResetPassword, type ResetPasswordRequest,
   type Step, type Tag,
   type UpdateFeature, type UpdateFeatureParentPath, type UpdateFeatureStatus, type UpdateMe,
@@ -39,10 +39,10 @@ const query = async (url: string, options: QueryOptions) => {
   const { token } = useAuthState()
 
   const result = await useFetch(`${API_URL}/${url}`, {
-    ...options,
     headers: {
       Authorization: token.value
-    }
+    },
+    ...options,
   } as any)
 
   if (result.error.value) {
@@ -52,7 +52,7 @@ const query = async (url: string, options: QueryOptions) => {
   return result.data.value
 }
 
-const get = async (url: string) => await query(url, { method: 'GET' })
+const get = async (url: string, options: QueryOptions) => await query(url, { ...options, method: 'GET' })
 
 
 const del = async (url: string) => await query(url, { method: 'DELETE' })
@@ -104,6 +104,7 @@ export default defineNuxtPlugin(() => ({
       getTags: async (projectId: string): Promise<Array<Tag>> => get(`projects/${projectId}/tags`),
       getProjectUserToken: async (projectId: string, userId: string): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`),
       login: async (user: Login): Promise<LoginResponse> => post(`login`, user),
+      pullFeatures: async (pullToken: string): Promise<PulledFeature[]> => get('pull/features?inlineParameterWrapper=%22', { headers: { Authorization: `Pull ${pullToken}` } }),
       register: async (user: Register): Promise<User> => post(`register`, user),
       resetPassword: (resetPassword: ResetPassword): Promise<void> => post('reset-password', resetPassword),
       resetPasswordRequest: (resetPasswordRequest: ResetPasswordRequest): Promise<void> => post('reset-password-request', resetPasswordRequest),

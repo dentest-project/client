@@ -16,6 +16,7 @@
           <FeatureStatusButton v-if="canWrite" :status="feature.status" @click="updateFeatureStatus" />
           <FeatureStatusChip v-else :status="feature.status" />
           <SaveStatusChip v-if="canWrite && feature.status === FeatureStatus.Draft" :status="saveStatus" />
+          <PullFeatureButton v-if="canPull" @click="openPullFeatureDialog" />
           <DeleteButton v-if="canWrite && feature.status === FeatureStatus.Draft" label="Delete feature" @deleted="onDeleted" />
         </ActionsBar>
         <div>
@@ -56,6 +57,7 @@
       <StepsBank :project="feature.rootProject as Project" />
     </el-aside>
   </el-container>
+  <PullFeatureDialog v-if="canPull && !!feature" v-model="pullFeatureDialogOpened" :feature="feature" />
 </template>
 
 <script setup async lang="ts">
@@ -70,7 +72,9 @@ import {
   type Path,
   type Project,
   ProjectPermission,
-  SaveStatus, type Scenario, type Tag
+  SaveStatus,
+  type Scenario,
+  type Tag
 } from '~/types'
 
 definePageMeta({
@@ -85,6 +89,7 @@ const { status } = useAuth()
 const feature = ref<Feature>(await $api.getFeature(params.pathId, params.featureSlug));
 const issueTrackerConfigurations = ref(await $api.getFeatureIssueTrackerConfigurations(params.pathId, params.featureSlug))
 const saveStatus = ref(SaveStatus.Saved)
+const pullFeatureDialogOpened = ref(false)
 
 let saveTimeout;
 
@@ -209,6 +214,10 @@ const save = async () => {
   }
 }
 
+const openPullFeatureDialog = () => {
+  pullFeatureDialogOpened.value = true
+}
+
 const nextStatus = computed(() => {
   if (feature.value.status === FeatureStatus.Draft) {
     return FeatureStatus.ReadyToDev
@@ -226,6 +235,8 @@ const canWrite = computed(() => !!feature.value.rootProject &&
     )
   )
 )
+
+const canPull = computed(() => !!feature.value.rootProject && feature.value.rootProject.permissions.includes(ProjectPermission.Pull) && feature.value.status === FeatureStatus.ReadyToDev)
 
 const breadcrumb = computed((): BreadcrumbItems => {
   const items = [

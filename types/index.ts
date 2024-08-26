@@ -234,6 +234,13 @@ interface ProjectUser {
   permissions: Array<ProjectPermission>
 }
 
+interface PulledFeature {
+  id: string,
+  displayPath: string,
+  path: string,
+  feature: string
+}
+
 interface ProjectUserToken {
   token: string
 }
@@ -449,6 +456,7 @@ export {
   ProjectUserList,
   ProjectUserToken,
   ProjectVisibility,
+  PulledFeature,
   Register,
   ResetPassword,
   ResetPasswordRequest,
