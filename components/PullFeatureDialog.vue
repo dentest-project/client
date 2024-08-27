@@ -3,7 +3,11 @@
     <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Pull feature">
       <div class="PullFeatureDialog-description">
         This is the feature, written in standardized Gherkin. You can copy it and paste it wherever you need in your project.
-        It can be used as is, with the Gherkin interpreter that best suits your needs.
+        It can be used as is, with the Gherkin interpreter that best suits your needs.<br><br>
+
+        As a developer, you may prefer using IDE extensions, such as <a href="https://marketplace.visualstudio.com/items?itemName=Dentest.dentest" target="_blank">Dentest for VSCode</a>, or
+        <a href="https://plugins.jetbrains.com/plugin/19626-dentest" target="_blank">Dentest for Jetbrains</a>, as
+        they allow you to pull the features without leaving your IDE, by creating the Gherkin files at the right place in one click.
       </div>
       <el-input
         class="PullFeatureDialog-path"
@@ -64,7 +68,7 @@ const onCopy = async () => {
 
     ElNotification({
       title: 'Feature contents copied',
-      message: 'The feature contents has been successfully copied to your clipboard. Paste them wherever you need.',
+      message: 'The feature contents have been successfully copied to your clipboard. Paste them wherever you need.',
       type: 'success',
     })
 
