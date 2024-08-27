@@ -33,6 +33,11 @@
         content="JetBrains IDEs integration"
       />
       <HomeHint
+        image="/vscode-logo.png"
+        alt="VSCode"
+        content="VSCode IDE integration"
+      />
+      <HomeHint
         image="/jira-logo.png"
         alt="Jira"
         content="Jira integration"
