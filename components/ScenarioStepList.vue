@@ -21,7 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import { clone } from 'remeda'
 import { Mode, type ScenarioStep } from '~/types'
 
 const props = defineProps<{
@@ -40,7 +39,7 @@ const onUpdate = (i: number, step: ScenarioStep) => {
 }
 
 const onDelete = (i: number) => {
-  const updatedList = clone(...props.modelValue)
+  const updatedList = [...props.modelValue]
 
   updatedList.splice(i, 1)
 
