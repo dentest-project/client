@@ -13,7 +13,7 @@
             <el-icon title="Make/unmake header" size="small" @click="onToggleHeaderColumn"><CollectionTag /></el-icon>
           </span>
           <el-icon v-if="creatableColumns" title="Insert a column before" size="small" @click="onInsertColumnBefore(i as number)"><ArrowLeft /></el-icon>
-          <el-icon title="Delete the column" v-if="nbColumns > 1 && deletableColumns" size="small" @click="onDeleteColumn(i as number)"><Delete /></el-icon>
+          <el-icon title="Delete the column" v-if="nbColumns > 1 && deletableColumns" size="small" @click.prevent.stop="onDeleteColumn(i as number)"><Delete /></el-icon>
           <el-icon v-if="creatableColumns" title="Insert a column after" size="small" @click="onInsertColumnAfter(i as number)"><ArrowRight /></el-icon>
         </td>
         <td />
@@ -42,6 +42,7 @@
 
 <script setup lang="ts">
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CollectionTag, Delete } from '@element-plus/icons-vue'
+import { clone } from 'remeda'
 
 const props = defineProps<{
   deletableColumns: boolean,
@@ -68,7 +69,7 @@ const onCellUpdated = (y: number, x: number, newContent: string) => {
 
 
 const onDeleteColumn = (columnId: number) => {
-  const content = [...props.modelValue.content]
+  const content = clone([...props.modelValue.content])
 
   content.forEach((r) => r.splice(columnId, 1))
 
@@ -77,7 +78,7 @@ const onDeleteColumn = (columnId: number) => {
 
 
 const onDeleteRow = (rowId: number) => {
-  const content = [...props.modelValue.content]
+  const content = deepClone([...props.modelValue.content])
 
   content.splice(rowId, 1)
 
