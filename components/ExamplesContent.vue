@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { Mode } from '~/types'
+import { Delay, Mode } from '~/types'
 
 const props = defineProps<{
   mode: Mode,
@@ -33,13 +33,14 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue'])
 
-const onUpdate = ({ content }: { content: string[][] }) => {
+const onUpdate = ({ content }: { content: string[][] }, delay: Delay) => {
   emit(
     'update:modelValue',
     Object.fromEntries(Object.keys(props.modelValue).map((key, keyId) => [
       key,
       content.flatMap((row) => row[keyId])])
-    )
+    ),
+    delay
   )
 }
 

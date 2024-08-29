@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Create a folder">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Create a folder">
       <form @submit.prevent="onSubmit">
         <el-input v-model="name" placeholder="Folder name" autofocus required clearable />
         <el-input type="submit" value="Create folder" />

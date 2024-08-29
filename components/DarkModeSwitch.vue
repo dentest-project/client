@@ -4,7 +4,7 @@
     inline-prompt
     :active-icon="Sunny"
     :inactive-icon="Moon"
-    @update:modelValue="v => $emit('update:modelValue', v ? 'light' : 'dark')"
+    @update:model-value="v => $emit('update:modelValue', v ? 'light' : 'dark')"
   />
 </template>
 

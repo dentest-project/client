@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Pull feature">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Pull feature">
       <div class="PullFeatureDialog-description">
         This is the feature, written in standardized Gherkin. You can copy it and paste it wherever you need in your project.
         It can be used as is, with the Gherkin interpreter that best suits your needs.<br><br>

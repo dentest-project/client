@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Update the step">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Update the step">
       <div class="UpdateStepDialog-inputs">
         <div class="UpdateStepDialog-adverb">
           {{ step.type.charAt(0).toUpperCase() + step.type.slice(1) }}

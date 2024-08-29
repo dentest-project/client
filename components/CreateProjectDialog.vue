@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Create a project">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Create a project">
       <form @submit.prevent="onSubmit">
         <el-input v-model="projectName" placeholder="Project name" autofocus required clearable />
         <el-select v-model="projectVisibility">

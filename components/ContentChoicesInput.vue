@@ -10,7 +10,7 @@
       allow-create
       filterable
       multiple
-      @update:modelValue="onUpdate"
+      @update:model-value="onUpdate"
     />
   </client-only>
 </template>

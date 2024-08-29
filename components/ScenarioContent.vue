@@ -62,6 +62,7 @@
 import { extractExamplesFromSteps } from '~/helpers/extractExamplesFromSteps'
 import { useStepStore } from '~/store/step'
 import {
+  Delay,
   Mode,
   type Project,
   type Scenario,
@@ -96,7 +97,7 @@ const onTitleUpdate = () => {
   emit('update:modelValue', {
     ...props.modelValue,
     title: title.value
-  })
+  }, Delay.Instantly)
 }
 
 const onTypeChange = () => {
@@ -106,7 +107,7 @@ const onTypeChange = () => {
       ? (props.modelValue.examples ? ScenarioType.Outline : ScenarioType.Regular)
       : ScenarioType.Background,
     title: props.modelValue.type === ScenarioType.Background ? 'Scenario title' : '',
-  })
+  }, Delay.Instantly)
 }
 
 const onDrop = () => {
@@ -139,10 +140,10 @@ const onDrop = () => {
   emit('update:modelValue', {
     ...props.modelValue,
     steps
-  })
+  }, Delay.Instantly)
 }
 
-const onStepsUpdate = (steps: ScenarioStep[]) => {
+const onStepsUpdate = (steps: ScenarioStep[], delay: Delay) => {
   const examples = extractExamplesFromSteps(steps, props.modelValue.examples)
 
   emit('update:modelValue', {
@@ -152,21 +153,21 @@ const onStepsUpdate = (steps: ScenarioStep[]) => {
     type: examples
       ? ScenarioType.Outline
       : (props.modelValue.type === ScenarioType.Background ? ScenarioType.Background : ScenarioType.Regular)
-  })
+  }, delay)
 }
 
-const onExamplesUpdate = (examples: Record<string, string[]>) => {
+const onExamplesUpdate = (examples: Record<string, string[]>, delay: Delay) => {
   emit('update:modelValue', {
     ...props.modelValue,
     examples
-  })
+  }, delay)
 }
 
 const onTagsUpdate = (tags: Tag[]) => {
   emit('update:modelValue', {
     ...props.modelValue,
     tags
-  })
+  }, Delay.Instantly)
 }
 
 const onMoveUp = () => {

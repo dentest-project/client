@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Get pull token">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Get pull token">
       <div class="GetPullTokenDialog-description">
         As a developer, use this token to pull features alongside your code, as Gherkin files. You can use it with the Dentest CLI,
         or with the IDE plugin.

@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Create a feature">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Create a feature">
       <form @submit.prevent="onSubmit">
         <el-input v-model="title" placeholder="Feature title" autofocus required clearable />
         <el-input type="submit" value="Create feature" />

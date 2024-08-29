@@ -12,7 +12,7 @@
     :placeholder="placeholder"
     :model-value="modelValue"
     autofocus
-    @update:modelValue="onChanged"
+    @update:model-value="onChanged"
     @blur="onInputBlur"
   />
 </template>

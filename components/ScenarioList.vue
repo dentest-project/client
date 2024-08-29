@@ -9,7 +9,7 @@
       :can-write="canWrite"
       :can-be-background="i === 0"
       :project="project"
-      @update:modelValue="(newVal) => { onUpdate(i, newVal) }"
+      @update:model-value="(newVal, delay) => { onUpdate(i, newVal, delay) }"
       @up="() => onUp(i)"
       @down="() => onDown(i)"
       @duplicate="() => onDuplicate(i)"
@@ -20,7 +20,15 @@
 </template>
 
 <script setup lang="ts">
-import { type InlineStepParam, type MultilineStepParam, type Project, type Scenario, ScenarioType, type TableStepParam } from '~/types'
+import {
+  Delay,
+  type InlineStepParam,
+  type MultilineStepParam,
+  type Project,
+  type Scenario,
+  ScenarioType,
+  type TableStepParam
+} from '~/types'
 
 const props = defineProps<{
   modelValue: Scenario[],
@@ -42,12 +50,12 @@ const onAdd = () => {
   ])
 }
 
-const onUpdate = (i: number, scenario: Scenario) => {
+const onUpdate = (i: number, scenario: Scenario, delay: Delay) => {
   const updatedList = [...props.modelValue]
 
   updatedList.splice(i, 1, scenario)
 
-  emit('update:modelValue', updatedList)
+  emit('update:modelValue', updatedList, delay)
 }
 
 const onUp = (i: number) => {
@@ -61,7 +69,7 @@ const onUp = (i: number) => {
   updatedList[i - 1] = props.modelValue[i]
   updatedList[i] = previousScenario
 
-  emit('update:modelValue', updatedList)
+  emit('update:modelValue', updatedList, Delay.Instantly)
 }
 
 const onDown = (i: number) => {
@@ -75,7 +83,7 @@ const onDown = (i: number) => {
   updatedList[i + 1] = props.modelValue[i]
   updatedList[i] = nextScenario
 
-  emit('update:modelValue', updatedList)
+  emit('update:modelValue', updatedList, Delay.Instantly)
 }
 
 const onDuplicate = (i: number) => {
@@ -123,7 +131,7 @@ const onDuplicate = (i: number) => {
     ],
   })
 
-  emit('update:modelValue', updatedList)
+  emit('update:modelValue', updatedList, Delay.Instantly)
 }
 
 const onDelete = (i: number) => {
@@ -131,6 +139,6 @@ const onDelete = (i: number) => {
 
   updatedList.splice(i, 1)
 
-  emit('update:modelValue', updatedList)
+  emit('update:modelValue', updatedList, Delay.Instantly)
 }
 </script>

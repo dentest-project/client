@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Create a step">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Create a step">
       <div class="AddStepDialog-description">
         Define new steps to use in your scenarios. A step is a sentence starting by either "Given" to define a context,
         or "When" to define an action, or "Then" to define an expected outcome (Given I'm in this situation, when I perform this action,

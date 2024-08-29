@@ -20,10 +20,10 @@
       </tr>
       <tr v-for="(row, i) in modelValue.content" :class="[ headerable && modelValue.headerRow && i === 0 && 'TableForm-header' ]">
         <td v-for="(cell, j) in row" class="cell" :class="[ headerable && modelValue.headerColumn && j === 0 && 'TableForm-header' ]">
-          <el-select v-if="(cellChoices ?? [])[j]" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue)">
+          <el-select v-if="(cellChoices ?? [])[j]" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Instantly)">
             <el-option v-for="choice in (cellChoices ?? [])[j]" :value="choice" :label="choice" />
           </el-select>
-          <el-input v-else :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue)" />
+          <el-input v-else :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Delayed)" />
         </td>
         <td class="TableForm-settingsColumn">
           <div class="TableForm-settingsColumn-addRow">
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CollectionTag, Delete } from '@element-plus/icons-vue'
 import { clone } from 'remeda'
+import { Delay } from '~/types'
 
 const props = defineProps<{
   deletableColumns: boolean,
@@ -59,12 +60,12 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue'])
 
-const onCellUpdated = (y: number, x: number, newContent: string) => {
+const onCellUpdated = (y: number, x: number, newContent: string, delay: Delay) => {
   const content = [...props.modelValue.content]
 
   content[y][x] = newContent
 
-  emit('update:modelValue', { ...props.modelValue, content })
+  emit('update:modelValue', { ...props.modelValue, content }, delay)
 }
 
 
@@ -73,7 +74,7 @@ const onDeleteColumn = (columnId: number) => {
 
   content.forEach((r) => r.splice(columnId, 1))
 
-  emit('update:modelValue', { ...props.modelValue, content })
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
 }
 
 
@@ -82,7 +83,7 @@ const onDeleteRow = (rowId: number) => {
 
   content.splice(rowId, 1)
 
-  emit('update:modelValue', { ...props.modelValue, content })
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
 }
 
 
@@ -91,7 +92,7 @@ const onInsertColumnAfter = (columnId: number) => {
 
   content.forEach((r) => r.splice(columnId + 1, 0, ''))
 
-  emit('update:modelValue', { ...props.modelValue, content })
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
 }
 
 const onInsertColumnBefore = (columnId: number) => {
@@ -99,7 +100,7 @@ const onInsertColumnBefore = (columnId: number) => {
 
   content.forEach((r) => r.splice(columnId, 0, ''))
 
-  emit('update:modelValue', { ...props.modelValue, content })
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
 }
 
 
@@ -108,7 +109,7 @@ const onInsertRowAfter = (rowId: number) => {
 
   content.splice(rowId + 1, 0, new Array(nbColumns.value).fill(''))
 
-  emit('update:modelValue', { ...props.modelValue, content })
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
 }
 
 const onInsertRowBefore = (rowId: number) => {
@@ -116,15 +117,15 @@ const onInsertRowBefore = (rowId: number) => {
 
   content.splice(rowId, 0, new Array(nbColumns.value).fill(''))
 
-  emit('update:modelValue', { ...props.modelValue, content })
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
 }
 
 const onToggleHeaderRow = () => {
-  emit('update:modelValue', { ...props.modelValue, headerRow: !props.modelValue.headerRow })
+  emit('update:modelValue', { ...props.modelValue, headerRow: !props.modelValue.headerRow }, Delay.Instantly)
 }
 
 const onToggleHeaderColumn = () => {
-  emit('update:modelValue', { ...props.modelValue, headerColumn: !props.modelValue.headerColumn })
+  emit('update:modelValue', { ...props.modelValue, headerColumn: !props.modelValue.headerColumn }, Delay.Instantly)
 }
 
 const nbRows = computed(() => props.modelValue.content.length)

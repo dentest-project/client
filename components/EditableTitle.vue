@@ -6,7 +6,7 @@
       :model-value="modelValue"
       :placeholder="label"
       autofocus
-      @update:modelValue="v => { $emit('update:modelValue', v) }"
+      @update:model-value="v => { $emit('update:modelValue', v) }"
       @blur="onSubmit"
     />
   </form>

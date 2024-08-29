@@ -18,7 +18,7 @@
           <InlineStepParamForm
             v-else
             :model-value="part.param as InlineStepParam"
-            @update:model-value="(v) => onInlineParamUpdated(part.paramIndex, v)"
+            @update:model-value="(v, delay) => onInlineParamUpdated(part.paramIndex, v, delay)"
           />
         </span>
       </div>
@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import { Sort, Delete } from '@element-plus/icons-vue'
 import {
+  Delay,
   type InlineStepParam,
   isInlineStepParam,
   type ScenarioStep,
@@ -72,10 +73,10 @@ const onAdverbUpdate = (adverb: StepAdverb) => {
   emit('update:modelValue', {
     ...props.modelValue,
     adverb
-  })
+  }, Delay.Instantly)
 }
 
-const onInlineParamUpdated = (paramIndex: number, newValue: InlineStepParam) => {
+const onInlineParamUpdated = (paramIndex: number, newValue: InlineStepParam, delay: Delay) => {
   const params = [...props.modelValue.params]
 
   params[paramIndex].content = newValue.content
@@ -83,7 +84,7 @@ const onInlineParamUpdated = (paramIndex: number, newValue: InlineStepParam) => 
   emit('update:modelValue', {
     ...props.modelValue,
     params,
-  })
+  }, delay)
 }
 
 const onMultilineParamUpdate = (newValue: string) => {
@@ -95,10 +96,10 @@ const onMultilineParamUpdate = (newValue: string) => {
   emit('update:modelValue', {
     ...props.modelValue,
     params
-  })
+  }, Delay.Delayed)
 }
 
-const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] }) => {
+const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] }, delay: Delay) => {
   const params = [...props.modelValue.params]
   const updatedParamIndex = props.modelValue.params.findIndex((param) => !isInlineStepParam(param))
 
@@ -124,7 +125,7 @@ const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] 
   emit('update:modelValue', {
     ...props.modelValue,
     params
-  })
+  }, delay)
 }
 
 const availableAdverbs = computed(() => [

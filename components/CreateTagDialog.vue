@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Create a tag">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Create a tag">
       <form @submit.prevent="onSubmit">
         <el-color-picker v-model="color" />
         <el-input class="CreateTagDialog-input" placeholder="Tag name" v-model="name" :style="{ backgroundColor: color, color: blackOrWhite(color) }" autofocus />

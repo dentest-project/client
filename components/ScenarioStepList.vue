@@ -3,12 +3,12 @@
     v-if="mode === Mode.Edit"
     :list="modelValue"
     useDragHandle
-    @update:list="(list) => emit('update:modelValue', list)"
+    @update:list="(list) => emit('update:modelValue', list, Delay.Instantly)"
   >
     <SlickItem v-for="(step, i) in modelValue" :key="step.id" :index="i">
       <ScenarioStepForm
         :model-value="step"
-        @update:model-value="(newVal) => onUpdate(i, newVal)"
+        @update:model-value="(newVal, delay) => onUpdate(i, newVal, delay)"
         @delete="() => onDelete(i)"
       />
     </SlickItem>
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { Mode, type ScenarioStep } from '~/types'
+import { Delay, Mode, type ScenarioStep } from '~/types'
 
 const props = defineProps<{
   modelValue: ScenarioStep[],
@@ -30,12 +30,12 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue'])
 
-const onUpdate = (i: number, step: ScenarioStep) => {
+const onUpdate = (i: number, step: ScenarioStep, delay: Delay) => {
   const updatedList = [...props.modelValue]
 
   updatedList.splice(i, 1, step)
 
-  emit('update:modelValue', updatedList)
+  emit('update:modelValue', updatedList, delay)
 }
 
 const onDelete = (i: number) => {
@@ -43,6 +43,6 @@ const onDelete = (i: number) => {
 
   updatedList.splice(i, 1)
 
-  emit('update:modelValue', updatedList)
+  emit('update:modelValue', updatedList, Delay.Instantly)
 }
 </script>

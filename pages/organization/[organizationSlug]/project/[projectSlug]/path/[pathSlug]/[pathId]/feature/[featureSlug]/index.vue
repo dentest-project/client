@@ -7,7 +7,7 @@
           v-if="isLoggedIn && canWrite && feature.status === FeatureStatus.Draft"
           v-model="feature.title"
           label="Title"
-          @update:modelValue="markUnsaved"
+          @update:model-value="markUnsaved"
           @cancel="markSaved"
           @submit="save"
         />
@@ -39,7 +39,7 @@
             placeholder="Feature description"
             :editable="canWrite && feature.status === FeatureStatus.Draft"
             v-model="feature.description"
-            @update:modelValue="markUnsaved"
+            @update:model-value="markUnsaved"
             @cancel="markSaved"
             @submit="save"
           />
@@ -48,7 +48,7 @@
           v-model="feature.scenarios"
           :project="feature.rootProject as Project"
           :can-write="canWrite && feature.status === FeatureStatus.Draft"
-          @update:modelValue="prepareSave"
+          @update:model-value="(newValue, delay) => chooseSaveStrategy(delay)"
           @scenario-added="saveScenariosInstantly"
         />
       </div>
@@ -65,6 +65,7 @@ import { ElNotification } from 'element-plus'
 import { isAuthenticated } from '~/helpers/auth'
 import {
   type BreadcrumbItems,
+  Delay,
   type Feature,
   FeatureStatus,
   Mode,
@@ -155,6 +156,16 @@ const onTagsSelected = async (tags: Tag[]) => {
   })
 
   prepareSave()
+}
+
+const chooseSaveStrategy = (delay: Delay) => {
+  if (delay === Delay.Delayed) {
+    prepareSave()
+
+    return
+  }
+
+  save()
 }
 
 const prepareSave = () => {

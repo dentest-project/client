@@ -7,7 +7,7 @@
     </el-menu-item>
     <div class="spacer" />
     <el-menu-item class="switch">
-      <DarkModeSwitch :model-value="lightMode" @update:modelValue="v => $emit('update:lightModeValue', v)" />
+      <DarkModeSwitch :model-value="lightMode" @update:model-value="v => $emit('update:lightModeValue', v)" />
     </el-menu-item>
     <el-menu-item index="2">
       <a href="https://docs.dentest.tech" target="_blank">Docs</a>

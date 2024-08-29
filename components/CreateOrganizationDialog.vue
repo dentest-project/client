@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" title="Create an organization">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Create an organization">
       <form @submit.prevent="onSubmit">
         <el-input v-model="organizationName" placeholder="Organization name" autofocus required clearable />
         <el-input type="submit" value="Create organization" />

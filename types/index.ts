@@ -1,3 +1,8 @@
+enum Delay {
+  Instantly,
+  Delayed
+}
+
 enum FeatureStatus {
   Draft = 'draft',
   ReadyToDev = 'ready_to_dev',
@@ -429,6 +434,7 @@ export {
   CreateProject,
   CreateStep,
   CreateTag,
+  Delay,
   Feature,
   FeatureStatus,
   InlineStepParam,

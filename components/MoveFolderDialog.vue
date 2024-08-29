@@ -1,11 +1,11 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:modelValue="onDialogStatusChanged" :title="`Move folder '${path.path}'`">
+    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" :title="`Move folder '${path.path}'`">
       <FolderTree
         v-if="tree.length > 0"
         :default="parent"
         :tree="tree"
-        @update:modelValue="onDestinationSelected"
+        @update:model-value="onDestinationSelected"
       />
     </el-dialog>
   </client-only>
