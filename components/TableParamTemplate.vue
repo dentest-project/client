@@ -23,6 +23,7 @@
         />
         <ContentStrategySelector
           :model-value="cell.strategy"
+          :with-row-id="true"
           @update:model-value="(newStrategy) => onStrategyUpdated(i, newStrategy)"
         />
       </td>

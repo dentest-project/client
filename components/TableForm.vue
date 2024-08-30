@@ -20,8 +20,8 @@
       </tr>
       <tr v-for="(row, i) in modelValue.content" :class="[ headerable && modelValue.headerRow && i === 0 && 'TableForm-header' ]">
         <td v-for="(cell, j) in row" class="cell" :class="[ headerable && modelValue.headerColumn && j === 0 && 'TableForm-header' ]">
-          <el-select v-if="(cellChoices ?? [])[j]" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Instantly)">
-            <el-option v-for="choice in (cellChoices ?? [])[j]" :value="choice" :label="choice" />
+          <el-select v-if="(cellStrategies ?? [])[j]?.strategy === ContentStrategy.Choices" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Instantly)">
+            <el-option v-for="choice in (cellStrategies ?? [])[j]?.choices" :value="choice" :label="choice" />
           </el-select>
           <el-input v-else :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Delayed)" />
         </td>
@@ -43,17 +43,22 @@
 <script setup lang="ts">
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CollectionTag, Delete } from '@element-plus/icons-vue'
 import { clone } from 'remeda'
-import { Delay } from '~/types'
+import { ContentStrategy, Delay } from '~/types'
+
+type CellStrategy = {
+  choices?: string[]
+  strategy: ContentStrategy
+}
 
 const props = defineProps<{
-  deletableColumns: boolean,
-  creatableColumns: boolean,
-  headerable: boolean,
-  headers?: string[],
-  cellChoices?: (string[] | null)[]
+  deletableColumns: boolean
+  creatableColumns: boolean
+  headerable: boolean
+  headers?: string[]
+  cellStrategies?: CellStrategy[]
   modelValue: {
-    headerColumn: boolean,
-    headerRow: boolean,
+    headerColumn: boolean
+    headerRow: boolean
     content: string[][]
   }
 }>()
@@ -109,21 +114,71 @@ const onInsertColumnBefore = (columnId: number) => {
   emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
 }
 
+const getNewRowContents = (newIndex: number) => {
+  const newRow = new Array(nbColumns.value).fill('')
+
+  if (!props.cellStrategies) {
+    return newRow
+  }
+
+  for (const i in newRow) {
+    if (props.cellStrategies[i].strategy === ContentStrategy.Choices && props.cellStrategies[i].choices.length > 0) {
+      newRow[i] = props.cellStrategies[i].choices[0]
+    } else if (props.cellStrategies[i].strategy === ContentStrategy.RowIndex) {
+      newRow[i] = (newIndex + 1).toString()
+    }
+  }
+
+  return newRow
+}
+
+const reorderRowIndexColumns = (baseContent: string[][]) => {
+  if (!props.cellStrategies || !props.cellStrategies.some((s) => s.strategy === ContentStrategy.RowIndex)) {
+    return
+  }
+
+  const content = [...baseContent]
+  for (const strategyId in props.cellStrategies) {
+    if (props.cellStrategies[strategyId].strategy !== ContentStrategy.RowIndex) {
+      continue
+    }
+
+    for (const i in content) {
+      content[i][strategyId] = (Number(i) + 1).toString()
+    }
+  }
+
+  return content
+}
 
 const onInsertRowAfter = (rowId: number) => {
   const content = [...props.modelValue.content]
 
-  content.splice(rowId + 1, 0, new Array(nbColumns.value).fill(''))
+  content.splice(rowId + 1, 0, getNewRowContents(rowId + 1))
 
-  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
+  emit(
+    'update:modelValue',
+    {
+      ...props.modelValue,
+      content: reorderRowIndexColumns(content)
+    },
+    Delay.Instantly
+  )
 }
 
 const onInsertRowBefore = (rowId: number) => {
   const content = [...props.modelValue.content]
 
-  content.splice(rowId, 0, new Array(nbColumns.value).fill(''))
+  content.splice(rowId, 0, getNewRowContents(rowId))
 
-  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
+  emit(
+    'update:modelValue',
+    {
+      ...props.modelValue,
+      content: reorderRowIndexColumns(content)
+    },
+    Delay.Instantly
+  )
 }
 
 const onToggleHeaderRow = () => {

@@ -37,7 +37,7 @@
         :deletable-columns="true"
         :headers="headers"
         :headerable="!modelValue.step?.extraParamTemplate"
-        :cell-choices="cellChoices"
+        :cell-strategies="cellStrategies"
         @update:model-value="onTableParamUpdate"
       />
       <el-button
@@ -216,7 +216,10 @@ const tableParamWithTemplateAndMissingColumns = computed(() => {
   return missingColumns.length > 0 ? missingColumns : false
 })
 
-const cellChoices = computed(() => props.modelValue.step?.extraParamTemplate?.map((col) => col.choices ?? null))
+const cellStrategies = computed(() => props.modelValue.step?.extraParamTemplate?.map((col) => ({
+  choices: col.choices,
+  strategy: col.strategy
+})))
 
 const headers = computed(() => props.modelValue.step?.extraParamTemplate ? (props.modelValue.params.find((param) => !isInlineStepParam(param)) as TableStepParam).content[0] : undefined)
 </script>

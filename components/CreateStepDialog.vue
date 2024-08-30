@@ -38,6 +38,7 @@
             />
             <ContentStrategySelector
               v-model="parts[i].strategy"
+              :with-row-id="false"
               @update:model-value="(newStrategy) => onStrategyUpdate(i, newStrategy)"
             />
           </div>

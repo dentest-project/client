@@ -1,5 +1,6 @@
-import { getCorrespondingAdverb } from './getCorrespondingAdverb'
+import { v4 as uuidv4 } from 'uuid'
 import {
+  ContentStrategy,
   type InlineStepParam,
   type MultilineStepParam,
   type ScenarioStep,
@@ -7,11 +8,11 @@ import {
   StepAdverb,
   StepParamType,
   type StepPart,
-  ContentStrategy,
   StepPartType,
-  type TableStepParam
+  type TableStepParam,
+  TableStepParamTemplateColumn
 } from '~/types'
-import { v4 as uuidv4 } from 'uuid'
+import { getCorrespondingAdverb } from './getCorrespondingAdverb'
 
 interface GenerateParamsOutput {
   withTableParam: boolean,
@@ -30,6 +31,18 @@ const getDefaultValueForStepPart = (part: StepPart) => {
   }
 
   return part.content
+}
+
+const getDefaultValueForTableTemplateCell = (cellDefinition: TableStepParamTemplateColumn) => {
+  if (cellDefinition.strategy === ContentStrategy.Choices && cellDefinition.choices) {
+    return cellDefinition.choices[0]
+  }
+
+  if (cellDefinition.strategy === ContentStrategy.RowIndex) {
+    return '1'
+  }
+
+  return ''
 }
 
 const generateParams = (step: Step): GenerateParamsOutput => {
@@ -119,9 +132,22 @@ export default function createScenarioStepFromStep(scenarioSteps: ScenarioStep[]
     params: generatedParams.params
   }
 
+  if (generatedParams.withTableParam) {
+    const tableParamIndex = scenarioStep.params.findIndex((s) => s.type === StepParamType.Table)
+
+    if (tableParamIndex !== -1) {
+      (scenarioStep.params[tableParamIndex]).content = step.extraParamTemplate
+        ? [
+          step.extraParamTemplate.map((item) => item.header),
+          step.extraParamTemplate.map((item) => getDefaultValueForTableTemplateCell(item))
+        ]
+        : [['', ''], ['', '']];
+      (scenarioStep.params[tableParamIndex] as TableStepParam).headerRow = !!step.extraParamTemplate
+    }
+  }
+
   return {
     scenarioStep,
-    withTableParam: generatedParams.withTableParam,
     insertingIndex
   }
 }

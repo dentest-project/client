@@ -65,7 +65,8 @@ enum StepAdverb {
 
 enum ContentStrategy {
   Free = 'free',
-  Choices = 'choices'
+  Choices = 'choices',
+  RowIndex = 'row_index'
 }
 
 enum StepParamType {
@@ -338,11 +339,13 @@ function isTableStepParam(object: any): object is TableStepParam {
   return !!object && 'headerColumn' in object && 'headerRow' in object;
 }
 
-type TableStepParamTemplate = {
+type TableStepParamTemplateColumn = {
   header: string,
   strategy: ContentStrategy,
   choices?: string[]
-}[]
+}
+
+type TableStepParamTemplate = TableStepParamTemplateColumn[]
 
 interface Tag {
   id: string,
@@ -477,6 +480,7 @@ export {
   TableStepParam,
   Tag,
   TableStepParamTemplate,
+  TableStepParamTemplateColumn,
   UpdateFeature,
   UpdateFeaturePath,
   UpdateFeatureParentPath,

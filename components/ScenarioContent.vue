@@ -68,7 +68,6 @@ import {
   type Scenario,
   type ScenarioStep,
   ScenarioType,
-  StepParamType, type TableStepParam,
   type Tag
 } from '~/types'
 import { Close } from '@element-plus/icons-vue'
@@ -120,20 +119,6 @@ const onDrop = () => {
   }
 
   const step = createScenarioStepFromStep([...steps.value], droppedStep)
-
-  if (step.withTableParam) {
-    const tableParamIndex = step.scenarioStep.params.findIndex((s) => s.type === StepParamType.Table)
-
-    if (tableParamIndex !== -1) {
-      (step.scenarioStep.params[tableParamIndex]).content = droppedStep.extraParamTemplate
-        ? [
-            droppedStep.extraParamTemplate.map((item) => item.header),
-            droppedStep.extraParamTemplate.map((item) => item.choices ? item.choices[0] : '')
-          ]
-        : [['', ''], ['', '']];
-      (step.scenarioStep.params[tableParamIndex] as TableStepParam).headerRow = !!droppedStep.extraParamTemplate
-    }
-  }
 
   steps.value.splice(step.insertingIndex, 0, step.scenarioStep)
 
