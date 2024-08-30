@@ -12,9 +12,9 @@
           <span v-if="headerable && i === 0">
             <el-icon title="Make/unmake header" size="small" @click="onToggleHeaderColumn"><CollectionTag /></el-icon>
           </span>
-          <el-icon v-if="creatableColumns" title="Insert a column before" size="small" @click="onInsertColumnBefore(i as number)"><ArrowLeft /></el-icon>
-          <el-icon title="Delete the column" v-if="nbColumns > 1 && deletableColumns" size="small" @click.prevent.stop="onDeleteColumn(i as number)"><Delete /></el-icon>
-          <el-icon v-if="creatableColumns" title="Insert a column after" size="small" @click="onInsertColumnAfter(i as number)"><ArrowRight /></el-icon>
+          <el-icon v-if="creatableColumns" title="Insert a column before" size="small" @click="() => onInsertColumnBefore(i as number)"><ArrowLeft /></el-icon>
+          <el-icon title="Delete the column" v-if="nbColumns > 1 && deletableColumns" size="small" @click.prevent.stop="() => onDeleteColumn(i as number)"><Delete /></el-icon>
+          <el-icon v-if="creatableColumns" title="Insert a column after" size="small" @click="() => onInsertColumnAfter(i as number)"><ArrowRight /></el-icon>
         </td>
         <td />
       </tr>
@@ -27,10 +27,10 @@
         </td>
         <td class="TableForm-settingsColumn">
           <div class="TableForm-settingsColumn-addRow">
-            <el-icon title="Insert a row before" size="small" @click="onInsertRowBefore(i as number)"><ArrowUp /></el-icon>
-            <el-icon title="Insert a row after" size="small" @click="onInsertRowAfter(i as number)"><ArrowDown /></el-icon>
+            <el-icon title="Insert a row before" size="small" @click="() => onInsertRowBefore(i as number)"><ArrowUp /></el-icon>
+            <el-icon title="Insert a row after" size="small" @click="() => onInsertRowAfter(i as number)"><ArrowDown /></el-icon>
           </div>
-          <el-icon title="Delete the row" v-if="nbRows > 1" size="small" @click="onDeleteRow(i as number)"><Delete /></el-icon>
+          <el-icon title="Delete the row" v-if="nbRows > 1" size="small" @click="() => onDeleteRow(i as number)"><Delete /></el-icon>
           <span v-if="headerable && i === 0">
             <el-icon title="Make/unmake header" size="small" @click="onToggleHeaderRow"><CollectionTag /></el-icon>
           </span>
@@ -68,18 +68,24 @@ const onCellUpdated = (y: number, x: number, newContent: string, delay: Delay) =
   emit('update:modelValue', { ...props.modelValue, content }, delay)
 }
 
-
 const onDeleteColumn = (columnId: number) => {
   const content = clone([...props.modelValue.content])
+  let headers
 
   content.forEach((r) => r.splice(columnId, 1))
 
-  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
+  if (props.headers) {
+    headers = clone([...props.headers])
+
+    headers.splice(columnId, 1)
+  }
+
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly, headers)
 }
 
 
 const onDeleteRow = (rowId: number) => {
-  const content = deepClone([...props.modelValue.content])
+  const content = [...props.modelValue.content]
 
   content.splice(rowId, 1)
 

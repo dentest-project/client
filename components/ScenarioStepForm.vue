@@ -40,6 +40,13 @@
         :cell-choices="cellChoices"
         @update:model-value="onTableParamUpdate"
       />
+      <el-button
+        v-if="tableParamWithTemplateAndMissingColumns"
+        size="small"
+        @click="addMissingColumnsFromStepDataTemplate"
+      >
+        Add missing columns from step data template
+      </el-button>
     </div>
     <div class="ScenarioStepForm-delete">
       <el-button size="small" type="danger" @click="emit('delete')">
@@ -50,8 +57,9 @@
 </template>
 
 <script setup lang="ts">
-import { Sort, Delete } from '@element-plus/icons-vue'
+import { Delete, Sort } from '@element-plus/icons-vue'
 import {
+  ContentStrategy,
   Delay,
   type InlineStepParam,
   isInlineStepParam,
@@ -60,7 +68,8 @@ import {
   StepParamType,
   StepPartType,
   type TableParamOptions,
-  type TableStepParam
+  type TableStepParam,
+  type TableStepParamTemplate
 } from '~/types'
 
 const props = defineProps<{
@@ -99,13 +108,13 @@ const onMultilineParamUpdate = (newValue: string) => {
   }, Delay.Delayed)
 }
 
-const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] }, delay: Delay) => {
+const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] }, delay: Delay, newHeaders?: string[]) => {
   const params = [...props.modelValue.params]
   const updatedParamIndex = props.modelValue.params.findIndex((param) => !isInlineStepParam(param))
 
   if (props.modelValue.step?.extraParamTemplate) {
     const firstRow: string[] = newValue.content.length > 0
-      ? newValue.content[0].map((_, i) => props.modelValue.step?.extraParamTemplate?.[i].header ?? '')
+      ? (newHeaders ? newHeaders : newValue.content[0].map((_, i) => props.modelValue.step?.extraParamTemplate?.[i].header ?? ''))
       : props.modelValue.step?.extraParamTemplate.map((item) => item.header)
 
     params[updatedParamIndex] = {
@@ -128,6 +137,46 @@ const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] 
   }, delay)
 }
 
+const addMissingColumnsFromStepDataTemplate = () => {
+  const params = [...props.modelValue.params]
+  const updatedParamIndex = props.modelValue.params.findIndex((param) => !isInlineStepParam(param))
+  const template = props.modelValue.step?.extraParamTemplate as TableStepParamTemplate
+  const presentColumns = (props.modelValue.params[updatedParamIndex] as TableStepParam).content[0]
+
+  params[updatedParamIndex] = {
+    ...params[updatedParamIndex] as TableStepParam,
+    content: params[updatedParamIndex].content.map((row, i) => {
+      const newRow = [...row]
+
+      for (const columnId in template) {
+        const column = template[columnId]
+        if (presentColumns.includes(column.header)) {
+          continue
+        }
+
+        let newValue
+
+        if (i === 0) {
+          newValue = column.header
+        } else if (column.strategy === ContentStrategy.Choices) {
+          newValue = column.choices[0] ?? ''
+        } else {
+          newValue = ''
+        }
+
+        newRow.splice(columnId, 0, newValue)
+      }
+
+      return newRow
+    })
+  }
+
+  emit('update:modelValue', {
+    ...props.modelValue,
+    params
+  }, Delay.Instantly)
+}
+
 const availableAdverbs = computed(() => [
   props.modelValue.step?.type as StepAdverb,
   StepAdverb.And,
@@ -146,6 +195,26 @@ const parts = computed(() => props.modelValue.step?.parts.map((part) => ({
 const multilineParam = computed(() => props.modelValue.step?.extraParamType === StepParamType.Multiline && props.modelValue.params.find((param) => !isInlineStepParam(param)))
 
 const tableParam = computed(() => props.modelValue.step?.extraParamType === StepParamType.Table && props.modelValue.params.find((param) => !isInlineStepParam(param)) as TableStepParam)
+
+const tableParamWithTemplateAndMissingColumns = computed(() => {
+  if (!tableParam.value || !props.modelValue.step?.extraParamTemplate) {
+    return false
+  }
+
+  const headerRow = tableParam.value.content[0]
+
+  if (!headerRow) {
+    return false
+  }
+
+  const template = props.modelValue.step?.extraParamTemplate as TableStepParamTemplate
+  const missingColumns = template.map((tpl, i) => ({
+    ...tpl,
+    order: i
+  })).filter((col) => !headerRow.includes(col.header))
+
+  return missingColumns.length > 0 ? missingColumns : false
+})
 
 const cellChoices = computed(() => props.modelValue.step?.extraParamTemplate?.map((col) => col.choices ?? null))
 
