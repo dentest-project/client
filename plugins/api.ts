@@ -82,7 +82,7 @@ export default defineNuxtPlugin(() => ({
       deletePath: async (id: string): Promise<void> => del(`paths/${id}`),
       deleteProject: async (id: string): Promise<void> => del(`projects/${id}`),
       deleteProjectUser: async (projectId: string, userId: string): Promise<void> => del(`projects/${projectId}/users/${userId}`),
-      deleteStep: async (id: number): Promise<void> => del(`steps/${id}`),
+      deleteStep: async (id: string): Promise<void> => del(`steps/${id}`),
       getFeature: async (pathId: string, featureSlug: string): Promise<Feature> => get(`paths/${pathId}/features/${featureSlug}`),
       getFeatureIssueTrackerConfigurations: async (pathId: string, featureSlug: string): Promise<OrganizationIssueTrackerConfigurationEmbedded[]> => get(`paths/${pathId}/features/${featureSlug}/issue-tracker-configurations`),
       getOrganizations: async (): Promise<OrganizationList> => get(`organizations`),
@@ -100,7 +100,7 @@ export default defineNuxtPlugin(() => ({
       getProjectUsers: async (projectSlug: string, organizationSlug?: string): Promise<ProjectUserList> => {
         return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}/users`) : get(`projects/${projectSlug}/users`);
       },
-      getStepPartChoices: async (stepPartId: number): Promise<Array<string>> => get(`step-parts/${stepPartId}/choices`),
+      getStepPartChoices: async (stepPartId: string): Promise<Array<string>> => get(`step-parts/${stepPartId}/choices`),
       getTags: async (projectId: string): Promise<Array<Tag>> => get(`projects/${projectId}/tags`),
       getProjectUserToken: async (projectId: string, userId: string): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`),
       login: async (user: Login): Promise<LoginResponse> => post(`login`, user),

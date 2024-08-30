@@ -2,7 +2,7 @@
   <el-row :gutter="20">
     <ScenarioContent
       v-for="(scenario, i) in modelValue"
-      :key="`${i}${scenario.id}`"
+      :key="scenario.id"
       :model-value="scenario"
       :can-move-up="i > 0 && !(i === 1 && modelValue[0].type === ScenarioType.Background)"
       :can-move-down="i < modelValue.length - 1 && !(i === 0 && scenario.type === ScenarioType.Background)"
@@ -29,6 +29,7 @@ import {
   ScenarioType,
   type TableStepParam
 } from '~/types'
+import { v4 as uuidv4 } from 'uuid'
 
 const props = defineProps<{
   modelValue: Scenario[],
@@ -42,6 +43,7 @@ const onAdd = () => {
   emit('scenarioAdded', [
     ...props.modelValue,
     {
+      id: uuidv4(),
       type: ScenarioType.Regular,
       title: 'Scenario title',
       steps: [],
@@ -91,10 +93,12 @@ const onDuplicate = (i: number) => {
   const toDuplicate = { ...props.modelValue[i] }
 
   updatedList.push({
+    id: uuidv4(),
     type: toDuplicate.type,
     title: toDuplicate.title + ' (copy)',
     steps: [
       ...toDuplicate.steps.map((s) => ({
+        id: uuidv4(),
         adverb: s.adverb,
         step: s.step,
         priority: s.priority,
@@ -102,6 +106,7 @@ const onDuplicate = (i: number) => {
           ...s.params.map((p) => {
             if ('stepPart' in p) {
               return {
+                id: uuidv4(),
                 content: p.content,
                 type: p.type,
                 stepPart: p.stepPart,
@@ -109,6 +114,7 @@ const onDuplicate = (i: number) => {
             }
 
             return {
+              id: uuidv4(),
               content:
                 typeof p.content === 'string'
                   ? p.content

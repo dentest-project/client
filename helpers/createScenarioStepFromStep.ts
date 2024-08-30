@@ -11,6 +11,7 @@ import {
   StepPartType,
   type TableStepParam
 } from '~/types'
+import { v4 as uuidv4 } from 'uuid'
 
 interface GenerateParamsOutput {
   withTableParam: boolean,
@@ -38,6 +39,7 @@ const generateParams = (step: Step): GenerateParamsOutput => {
     .parts
     .filter(p => p.type === StepPartType.Param)
     .map(stepPart => ({
+      id: uuidv4(),
       type: StepParamType.Inline,
       content: getDefaultValueForStepPart(stepPart),
       stepPart
@@ -52,12 +54,14 @@ const generateParams = (step: Step): GenerateParamsOutput => {
 
   if (step.extraParamType === StepParamType.Multiline) {
     params.push({
+      id: uuidv4(),
       type: step.extraParamType,
       content: ''
     })
   } else {
     withTableParam = true
     params.push({
+      id: uuidv4(),
       type: step.extraParamType,
       content: [] as Array<Array<string>>,
       headerColumn: false,
@@ -102,12 +106,13 @@ const findBestIndexForStep = (scenarioSteps: Array<ScenarioStep>, adverb: StepAd
   return [scenarioSteps.length, true]
 }
 
-export default function createScenarioStepFromStep(scenarioSteps: Array<ScenarioStep>, step: Step): CreateScenarioStepFromStepOutput {
+export default function createScenarioStepFromStep(scenarioSteps: ScenarioStep[], step: Step): CreateScenarioStepFromStepOutput {
   const generatedParams = generateParams(step)
   const correspondingAdverb = getCorrespondingAdverb(step.type)
   const [insertingIndex, shouldUseAdverb] = findBestIndexForStep(scenarioSteps, correspondingAdverb)
 
   const scenarioStep = {
+    id: uuidv4(),
     priority: scenarioSteps.length,
     adverb: shouldUseAdverb ? correspondingAdverb : StepAdverb.And,
     step,

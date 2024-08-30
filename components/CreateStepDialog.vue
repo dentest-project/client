@@ -70,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import { v4 as uuidv4 } from 'uuid'
 import { CloseBold } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
 import {
@@ -103,6 +104,7 @@ const adverbs = [StepType.Given, StepType.When, StepType.Then]
 const adverb = ref(StepType.Given)
 const parts = ref<StepPart[]>([
   {
+    id: uuidv4(),
     type: StepPartType.Sentence,
     priority: 0,
     content: '',
@@ -147,6 +149,7 @@ const onSplitButtonClicked = () => {
 
   if (after !== '') {
     newParts.splice(selection.value?.inputId + 1, 0, {
+      id: uuidv4(),
       type: StepPartType.Sentence,
       priority: 0,
       content: after,
@@ -154,6 +157,7 @@ const onSplitButtonClicked = () => {
     })
   }
   newParts.splice(selection.value?.inputId + 1, 0, {
+    id: uuidv4(),
     type: StepPartType.Param,
     priority: selection.value?.inputId + 1,
     content: selected,
@@ -162,6 +166,7 @@ const onSplitButtonClicked = () => {
   })
   if (before !== '') {
     newParts.splice(selection.value?.inputId + 1, 0, {
+      id: uuidv4(),
       type: StepPartType.Sentence,
       priority: 0,
       content: before,
@@ -211,6 +216,7 @@ const onInputCleared = (i: number) => {
   }
 
   newParts.splice(elementToReplace, amountToDelete, {
+    id: uuidv4(),
     type: StepPartType.Sentence,
     content: fullContent,
     priority: 0,
@@ -242,6 +248,7 @@ const onSubmit = async () => {
     isSubmitEnabled.value = false
     await $api.createStep(
       {
+        id: uuidv4(),
         type: adverb.value,
         project: {
           id: props.project.id,

@@ -267,7 +267,7 @@ interface ResetPasswordRequest {
 
 
 interface Scenario {
-  id?: number,
+  id: string,
   type: ScenarioType,
   title: string,
   steps: Array<ScenarioStep>,
@@ -276,17 +276,11 @@ interface Scenario {
 }
 
 interface ScenarioStep {
-  id?: number,
+  id: string,
   adverb: StepAdverb,
   step?: Step,
   params: Array<InlineStepParam | MultilineStepParam | TableStepParam>,
   priority: number
-}
-
-interface SelectItem {
-  text: string,
-  value: string,
-  disabled: boolean
 }
 
 interface Session {
@@ -294,6 +288,7 @@ interface Session {
 }
 
 interface CreateStep {
+  id: string
   project: StepProject,
   type: StepType,
   extraParamType: StepParamType,
@@ -303,7 +298,7 @@ interface CreateStep {
 }
 
 interface Step {
-  id?: number,
+  id: string,
   project: StepProject,
   type: StepType,
   extraParamType: StepParamType,
@@ -313,12 +308,12 @@ interface Step {
 }
 
 interface StepParam {
-  id?: number,
+  id: string,
   type: StepParamType,
 }
 
 interface StepPart {
-  id?: number,
+  id: string,
   type: StepPartType,
   content: string,
   priority: number,
@@ -401,7 +396,7 @@ interface UpdateProject {
 }
 
 interface UpdateStep {
-  id: number,
+  id: string,
   parts: Array<StepPart>,
   tags: Array<Tag>,
   extraParamTemplate: TableStepParamTemplate | null
@@ -470,7 +465,6 @@ export {
   Scenario,
   ScenarioStep,
   ScenarioType,
-  SelectItem,
   Session,
   Step,
   StepAdverb,
