@@ -270,7 +270,7 @@ const breadcrumb = computed((): BreadcrumbItems => {
   const items = [] as BreadcrumbItems
   let currentPath: Path | undefined = path.value
 
-  while (currentPath !== undefined) {
+  while (currentPath) {
     items.push({
       text: currentPath.project ? currentPath.project.title : currentPath.path,
       href: currentPath.id,

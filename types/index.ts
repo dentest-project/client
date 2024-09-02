@@ -66,7 +66,26 @@ enum StepAdverb {
 enum ContentStrategy {
   Free = 'free',
   Choices = 'choices',
+  FakeData = 'fake_data',
   RowIndex = 'row_index'
+}
+
+enum FakeDataType {
+  FirstName = 'first_name',
+  LastName = 'last_name',
+  FullName = 'full_name',
+  JobTitle = 'job_title',
+  Email = 'email',
+  Phone = 'phone',
+  Number = 'number',
+  UUID = 'uuid',
+  StreetAddress = 'street_address',
+  City = 'city',
+  ZipCode = 'zip_code',
+  Country = 'country',
+  Latitude = 'latitude',
+  Longitude = 'longitude',
+  Url = 'url'
 }
 
 enum StepParamType {
@@ -320,6 +339,7 @@ interface StepPart {
   priority: number,
   strategy?: ContentStrategy,
   choices?: Array<string> | null
+  fakeDataType?: FakeDataType | null
 }
 
 interface StepProject {
@@ -343,6 +363,7 @@ type TableStepParamTemplateColumn = {
   header: string,
   strategy: ContentStrategy,
   choices?: string[]
+  fakeDataType?: FakeDataType
 }
 
 type TableStepParamTemplate = TableStepParamTemplateColumn[]
@@ -375,7 +396,11 @@ interface UpdateFeatureStatus {
 
 interface UpdateFeaturePath extends CreateFeaturePath {}
 
-interface UpdateMe extends Register {}
+interface UpdateMe {
+  username: string,
+  email: string
+  password?: string
+}
 
 interface UpdateOrganizationName {
   id: string,
@@ -433,6 +458,7 @@ export {
   CreateStep,
   CreateTag,
   Delay,
+  FakeDataType,
   Feature,
   FeatureStatus,
   InlineStepParam,

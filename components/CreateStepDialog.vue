@@ -36,6 +36,11 @@
               v-model="parts[i].choices"
               @update:model-value="onPartsUpdate"
             />
+            <ContentFakeDataTypeSelector
+              v-else-if="part.strategy === ContentStrategy.FakeData"
+              v-model="parts[i].fakeDataType"
+              @update:model-value="onPartsUpdate"
+            />
             <ContentStrategySelector
               v-model="parts[i].strategy"
               :with-row-id="false"
@@ -71,14 +76,14 @@
 </template>
 
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid'
 import { CloseBold } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
+import { v4 as uuidv4 } from 'uuid'
 import {
+  ContentStrategy,
   type Project,
   StepParamType,
   type StepPart,
-  ContentStrategy,
   StepPartType,
   StepType,
   type TableStepParamTemplate,
@@ -270,6 +275,7 @@ const onSubmit = async () => {
     emit('created')
     parts.value = [
       {
+        id: uuidv4(),
         type: StepPartType.Sentence,
         priority: 0,
         content: '',

@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { Delete, Sort } from '@element-plus/icons-vue'
+import { fake } from '~/helpers/fake'
 import {
   ContentStrategy,
   Delay,
@@ -160,6 +161,10 @@ const addMissingColumnsFromStepDataTemplate = () => {
           newValue = column.header
         } else if (column.strategy === ContentStrategy.Choices) {
           newValue = column.choices[0] ?? ''
+        } else if (column.strategy === ContentStrategy.RowIndex) {
+          newValue = i.toString()
+        } else if (column.strategy === ContentStrategy.FakeData && column.fakeDataType) {
+          newValue = fake(column.fakeDataType)
         } else {
           newValue = ''
         }
@@ -218,6 +223,7 @@ const tableParamWithTemplateAndMissingColumns = computed(() => {
 
 const cellStrategies = computed(() => props.modelValue.step?.extraParamTemplate?.map((col) => ({
   choices: col.choices,
+  fakeDataType: col.fakeDataType,
   strategy: col.strategy
 })))
 

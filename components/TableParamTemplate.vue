@@ -11,20 +11,25 @@
     </tr>
     <tr class="TableParamTemplate-header">
       <td v-for="(cell, i) in modelValue" class="cell TableParamTemplate-header">
-        <el-input :model-value="cell.header" size="small" @update:model-value="(newValue) => onHeaderUpdated(i, newValue)" />
+        <el-input :model-value="cell.header" size="small" placeholder="Column name" @update:model-value="(newValue) => onHeaderUpdated(i, newValue)" />
       </td>
     </tr>
     <tr>
       <td v-for="(cell, i) in modelValue" class="cell">
+        <ContentStrategySelector
+          :model-value="cell.strategy"
+          :with-row-id="true"
+          @update:model-value="(newStrategy) => onStrategyUpdated(i, newStrategy)"
+        />
         <ContentChoicesInput
           v-if="cell.strategy === ContentStrategy.Choices"
           :model-value="cell.choices ?? []"
           @update:model-value="(newChoices) => onChoicesUpdated(i, newChoices)"
         />
-        <ContentStrategySelector
-          :model-value="cell.strategy"
-          :with-row-id="true"
-          @update:model-value="(newStrategy) => onStrategyUpdated(i, newStrategy)"
+        <ContentFakeDataTypeSelector
+          v-if="cell.strategy === ContentStrategy.FakeData"
+          :model-value="cell.fakeDataType"
+          @update:model-value="(newFakeDataType) => onFakeDataTypeUpdated(i, newFakeDataType)"
         />
       </td>
     </tr>
@@ -34,8 +39,9 @@
 
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight, Delete } from '@element-plus/icons-vue'
+import ContentFakeDataTypeSelector from '~/components/ContentFakeDataTypeSelector.vue'
+import { FakeDataType, type TableStepParamTemplate } from '~/types'
 import { ContentStrategy } from '~/types'
-import type { TableStepParamTemplate } from '~/types'
 
 const props = defineProps<{
   modelValue: TableStepParamTemplate
@@ -56,6 +62,10 @@ const onStrategyUpdated = (x: number, newStrategy: ContentStrategy) => {
 
   content[x].strategy = newStrategy
 
+  if (newStrategy === 'fake_data') {
+    content[x].fakeDataType = FakeDataType.FirstName
+  }
+
   emit('update:modelValue', content)
 }
 
@@ -63,6 +73,14 @@ const onChoicesUpdated = (x: number, newChoices: string[]) => {
   const content = [...props.modelValue]
 
   content[x].choices = newChoices
+
+  emit('update:modelValue', content)
+}
+
+const onFakeDataTypeUpdated = (x: number, newFakeDataType: FakeDataType) => {
+  const content = [...props.modelValue]
+
+  content[x].fakeDataType = newFakeDataType
 
   emit('update:modelValue', content)
 }

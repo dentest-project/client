@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
+import { fake } from '~/helpers/fake'
 import {
   ContentStrategy,
   type InlineStepParam,
@@ -30,6 +31,10 @@ const getDefaultValueForStepPart = (part: StepPart) => {
     return part.choices[0]
   }
 
+  if (part.strategy === ContentStrategy.FakeData && part.fakeDataType) {
+    return fake(part.fakeDataType)
+  }
+
   return part.content
 }
 
@@ -40,6 +45,10 @@ const getDefaultValueForTableTemplateCell = (cellDefinition: TableStepParamTempl
 
   if (cellDefinition.strategy === ContentStrategy.RowIndex) {
     return '1'
+  }
+
+  if (cellDefinition.strategy === ContentStrategy.FakeData && cellDefinition.fakeDataType) {
+    return fake(cellDefinition.fakeDataType)
   }
 
   return ''

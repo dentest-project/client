@@ -62,7 +62,7 @@ const onSubmit = () => {
   emit('submit', {
     username: username.value,
     email: email.value,
-    password: password.value,
+    password: password.value.length ? password.value : undefined,
   })
 }
 </script>

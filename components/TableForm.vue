@@ -43,11 +43,13 @@
 <script setup lang="ts">
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CollectionTag, Delete } from '@element-plus/icons-vue'
 import { clone } from 'remeda'
-import { ContentStrategy, Delay } from '~/types'
+import { fake } from '~/helpers/fake'
+import { ContentStrategy, Delay, FakeDataType } from '~/types'
 
 type CellStrategy = {
-  choices?: string[]
   strategy: ContentStrategy
+  choices?: string[]
+  fakeDataType?: FakeDataType
 }
 
 const props = defineProps<{
@@ -126,6 +128,8 @@ const getNewRowContents = (newIndex: number) => {
       newRow[i] = props.cellStrategies[i].choices[0]
     } else if (props.cellStrategies[i].strategy === ContentStrategy.RowIndex) {
       newRow[i] = (newIndex + 1).toString()
+    } else if (props.cellStrategies[i].strategy === ContentStrategy.FakeData && props.cellStrategies[i].fakeDataType) {
+      newRow[i] = fake(props.cellStrategies[i].fakeDataType)
     }
   }
 

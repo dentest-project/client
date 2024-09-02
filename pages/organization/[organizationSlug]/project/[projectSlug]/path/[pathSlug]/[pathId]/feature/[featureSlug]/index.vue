@@ -259,7 +259,7 @@ const breadcrumb = computed((): BreadcrumbItems => {
   ] as BreadcrumbItems
   let currentPath: Path | undefined = feature.value.path
 
-  while (currentPath !== undefined) {
+  while (currentPath) {
     items.push({
       text: currentPath.project ? currentPath.project.title : currentPath.path,
       href: $routes.path(currentPath),
