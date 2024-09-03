@@ -20,14 +20,12 @@
 </template>
 
 <script setup lang="ts">
+import { duplicateScenario } from '~/helpers/duplicateScenario'
 import {
   Delay,
-  type InlineStepParam,
-  type MultilineStepParam,
   type Project,
   type Scenario,
   ScenarioType,
-  type TableStepParam
 } from '~/types'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -90,52 +88,8 @@ const onDown = (i: number) => {
 
 const onDuplicate = (i: number) => {
   const updatedList = [...props.modelValue]
-  const toDuplicate = { ...props.modelValue[i] }
 
-  updatedList.push({
-    id: uuidv4(),
-    type: toDuplicate.type,
-    title: toDuplicate.title + ' (copy)',
-    steps: [
-      ...toDuplicate.steps.map((s) => ({
-        id: uuidv4(),
-        adverb: s.adverb,
-        step: s.step,
-        priority: s.priority,
-        params: [
-          ...s.params.map((p) => {
-            if ('stepPart' in p) {
-              return {
-                id: uuidv4(),
-                content: p.content,
-                type: p.type,
-                stepPart: p.stepPart,
-              } as InlineStepParam
-            }
-
-            return {
-              id: uuidv4(),
-              content:
-                typeof p.content === 'string'
-                  ? p.content
-                  : p.content.map((row) => [...row]),
-              type: p.type,
-              headerColumn: p.headerColumn,
-              headerRow: p.headerRow
-            } as MultilineStepParam | TableStepParam
-          }),
-        ],
-      })),
-    ],
-    examples: toDuplicate.examples,
-    tags: [
-      ...toDuplicate.tags.map((t) => ({
-        id: t.id,
-        color: t.color,
-        name: t.name,
-      })),
-    ],
-  })
+  updatedList.push(duplicateScenario({ ...props.modelValue[i] }))
 
   emit('update:modelValue', updatedList, Delay.Delayed)
 }

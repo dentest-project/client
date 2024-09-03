@@ -40,6 +40,12 @@
           <TagsList v-else :tags="modelValue.tags" />
         </div>
       </template>
+      <FeaturesWithBackgroundSelector
+        v-if="modelValue.type === ScenarioType.Background && steps.length === 0 && mode === Mode.Edit"
+        v-model="featuresToCopyBackgroundFrom"
+        :project="project"
+        @update:model-value="onFeatureWithBackgroundSelected"
+      />
       <ScenarioStepList
         v-model="steps"
         :mode="canWrite ? mode : Mode.View"
@@ -59,10 +65,14 @@
 </template>
 
 <script setup lang="ts">
+import { Close } from '@element-plus/icons-vue'
+import FeaturesWithBackgroundSelector from '~/components/FeaturesWithBackgroundSelector.vue'
+import { duplicateScenario } from '~/helpers/duplicateScenario'
 import { extractExamplesFromSteps } from '~/helpers/extractExamplesFromSteps'
 import { useStepStore } from '~/store/step'
 import {
   Delay,
+  type Feature,
   Mode,
   type Project,
   type Scenario,
@@ -70,10 +80,10 @@ import {
   ScenarioType,
   type Tag
 } from '~/types'
-import { Close } from '@element-plus/icons-vue'
 import createScenarioStepFromStep from '../helpers/createScenarioStepFromStep'
 
 const { getMovingStep } = useStepStore()
+const { $api } = useNuxtApp()
 
 const props = defineProps<{
   modelValue: Scenario,
@@ -91,6 +101,7 @@ const steps = ref(props.modelValue.steps)
 const tags = ref(props.modelValue.tags)
 const draggedOver = ref(false)
 const mode = ref(Mode.View)
+const featuresToCopyBackgroundFrom = ref<Pick<Feature, 'id' | 'title'>>()
 
 const onTitleUpdate = () => {
   emit('update:modelValue', {
@@ -177,6 +188,19 @@ const onScenarioClick = () => {
   }
 }
 
+const onFeatureWithBackgroundSelected = async ({ id }: Pick<Feature, 'id' | 'title'>) => {
+  const feature = await $api.getFeatureById(id)
+  const background = feature.scenarios.find((scenario) => scenario.type === ScenarioType.Background)
+
+  if (!background) {
+    return
+  }
+
+  featuresToCopyBackgroundFrom.value = undefined
+
+  emit('update:modelValue', duplicateScenario(background))
+}
+
 const shouldDisplayBackgroundSwitch = computed(() => !props.modelValue.examples && props.canBeBackground)
 </script>
 
@@ -212,6 +236,7 @@ h2 + .ScenarioContent-actions, .ScenarioContent-backgroundChip + .ScenarioConten
 }
 
 .ScenarioContent-empty {
+  margin-top: 2rem;
   color: var(--el-color-info);
 }
 

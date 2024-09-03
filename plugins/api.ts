@@ -92,6 +92,7 @@ export default defineNuxtPlugin(() => ({
       deleteProjectUser: async (projectId: string, userId: string): Promise<void> => del(`projects/${projectId}/users/${userId}`),
       deleteStep: async (id: string): Promise<void> => del(`steps/${id}`),
       getFeature: async (pathId: string, featureSlug: string): Promise<Feature> => get(`paths/${pathId}/features/${featureSlug}`),
+      getFeatureById: async (featureId: string): Promise<Feature> => get(`features/${featureId}`),
       getFeatureIssueTrackerConfigurations: async (pathId: string, featureSlug: string): Promise<OrganizationIssueTrackerConfigurationEmbedded[]> => get(`paths/${pathId}/features/${featureSlug}/issue-tracker-configurations`),
       getOrganizations: async (): Promise<OrganizationList> => get(`organizations`),
       getOrganization: async (slug: string): Promise<Organization> => get(`organizations/${slug}`),
@@ -100,6 +101,7 @@ export default defineNuxtPlugin(() => ({
       getOrganizationUsers: async (organizationSlug: string): Promise<OrganizationUserList> => get(`organizations/${organizationSlug}/users`),
       getPath: async (id: string): Promise<Path> => get(`paths/${id}`),
       getPathRoot: async (id: string): Promise<Path> => get(`paths/${id}/root`),
+      getProjectFeaturesWithBackground: async (id: string): Promise<Pick<Feature, 'id' | 'title'>[]> => get(`projects/${id}/features-with-backgrounds`),
       getProjectSteps: async (id: string): Promise<Array<Step>> => get(`projects/${id}/steps`),
       getProject: async (projectSlug: string, organizationSlug?: string): Promise<Project> => {
         return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}`) : get(`projects/${projectSlug}`);
@@ -108,7 +110,6 @@ export default defineNuxtPlugin(() => ({
       getProjectUsers: async (projectSlug: string, organizationSlug?: string): Promise<ProjectUserList> => {
         return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}/users`) : get(`projects/${projectSlug}/users`);
       },
-      getStepPartChoices: async (stepPartId: string): Promise<Array<string>> => get(`step-parts/${stepPartId}/choices`),
       getTags: async (projectId: string): Promise<Array<Tag>> => get(`projects/${projectId}/tags`),
       getProjectUserToken: async (projectId: string, userId: string): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`),
       login: async (user: Login): Promise<LoginResponse> => post(`login`, user),
@@ -145,6 +146,5 @@ export default defineNuxtPlugin(() => ({
       updateProject: async (project: UpdateProject): Promise<Project> => put('projects', project),
       updateProjectUser: async (projectId: string, userId: string, permissions: Array<ProjectPermission>): Promise<ProjectUser> => put(`projects/${projectId}/users/${userId}`, { permissions }),
       updateStep: async (step: UpdateStep): Promise<Step> => put('steps', step),
-      updateTag: async (projectId: string, tag: Tag): Promise<Tag> => put(`projects/${projectId}/tags`, tag),
     }
 }}))
