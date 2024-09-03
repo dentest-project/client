@@ -115,7 +115,7 @@ const onTableParamUpdate = (newValue: TableParamOptions & { content: string[][] 
 
   if (props.modelValue.step?.extraParamTemplate) {
     const firstRow: string[] = newValue.content.length > 0
-      ? (newHeaders ? newHeaders : newValue.content[0].map((_, i) => props.modelValue.step?.extraParamTemplate?.[i].header ?? ''))
+      ? (newHeaders ? newHeaders : headers.value)
       : props.modelValue.step?.extraParamTemplate.map((item) => item.header)
 
     params[updatedParamIndex] = {
@@ -222,6 +222,7 @@ const tableParamWithTemplateAndMissingColumns = computed(() => {
 })
 
 const cellStrategies = computed(() => props.modelValue.step?.extraParamTemplate?.map((col) => ({
+  header: col.header,
   choices: col.choices,
   fakeDataType: col.fakeDataType,
   strategy: col.strategy

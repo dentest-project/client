@@ -20,8 +20,8 @@
       </tr>
       <tr v-for="(row, i) in modelValue.content" :class="[ headerable && modelValue.headerRow && i === 0 && 'TableForm-header' ]">
         <td v-for="(cell, j) in row" class="cell" :class="[ headerable && modelValue.headerColumn && j === 0 && 'TableForm-header' ]">
-          <el-select v-if="(cellStrategies ?? [])[j]?.strategy === ContentStrategy.Choices" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Instantly)">
-            <el-option v-for="choice in (cellStrategies ?? [])[j]?.choices" :value="choice" :label="choice" />
+          <el-select v-if="getColumnStrategy(j)?.strategy === ContentStrategy.Choices" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Instantly)">
+            <el-option v-for="choice in (getColumnStrategy(j)?.choices ?? [])" :value="choice" :label="choice" />
           </el-select>
           <el-input v-else :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Delayed)" />
         </td>
@@ -47,6 +47,7 @@ import { fake } from '~/helpers/fake'
 import { ContentStrategy, Delay, FakeDataType } from '~/types'
 
 type CellStrategy = {
+  header: string
   strategy: ContentStrategy
   choices?: string[]
   fakeDataType?: FakeDataType
@@ -116,6 +117,16 @@ const onInsertColumnBefore = (columnId: number) => {
   emit('update:modelValue', { ...props.modelValue, content }, Delay.Delayed)
 }
 
+const getColumnStrategy = (columnId: number) => {
+  if (!props.cellStrategies) {
+    return
+  }
+
+  const headerName = props.headers[columnId] ?? ''
+
+  return props.cellStrategies.find((strategy) => strategy.header === headerName)
+}
+
 const getNewRowContents = (newIndex: number) => {
   const newRow = new Array(nbColumns.value).fill('')
 
@@ -124,12 +135,18 @@ const getNewRowContents = (newIndex: number) => {
   }
 
   for (const i in newRow) {
-    if (props.cellStrategies[i].strategy === ContentStrategy.Choices && props.cellStrategies[i].choices.length > 0) {
-      newRow[i] = props.cellStrategies[i].choices[0]
-    } else if (props.cellStrategies[i].strategy === ContentStrategy.RowIndex) {
+    const strategy = getColumnStrategy(i)
+
+    if (!strategy) {
+      continue
+    }
+
+    if (strategy.strategy === ContentStrategy.Choices && strategy.choices.length > 0) {
+      newRow[i] = strategy.choices[0]
+    } else if (strategy.strategy === ContentStrategy.RowIndex) {
       newRow[i] = (newIndex + 1).toString()
-    } else if (props.cellStrategies[i].strategy === ContentStrategy.FakeData && props.cellStrategies[i].fakeDataType) {
-      newRow[i] = fake(props.cellStrategies[i].fakeDataType)
+    } else if (strategy.strategy === ContentStrategy.FakeData && strategy.fakeDataType) {
+      newRow[i] = fake(strategy.fakeDataType)
     }
   }
 
@@ -147,8 +164,15 @@ const reorderRowIndexColumns = (baseContent: string[][]) => {
       continue
     }
 
+    const strategyHeaderName = props.cellStrategies[strategyId].header
+    const columnId = props.headers.findIndex((h) => h === strategyHeaderName)
+
+    if (columnId === -1) {
+      continue
+    }
+
     for (const i in content) {
-      content[i][strategyId] = (Number(i) + 1).toString()
+      content[i][columnId] = (Number(i) + 1).toString()
     }
   }
 
