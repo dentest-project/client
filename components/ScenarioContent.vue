@@ -34,6 +34,8 @@
           <MoveDownButton v-if="canMoveDown" @click.stop="onMoveDown" />
           <DuplicateButton v-if="modelValue.type !== ScenarioType.Background" @click.stop="onDuplicate" />
           <DeleteButton label="Delete" size="small" @deleted="onDelete" />
+          <MinimizeButton v-if="modelValue.type === ScenarioType.Background && !minimized" @click.stop="minimize" />
+          <ExpandButton v-if="modelValue.type === ScenarioType.Background && minimized" @click.stop="expand" />
         </div>
         <div v-if="modelValue.type !== ScenarioType.Background" class="ScenarioContent-tags">
           <TagsSelector v-if="canWrite && mode === Mode.Edit" :project="project" v-model="modelValue.tags" @update:model-value="onTagsUpdate" />
@@ -41,18 +43,19 @@
         </div>
       </template>
       <FeaturesWithBackgroundSelector
-        v-if="modelValue.type === ScenarioType.Background && steps.length === 0 && mode === Mode.Edit"
+        v-if="modelValue.type === ScenarioType.Background && steps.length === 0 && mode === Mode.Edit && !minimized"
         v-model="featuresToCopyBackgroundFrom"
         :project="project"
         @update:model-value="onFeatureWithBackgroundSelected"
       />
       <ScenarioStepList
+        v-if="!minimized"
         v-model="steps"
         :mode="canWrite ? mode : Mode.View"
         @update:model-value="onStepsUpdate"
       />
       <ExamplesContent
-        v-if="modelValue.examples"
+        v-if="modelValue.examples && !minimized"
         :mode="canWrite ? mode : Mode.View"
         :model-value="modelValue.examples"
         @update:model-value="onExamplesUpdate"
@@ -102,6 +105,7 @@ const tags = ref(props.modelValue.tags)
 const draggedOver = ref(false)
 const mode = ref(Mode.View)
 const featuresToCopyBackgroundFrom = ref<Pick<Feature, 'id' | 'title'>>()
+const minimized = ref(false)
 
 const onTitleUpdate = () => {
   emit('update:modelValue', {
@@ -199,6 +203,14 @@ const onFeatureWithBackgroundSelected = async ({ id }: Pick<Feature, 'id' | 'tit
   featuresToCopyBackgroundFrom.value = undefined
 
   emit('update:modelValue', duplicateScenario(background))
+}
+
+const minimize = () => {
+  minimized.value = true
+}
+
+const expand = () => {
+  minimized.value = false
 }
 
 const shouldDisplayBackgroundSwitch = computed(() => !props.modelValue.examples && props.canBeBackground)
