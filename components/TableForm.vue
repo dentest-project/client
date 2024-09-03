@@ -138,7 +138,7 @@ const getNewRowContents = (newIndex: number) => {
 
 const reorderRowIndexColumns = (baseContent: string[][]) => {
   if (!props.cellStrategies || !props.cellStrategies.some((s) => s.strategy === ContentStrategy.RowIndex)) {
-    return
+    return baseContent
   }
 
   const content = [...baseContent]
