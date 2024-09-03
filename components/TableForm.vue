@@ -87,7 +87,7 @@ const onDeleteColumn = (columnId: number) => {
     headers.splice(columnId, 1)
   }
 
-  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly, headers)
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Delayed, headers)
 }
 
 
@@ -96,7 +96,7 @@ const onDeleteRow = (rowId: number) => {
 
   content.splice(rowId, 1)
 
-  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Delayed)
 }
 
 
@@ -105,7 +105,7 @@ const onInsertColumnAfter = (columnId: number) => {
 
   content.forEach((r) => r.splice(columnId + 1, 0, ''))
 
-  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Delayed)
 }
 
 const onInsertColumnBefore = (columnId: number) => {
@@ -113,7 +113,7 @@ const onInsertColumnBefore = (columnId: number) => {
 
   content.forEach((r) => r.splice(columnId, 0, ''))
 
-  emit('update:modelValue', { ...props.modelValue, content }, Delay.Instantly)
+  emit('update:modelValue', { ...props.modelValue, content }, Delay.Delayed)
 }
 
 const getNewRowContents = (newIndex: number) => {
@@ -166,7 +166,7 @@ const onInsertRowAfter = (rowId: number) => {
       ...props.modelValue,
       content: reorderRowIndexColumns(content)
     },
-    Delay.Instantly
+    Delay.Delayed
   )
 }
 
@@ -181,16 +181,16 @@ const onInsertRowBefore = (rowId: number) => {
       ...props.modelValue,
       content: reorderRowIndexColumns(content)
     },
-    Delay.Instantly
+    Delay.Delayed
   )
 }
 
 const onToggleHeaderRow = () => {
-  emit('update:modelValue', { ...props.modelValue, headerRow: !props.modelValue.headerRow }, Delay.Instantly)
+  emit('update:modelValue', { ...props.modelValue, headerRow: !props.modelValue.headerRow }, Delay.Delayed)
 }
 
 const onToggleHeaderColumn = () => {
-  emit('update:modelValue', { ...props.modelValue, headerColumn: !props.modelValue.headerColumn }, Delay.Instantly)
+  emit('update:modelValue', { ...props.modelValue, headerColumn: !props.modelValue.headerColumn }, Delay.Delayed)
 }
 
 const nbRows = computed(() => props.modelValue.content.length)

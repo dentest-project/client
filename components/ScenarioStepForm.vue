@@ -83,7 +83,7 @@ const onAdverbUpdate = (adverb: StepAdverb) => {
   emit('update:modelValue', {
     ...props.modelValue,
     adverb
-  }, Delay.Instantly)
+  }, Delay.Delayed)
 }
 
 const onInlineParamUpdated = (paramIndex: number, newValue: InlineStepParam, delay: Delay) => {

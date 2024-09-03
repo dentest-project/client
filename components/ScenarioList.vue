@@ -71,7 +71,7 @@ const onUp = (i: number) => {
   updatedList[i - 1] = props.modelValue[i]
   updatedList[i] = previousScenario
 
-  emit('update:modelValue', updatedList, Delay.Instantly)
+  emit('update:modelValue', updatedList, Delay.Delayed)
 }
 
 const onDown = (i: number) => {
@@ -85,7 +85,7 @@ const onDown = (i: number) => {
   updatedList[i + 1] = props.modelValue[i]
   updatedList[i] = nextScenario
 
-  emit('update:modelValue', updatedList, Delay.Instantly)
+  emit('update:modelValue', updatedList, Delay.Delayed)
 }
 
 const onDuplicate = (i: number) => {
@@ -137,7 +137,7 @@ const onDuplicate = (i: number) => {
     ],
   })
 
-  emit('update:modelValue', updatedList, Delay.Instantly)
+  emit('update:modelValue', updatedList, Delay.Delayed)
 }
 
 const onDelete = (i: number) => {
@@ -145,6 +145,6 @@ const onDelete = (i: number) => {
 
   updatedList.splice(i, 1)
 
-  emit('update:modelValue', updatedList, Delay.Instantly)
+  emit('update:modelValue', updatedList, Delay.Delayed)
 }
 </script>

@@ -96,7 +96,7 @@ const onTitleUpdate = () => {
   emit('update:modelValue', {
     ...props.modelValue,
     title: title.value
-  }, Delay.Instantly)
+  }, Delay.Delayed)
 }
 
 const onTypeChange = () => {
@@ -106,7 +106,7 @@ const onTypeChange = () => {
       ? (props.modelValue.examples ? ScenarioType.Outline : ScenarioType.Regular)
       : ScenarioType.Background,
     title: props.modelValue.type === ScenarioType.Background ? 'Scenario title' : '',
-  }, Delay.Instantly)
+  }, Delay.Delayed)
 }
 
 const onDrop = () => {
@@ -125,7 +125,7 @@ const onDrop = () => {
   emit('update:modelValue', {
     ...props.modelValue,
     steps
-  }, Delay.Instantly)
+  }, Delay.Delayed)
 }
 
 const onStepsUpdate = (steps: ScenarioStep[], delay: Delay) => {
@@ -152,7 +152,7 @@ const onTagsUpdate = (tags: Tag[]) => {
   emit('update:modelValue', {
     ...props.modelValue,
     tags
-  }, Delay.Instantly)
+  }, Delay.Delayed)
 }
 
 const onMoveUp = () => {

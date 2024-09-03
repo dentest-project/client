@@ -21,6 +21,7 @@
     "@vueuse/components": "^10.9.0",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
+    "axios": "^1.7.7",
     "core-js": "^3.37.0",
     "eslint": "^9.1.1",
     "eslint-config-prettier": "^9.1.0",

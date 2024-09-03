@@ -1,4 +1,5 @@
 import { defineNuxtPlugin } from 'nuxt/app'
+import axios from 'axios'
 import {
   type BaseUser,
   type CreateFeature,
@@ -38,18 +39,25 @@ interface QueryOptions {
 const query = async (url: string, options: QueryOptions) => {
   const { token } = useAuthState()
 
-  const result = await useFetch(`${API_URL}/${url}`, {
-    headers: {
-      Authorization: token.value
-    },
-    ...options,
-  } as any)
+  try {
+    const result = await axios.request({
+      baseURL: API_URL,
+      url,
+      method: options.method ?? 'GET',
+      data: options.body,
+      headers: {
+        Authorization: token.value
+      },
+      ...options
+    })
 
-  if (result.error.value) {
-    throw result.error.value
+    return result.data
+  } catch (error) {
+    throw {
+      ...error,
+      statusCode: error.status
+    }
   }
-
-  return result.data.value
 }
 
 const get = async (url: string, options: QueryOptions) => await query(url, { ...options, method: 'GET' })

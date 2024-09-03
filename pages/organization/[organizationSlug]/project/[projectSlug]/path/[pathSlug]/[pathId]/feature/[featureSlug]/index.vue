@@ -175,9 +175,7 @@ const prepareSave = () => {
     clearTimeout(saveTimeout)
   }
 
-  saveTimeout = setTimeout(() => {
-    save()
-  }, 2000)
+  saveTimeout = setTimeout(save, 2000)
 }
 
 const saveScenariosInstantly = (scenarios: Scenario[]) => {
@@ -209,6 +207,12 @@ const save = async () => {
     })
 
     saveStatus.value = SaveStatus.Saved
+
+    if (saveTimeout) {
+      clearTimeout(saveTimeout)
+
+      saveTimeout = undefined
+    }
 
     if (savedFeature.slug !== params.featureSlug) {
       $router.push($routes.feature(savedFeature.path, savedFeature))

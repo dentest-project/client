@@ -43,6 +43,6 @@ const onDelete = (i: number) => {
 
   updatedList.splice(i, 1)
 
-  emit('update:modelValue', updatedList, Delay.Instantly)
+  emit('update:modelValue', updatedList, Delay.Delayed)
 }
 </script>
