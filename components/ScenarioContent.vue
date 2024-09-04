@@ -251,6 +251,7 @@ h2 + .ScenarioContent-actions, .ScenarioContent-backgroundChip + .ScenarioConten
 
 .ScenarioContent-card {
   height: 100%;
+  border-radius: 1rem;
 }
 
 .ScenarioContent-empty {
@@ -264,7 +265,7 @@ h2 + .ScenarioContent-actions, .ScenarioContent-backgroundChip + .ScenarioConten
 
 .ScenarioContent-close {
   position: absolute;
-  top: 0;
-  right: 11px;
+  top: 0.5rem;
+  right: 1.2rem;
 }
 </style>

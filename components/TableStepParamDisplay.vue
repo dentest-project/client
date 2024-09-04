@@ -39,6 +39,7 @@ defineProps<{
   font-size: 0.8rem;
   margin: 0;
   min-width: 3rem;
+  border-radius: 0.2rem;
 }
 
 .TableStepParamDisplay td {

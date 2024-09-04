@@ -66,5 +66,6 @@ const isExtraParamJson = computed(() => props.step.step?.extraParamType === Step
   padding: 0.5rem;
   color: var(--el-text-color-regular);
   font-size: 0.8rem;
+  border-radius: 0.4rem;
 }
 </style>
