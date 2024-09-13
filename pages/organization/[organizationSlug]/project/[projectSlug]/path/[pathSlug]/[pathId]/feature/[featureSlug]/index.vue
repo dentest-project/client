@@ -34,7 +34,7 @@
           @update:model-value="onTagsSelected"
         />
         <TagsList v-else :tags="feature.tags" />
-        <Panel type="info" bold>
+        <Panel type="info">
           <EditableParagraph
             placeholder="Feature description"
             :editable="canWrite && feature.status === FeatureStatus.Draft"

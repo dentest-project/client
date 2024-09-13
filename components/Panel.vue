@@ -13,20 +13,20 @@ defineProps<{
 
 <style>
 .panel {
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 4px;
   margin: 20px 0;
 }
 
 .panel.panel--warning {
-  background-color: var(--el-color-warning-light-5);
+  background-color: var(--el-color-warning-light-9);
   border-left: 5px solid var(--el-color-warning);
 }
 
 .panel.panel--info {
-  background-color: var(--el-color-primary-light-3);
+  background-color: var(--el-color-primary-light-9);
+  border: 1px solid var(--el-color-primary);
   border-left: 5px solid var(--el-color-primary);
-  color: #EEEEEE;
 }
 
 .panel--bold {
