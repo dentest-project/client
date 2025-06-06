@@ -1,8 +1,6 @@
-import { SessionData } from '#auth'
-import { SessionStatus } from '@sidebase/nuxt-auth/dist/runtime/types'
 import type { Session, User } from '~/types'
 
-const loggedInUser = (sessionData?: SessionData | null): User => {
+const loggedInUser = (sessionData): User => {
   return sessionData ? (sessionData as Session).user : {
     id: '',
     username: '',
@@ -11,7 +9,7 @@ const loggedInUser = (sessionData?: SessionData | null): User => {
   }
 }
 
-const isAuthenticated = (sessionStatus: SessionStatus) => {
+const isAuthenticated = (sessionStatus) => {
   return sessionStatus === 'authenticated'
 }
 
