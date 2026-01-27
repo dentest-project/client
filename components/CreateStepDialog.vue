@@ -12,40 +12,42 @@
         <el-select v-model="adverb" class="AddStepDialog-adverb">
           <el-option v-for="adverbOption in adverbs" :value="adverbOption" :label="adverbOption.charAt(0).toUpperCase() + adverbOption.slice(1)" />
         </el-select>
-        <div v-for="(part, i) in parts" class="AddStepDialog-input">
-          <el-input
-            v-model="parts[i].content"
-            :class="`AddStepDialog-input--${part.type}`"
-            @select="(e) => onContentSelected(i, e)"
-            @focus="onPotentialSelectionEnd"
-            @blur="onPotentialSelectionEnd"
-            @keydown="onPotentialSelectionEnd"
-            @mousedown="onPotentialSelectionEnd"
-            @update:model-value="onPartsUpdate"
-          >
-            <template v-if="part.type === StepPartType.Param" #suffix>
-              <el-icon class="el-input__icon AddStepDialog-input-close" title="Remove parameter" @click="onInputCleared(i)">
-                <CloseBold />
-              </el-icon>
-            </template>
-          </el-input>
-          <SplitStepButton v-if="selection && selection.inputId === i" @click="onSplitButtonClicked" />
-          <div v-else-if="part.type === StepPartType.Param">
-            <ContentChoicesInput
-              v-if="part.strategy === ContentStrategy.Choices"
-              v-model="parts[i].choices"
+        <div class="AddStepDialog-parts">
+          <div v-for="(part, i) in parts" class="AddStepDialog-input">
+            <el-input
+              v-model="parts[i].content"
+              :class="`AddStepDialog-input--${part.type}`"
+              @select="(e) => onContentSelected(i, e)"
+              @focus="onPotentialSelectionEnd"
+              @blur="onPotentialSelectionEnd"
+              @keydown="onPotentialSelectionEnd"
+              @mousedown="onPotentialSelectionEnd"
               @update:model-value="onPartsUpdate"
-            />
-            <ContentFakeDataTypeSelector
-              v-else-if="part.strategy === ContentStrategy.FakeData"
-              v-model="parts[i].fakeDataType"
-              @update:model-value="onPartsUpdate"
-            />
-            <ContentStrategySelector
-              v-model="parts[i].strategy"
-              :with-row-id="false"
-              @update:model-value="(newStrategy) => onStrategyUpdate(i, newStrategy)"
-            />
+            >
+              <template v-if="part.type === StepPartType.Param" #suffix>
+                <el-icon class="el-input__icon AddStepDialog-input-close" title="Remove parameter" @click="onInputCleared(i)">
+                  <CloseBold />
+                </el-icon>
+              </template>
+            </el-input>
+            <SplitStepButton v-if="selection && selection.inputId === i" @click="onSplitButtonClicked" />
+            <div v-else-if="part.type === StepPartType.Param">
+              <ContentChoicesInput
+                v-if="part.strategy === ContentStrategy.Choices"
+                v-model="parts[i].choices"
+                @update:model-value="onPartsUpdate"
+              />
+              <ContentFakeDataTypeSelector
+                v-else-if="part.strategy === ContentStrategy.FakeData"
+                v-model="parts[i].fakeDataType"
+                @update:model-value="onPartsUpdate"
+              />
+              <ContentStrategySelector
+                v-model="parts[i].strategy"
+                :with-row-id="false"
+                @update:model-value="(newStrategy) => onStrategyUpdate(i, newStrategy)"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -321,15 +323,25 @@ const adverbDescription = computed(() => {
 .AddStepDialog-inputs {
   display: flex;
   width: 100%;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .AddStepDialog-adverb {
   width: 100px;
 }
 
-.AddStepDialog-input {
-  width: 100%;
+.AddStepDialog-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   flex: 1;
+  min-width: 0;
+}
+
+.AddStepDialog-input {
+  flex: 1 0 calc(20% - 0.5rem);
+  min-width: 160px;
   text-align: center;
 }
 

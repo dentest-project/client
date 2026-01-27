@@ -6,6 +6,10 @@ services:
     build:
       target: app_node_dev
     command: npm run dev
+    environment:
+      HMR_HOST: ${HMR_HOST:-dentest.local}
+      HMR_CLIENT_PORT: ${HMR_CLIENT_PORT:-${HTTP_PORT:-80}}
+      HMR_PROTOCOL: ${HMR_PROTOCOL:-ws}
     volumes:
       - .:/srv/app
       - ./node_modules:/srv/app/node_modules

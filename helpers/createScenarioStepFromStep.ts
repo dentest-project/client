@@ -11,7 +11,7 @@ import {
   type StepPart,
   StepPartType,
   type TableStepParam,
-  TableStepParamTemplateColumn
+  type TableStepParamTemplateColumn
 } from '~/types'
 import { getCorrespondingAdverb } from './getCorrespondingAdverb'
 

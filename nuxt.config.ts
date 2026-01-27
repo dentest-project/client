@@ -2,6 +2,17 @@
 import { Session } from './types'
 
 // @ts-ignore
+const hmrHost = process.env.HMR_HOST
+const hmrPort = process.env.HMR_PORT ? Number(process.env.HMR_PORT) : undefined
+const hmrClientPort = process.env.HMR_CLIENT_PORT ? Number(process.env.HMR_CLIENT_PORT) : undefined
+const hmrProtocol = process.env.HMR_PROTOCOL
+const hmrConfig = hmrHost || hmrPort || hmrClientPort || hmrProtocol ? {
+  ...(hmrHost ? { host: hmrHost } : {}),
+  ...(hmrPort ? { port: hmrPort } : {}),
+  ...(hmrClientPort ? { clientPort: hmrClientPort } : {}),
+  ...(hmrProtocol ? { protocol: hmrProtocol } : {}),
+} : undefined
+
 export default defineNuxtConfig({
     /*
     ** Global CSS
@@ -76,6 +87,7 @@ export default defineNuxtConfig({
           usePolling: true,
           interval: 100,
         },
+        ...(hmrConfig ? { hmr: hmrConfig } : {}),
       }
     },
 })

@@ -5,15 +5,17 @@
         <div class="UpdateStepDialog-adverb">
           {{ step.type.charAt(0).toUpperCase() + step.type.slice(1) }}
         </div>
-        <div v-for="(part, i) in parts" class="UpdateStepDialog-input">
-          <el-input v-model="parts[i].content" :class="`UpdateStepDialog-input--${part.type}`" />
-          <div v-if="part.type === StepPartType.Param">
-            <ContentChoicesInput v-if="part.strategy === ContentStrategy.Choices" v-model="parts[i].choices" :key="step.id" />
-            <ContentStrategySelector
-              v-model="parts[i].strategy"
-              :with-row-id="false"
-              @update:model-value="(newStrategy) => onStrategyUpdate(i, newStrategy)"
-            />
+        <div class="UpdateStepDialog-parts">
+          <div v-for="(part, i) in parts" class="UpdateStepDialog-input">
+            <el-input v-model="parts[i].content" :class="`UpdateStepDialog-input--${part.type}`" />
+            <div v-if="part.type === StepPartType.Param">
+              <ContentChoicesInput v-if="part.strategy === ContentStrategy.Choices" v-model="parts[i].choices" :key="step.id" />
+              <ContentStrategySelector
+                v-model="parts[i].strategy"
+                :with-row-id="false"
+                @update:model-value="(newStrategy) => onStrategyUpdate(i, newStrategy)"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -142,6 +144,8 @@ watch(props, () => {
 .UpdateStepDialog-inputs {
   display: flex;
   width: 100%;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .UpdateStepDialog-adverb {
@@ -149,9 +153,17 @@ watch(props, () => {
   width: 50px;
 }
 
-.UpdateStepDialog-input {
-  width: 100%;
+.UpdateStepDialog-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   flex: 1;
+  min-width: 0;
+}
+
+.UpdateStepDialog-input {
+  flex: 1 0 calc(20% - 0.5rem);
+  min-width: 160px;
   text-align: center;
 }
 
