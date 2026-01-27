@@ -93,6 +93,10 @@ const saveStatus = ref(SaveStatus.Saved)
 const pullFeatureDialogOpened = ref(false)
 
 let saveTimeout;
+let saveRequestId = 0
+let changeVersion = 0
+let saveInFlight = false
+let pendingSaveRequested = false
 
 useHead({
   title: (feature.value.rootProject?.organization
@@ -143,6 +147,7 @@ const onDeleted = async () => {
 }
 
 const markUnsaved = () => {
+  changeVersion += 1
   saveStatus.value = SaveStatus.NotSaved
 }
 
@@ -165,12 +170,12 @@ const chooseSaveStrategy = (delay: Delay) => {
     return
   }
 
+  markUnsaved()
   save()
 }
 
 const prepareSave = () => {
-  saveStatus.value = SaveStatus.NotSaved
-
+  markUnsaved()
   if (saveTimeout) {
     clearTimeout(saveTimeout)
   }
@@ -181,7 +186,7 @@ const prepareSave = () => {
 const saveScenariosInstantly = (scenarios: Scenario[]) => {
   feature.value.scenarios = scenarios
 
-  saveStatus.value = SaveStatus.NotSaved
+  markUnsaved()
 
   if (saveTimeout) {
     clearTimeout(saveTimeout)
@@ -191,28 +196,47 @@ const saveScenariosInstantly = (scenarios: Scenario[]) => {
 }
 
 const save = async () => {
+  if (saveTimeout) {
+    clearTimeout(saveTimeout)
+    saveTimeout = undefined
+  }
+
+  if (saveInFlight) {
+    pendingSaveRequested = true
+    return
+  }
+
+  saveInFlight = true
+  const requestId = ++saveRequestId
+  const changeVersionAtStart = changeVersion
+
   try {
     saveStatus.value = SaveStatus.Saving
 
+    const featureSnapshot = JSON.parse(JSON.stringify(feature.value)) as Feature
+
     const savedFeature = await $api.saveFeature({
-      id: feature.value.id,
-      title: feature.value.title,
-      description: feature.value.description,
-      scenarios: feature.value.scenarios,
-      tags: feature.value.tags,
-      issues: feature.value.issues,
+      id: featureSnapshot.id,
+      title: featureSnapshot.title,
+      description: featureSnapshot.description,
+      scenarios: featureSnapshot.scenarios,
+      tags: featureSnapshot.tags,
+      issues: featureSnapshot.issues,
       path: {
-        id: feature.value.path.id
+        id: featureSnapshot.path.id
       }
     })
 
-    saveStatus.value = SaveStatus.Saved
-
-    if (saveTimeout) {
-      clearTimeout(saveTimeout)
-
-      saveTimeout = undefined
+    if (requestId !== saveRequestId) {
+      return
     }
+
+    if (changeVersion !== changeVersionAtStart) {
+      saveStatus.value = SaveStatus.NotSaved
+      return
+    }
+
+    saveStatus.value = SaveStatus.Saved
 
     if (savedFeature.slug !== params.featureSlug) {
       $router.push($routes.feature(savedFeature.path, savedFeature))
@@ -220,12 +244,26 @@ const save = async () => {
 
     feature.value = savedFeature
   } catch (error) {
+    if (requestId !== saveRequestId) {
+      return
+    }
     saveStatus.value = SaveStatus.NotSaved
     ElNotification({
       title: 'An error occurred',
       message: 'An error occurred while saving the feature',
       type: 'error',
     })
+  } finally {
+    if (requestId === saveRequestId) {
+      saveInFlight = false
+    }
+
+    if (pendingSaveRequested) {
+      pendingSaveRequested = false
+      if (changeVersion !== changeVersionAtStart) {
+        await save()
+      }
+    }
   }
 }
 
