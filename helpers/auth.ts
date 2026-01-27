@@ -9,8 +9,12 @@ const loggedInUser = (sessionData): User => {
   }
 }
 
-const isAuthenticated = (sessionStatus) => {
-  return sessionStatus === 'authenticated'
+const isAuthenticated = (sessionStatus: string, sessionData?: Session | null) => {
+  if (sessionStatus === 'authenticated') {
+    return true
+  }
+
+  return sessionStatus === 'loading' && !!sessionData
 }
 
 export { loggedInUser, isAuthenticated }

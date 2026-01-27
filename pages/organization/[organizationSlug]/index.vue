@@ -34,7 +34,7 @@ definePageMeta({
 
 const { $api, $router, $routes } = useNuxtApp()
 const { params } = useRoute()
-const { status } = useAuth()
+const { status, data } = useAuth()
 
 const organization = await $api.getOrganization(params.organizationSlug)
 const organizationName = ref(organization.name)
@@ -44,8 +44,6 @@ const projects = ref(await $api.getOrganizationProjects(params.organizationSlug)
 useHead({
   title: `${organization.name} | Dentest`
 })
-
-const { data } = useAuth()
 
 const onProjectCreated = () => {
   reloadProjects()
@@ -147,5 +145,5 @@ const isOrganizationUser = computed(() => organization.permissions.some(
   ].includes(p)
 ))
 
-const isLoggedIn = computed(() => isAuthenticated(status.value))
+const isLoggedIn = computed(() => isAuthenticated(status.value, data.value))
 </script>

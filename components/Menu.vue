@@ -34,9 +34,9 @@ const props = defineProps<{
   lightMode: 'light' | 'dark'
 }>()
 
-const username = computed(() => isAuthenticated(status.value) ? loggedInUser(data.value).username : '')
+const username = computed(() => isAuthenticated(status.value, data.value) ? loggedInUser(data.value).username : '')
 
-const loggedIn = computed(() => isAuthenticated(status.value))
+const loggedIn = computed(() => isAuthenticated(status.value, data.value))
 
 const toUpdateProfile = computed(() => $routes.updateProfile())
 </script>

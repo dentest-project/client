@@ -85,7 +85,7 @@ definePageMeta({
 
 const { $api, $router, $routes } = useNuxtApp()
 const { params } = useRoute()
-const { status } = useAuth()
+const { status, data } = useAuth()
 
 const feature = ref<Feature>(await $api.getFeature(params.pathId, params.featureSlug));
 const issueTrackerConfigurations = ref(await $api.getFeatureIssueTrackerConfigurations(params.pathId, params.featureSlug))
@@ -286,7 +286,7 @@ const breadcrumb = computed((): BreadcrumbItems => {
   return items.reverse()
 })
 
-const isLoggedIn = computed(() => isAuthenticated(status.value))
+const isLoggedIn = computed(() => isAuthenticated(status.value, data.value))
 </script>
 
 <style scoped>

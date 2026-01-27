@@ -55,7 +55,7 @@ definePageMeta({
 
 const { $api, $router, $routes } = useNuxtApp()
 const { params } = useRoute()
-const { status } = useAuth()
+const { status, data } = useAuth()
 
 const path = ref<Path>(await $api.getPath(params.pathId))
 const title = ref(path.value.project ? path.value.project.title : path.value.path)
@@ -68,8 +68,6 @@ useHead({
     ? `${path.value.path} - ${path.value.rootProject?.title} - ${path.value.rootProject?.organization.name}`
     : `${path.value.path} - ${path.value.rootProject?.title}`) + ' | Dentest'
 })
-
-const { data } = useAuth()
 
 const reload = async () => {
   path.value = await $api.getPath(params.pathId)
@@ -293,5 +291,5 @@ const breadcrumb = computed((): BreadcrumbItems => {
   return items.reverse()
 })
 
-const isLoggedIn = computed(() => isAuthenticated(status.value))
+const isLoggedIn = computed(() => isAuthenticated(status.value, data.value))
 </script>

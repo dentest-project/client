@@ -40,7 +40,7 @@ definePageMeta({
 })
 
 const { $api } = useNuxtApp()
-const { status } = useAuth()
+const { status, data } = useAuth()
 
 const organizations = ref<OrganizationList>([])
 const projects = ref<ProjectList>([])
@@ -63,12 +63,12 @@ const onProjectCreated = () => {
   loadProjects()
 }
 
-if (isAuthenticated(status.value)) {
+if (isAuthenticated(status.value, data.value)) {
   await loadOrganizations()
   await loadProjects()
 }
 
-const isLoggedIn = computed(() => isAuthenticated(status.value))
+const isLoggedIn = computed(() => isAuthenticated(status.value, data.value))
 
 const shouldDisplayEmptyMessage = computed(() => organizations.value.length === 0 && projects.value.length === 0)
 </script>
