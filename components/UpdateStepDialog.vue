@@ -10,6 +10,10 @@
             <el-input v-model="parts[i].content" :class="`UpdateStepDialog-input--${part.type}`" />
             <div v-if="part.type === StepPartType.Param">
               <ContentChoicesInput v-if="part.strategy === ContentStrategy.Choices" v-model="parts[i].choices" :key="step.id" />
+              <ContentFakeDataTypeSelector
+                v-else-if="part.strategy === ContentStrategy.FakeData"
+                v-model="parts[i].fakeDataType"
+              />
               <ContentStrategySelector
                 v-model="parts[i].strategy"
                 :with-row-id="false"
