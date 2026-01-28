@@ -144,6 +144,10 @@ const nbColumns = computed(() => props.modelValue.length)
   background-color: var(--el-fill-color);
 }
 
+.TableParamTemplate td .el-select__input {
+  background-color: transparent;
+}
+
 .TableParamTemplate th {
   padding: 1rem;
 }

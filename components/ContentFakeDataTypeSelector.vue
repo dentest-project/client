@@ -1,15 +1,20 @@
 <template>
   <client-only>
-    <el-select-v2
+    <el-select
       :model-value="modelValue"
-      :options="options"
       size="small"
       placeholder="Data type"
-      label="Data type"
       style="width: 100%"
       filterable
       @update:model-value="onUpdate"
-    />
+    >
+      <el-option
+        v-for="option in options"
+        :key="option.value"
+        :label="option.label"
+        :value="option.value"
+      />
+    </el-select>
   </client-only>
 </template>
 
@@ -17,7 +22,7 @@
 import { FakeDataType } from '~/types'
 
 export interface Props {
-  modelValue: FakeDataType
+  modelValue?: FakeDataType | null
 }
 
 const props = defineProps<Props>()
@@ -45,7 +50,7 @@ const options = computed(() => Object.entries({
   label
 })))
 
-const onUpdate = (newValue: string[]) => {
+const onUpdate = (newValue: FakeDataType | null) => {
   emit('update:modelValue', newValue)
 }
 </script>
