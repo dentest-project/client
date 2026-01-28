@@ -141,7 +141,7 @@ const onDrop = () => {
 
   emit('update:modelValue', {
     ...props.modelValue,
-    steps
+    steps: steps.value
   }, Delay.Delayed)
 }
 
@@ -216,6 +216,12 @@ const expand = () => {
 }
 
 const shouldDisplayBackgroundSwitch = computed(() => !props.modelValue.examples && props.canBeBackground)
+
+watch(() => props.modelValue, (newScenario) => {
+  title.value = newScenario.title
+  steps.value = newScenario.steps
+  tags.value = newScenario.tags
+})
 </script>
 
 <style scoped>

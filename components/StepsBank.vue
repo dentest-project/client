@@ -44,7 +44,14 @@
     </el-collapse-item>
   </el-collapse>
   <CreateStepDialog v-model="createStepDialog" :project="project" @created="loadSteps" />
-  <UpdateStepDialog v-if="stepToUpdate" v-model="updateStepDialog" :project="project" :step="stepToUpdate" @updated="loadSteps" @deleted="loadSteps" />
+  <UpdateStepDialog
+    v-if="stepToUpdate"
+    v-model="updateStepDialog"
+    :project="project"
+    :step="stepToUpdate"
+    @updated="onStepChanged"
+    @deleted="onStepChanged"
+  />
 </template>
 
 <script setup async lang="ts">
@@ -58,6 +65,7 @@ const props = defineProps<{
 
 const { $api } = useNuxtApp()
 const { moveStep, stopMovingStep } = useStepStore()
+const emit = defineEmits(['stepUpdated'])
 
 const createStepDialog = ref(false)
 const updateStepDialog = ref(false)
@@ -69,6 +77,11 @@ const filterTags = ref<Tag[]>([])
 
 const loadSteps = async () => {
   steps.value = await $api.getProjectSteps(props.project.id)
+}
+
+const onStepChanged = async () => {
+  await loadSteps()
+  emit('stepUpdated')
 }
 
 const onStepUpdate = (step: Step) => {

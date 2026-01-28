@@ -54,7 +54,7 @@
       </div>
     </el-main>
     <el-aside v-if="isLoggedIn && canWrite && feature.status === FeatureStatus.Draft" class="Feature-side">
-      <StepsBank :project="feature.rootProject as Project" />
+      <StepsBank :project="feature.rootProject as Project" @step-updated="onStepUpdated" />
     </el-aside>
   </el-container>
   <PullFeatureDialog v-if="canPull && !!feature" v-model="pullFeatureDialogOpened" :feature="feature" />
@@ -97,6 +97,7 @@ let saveRequestId = 0
 let changeVersion = 0
 let saveInFlight = false
 let pendingSaveRequested = false
+let pendingFeatureReload = false
 
 useHead({
   title: (feature.value.rootProject?.organization
@@ -144,6 +145,10 @@ const onDeleted = async () => {
       type: 'error',
     })
   }
+}
+
+const reloadFeature = async () => {
+  feature.value = await $api.getFeature(params.pathId, params.featureSlug)
 }
 
 const markUnsaved = () => {
@@ -243,6 +248,11 @@ const save = async () => {
     }
 
     feature.value = savedFeature
+
+    if (pendingFeatureReload) {
+      pendingFeatureReload = false
+      await reloadFeature()
+    }
   } catch (error) {
     if (requestId !== saveRequestId) {
       return
@@ -265,6 +275,18 @@ const save = async () => {
       }
     }
   }
+}
+
+const onStepUpdated = async () => {
+  if (saveStatus.value !== SaveStatus.Saved) {
+    pendingFeatureReload = true
+    if (saveStatus.value === SaveStatus.NotSaved) {
+      save()
+    }
+    return
+  }
+
+  await reloadFeature()
 }
 
 const openPullFeatureDialog = () => {
