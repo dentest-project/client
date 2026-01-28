@@ -21,7 +21,7 @@
       <tr v-for="(row, i) in modelValue.content" :class="[ headerable && modelValue.headerRow && i === 0 && 'TableForm-header' ]">
         <td v-for="(cell, j) in row" class="cell" :class="[ headerable && modelValue.headerColumn && j === 0 && 'TableForm-header' ]">
           <el-select v-if="getColumnStrategy(j)?.strategy === ContentStrategy.Choices" size="small" :model-value="cell" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Instantly)">
-            <el-option v-for="choice in (getColumnStrategy(j)?.choices ?? [])" :value="choice" :label="choice" />
+            <el-option v-for="choice in getSortedChoices(j)" :value="choice" :label="choice" />
           </el-select>
           <el-input v-else :model-value="cell" size="small" @update:model-value="(newValue) => onCellUpdated(i, j, newValue, Delay.Delayed)" />
         </td>
@@ -67,6 +67,18 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:modelValue'])
+
+const sortChoices = (choices?: string[]) => {
+  if (!choices) {
+    return []
+  }
+
+  return [...choices].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+}
+
+const getSortedChoices = (columnId: number) => {
+  return sortChoices(getColumnStrategy(columnId)?.choices)
+}
 
 const onCellUpdated = (y: number, x: number, newContent: string, delay: Delay) => {
   const content = [...props.modelValue.content]
@@ -142,7 +154,8 @@ const getNewRowContents = (newIndex: number) => {
     }
 
     if (strategy.strategy === ContentStrategy.Choices && strategy.choices.length > 0) {
-      newRow[i] = strategy.choices[0]
+      const sortedChoices = sortChoices(strategy.choices)
+      newRow[i] = sortedChoices[0] ?? ''
     } else if (strategy.strategy === ContentStrategy.RowIndex) {
       newRow[i] = (newIndex + 1).toString()
     } else if (strategy.strategy === ContentStrategy.FakeData && strategy.fakeDataType) {
