@@ -34,6 +34,7 @@
           @update:model-value="onTagsSelected"
         />
         <TagsList v-else :tags="feature.tags" />
+        <AISummaryPanel v-if="feature.status === FeatureStatus.Live && featureSummary" :summary="featureSummary" />
         <Panel type="info">
           <EditableParagraph
             placeholder="Feature description"
@@ -300,6 +301,8 @@ const nextStatus = computed(() => {
 
   return feature.value.status === FeatureStatus.ReadyToDev ? FeatureStatus.Live : FeatureStatus.Draft
 })
+
+const featureSummary = computed(() => feature.value.summary?.trim() ?? '')
 
 const canWrite = computed(() => !!feature.value.rootProject &&
   (

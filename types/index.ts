@@ -162,6 +162,7 @@ interface Feature {
   path: Path,
   title: string,
   description: string,
+  summary?: string,
   scenarios: Array<Scenario>,
   rootProject?: Project,
   priority: number,
