@@ -3,8 +3,10 @@
   <table class="el-table el-table--striped">
     <tbody>
     <UsersTableRow
-      v-for="user in users"
+      v-for="(user, index) in sortedUsers"
+      :key="user.user.id"
       :user="user"
+      :row-index="index"
       :context="context"
       @update:permissions="onUserUpdated"
       @remove="onUserRemoved"
@@ -23,6 +25,10 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['added', 'updated', 'removed'])
+
+const sortedUsers = computed(() => [...props.users].sort((left, right) =>
+  left.user.username.localeCompare(right.user.username, undefined, { sensitivity: 'base' }),
+))
 
 const onUserAdd = (user?: BaseUser) => {
   if (user) {

@@ -1,5 +1,5 @@
 <template>
-  <tr>
+  <tr :class="rowClass">
     <td>{{ user.user.username }}</td>
     <td>
       <UserPermissionSwitch
@@ -23,7 +23,8 @@ import { Context, OrganizationPermission, type OrganizationUser, ProjectPermissi
 
 const props = defineProps<{
   context: Context,
-  user: OrganizationUser | ProjectUser
+  user: OrganizationUser | ProjectUser,
+  rowIndex: number
 }>()
 
 interface PermissionUpdate {
@@ -32,6 +33,11 @@ interface PermissionUpdate {
 }
 
 const emit = defineEmits(['remove', 'update:permissions'])
+
+const rowClass = computed(() => ({
+  'users-table-row--even': props.rowIndex % 2 === 0,
+  'users-table-row--odd': props.rowIndex % 2 !== 0,
+}))
 
 const onRemove = () => {
   emit('remove', {
@@ -126,6 +132,22 @@ const displayedPermissions = computed(() => {
 </script>
 
 <style scoped>
+td {
+  transition: background-color 0.2s ease;
+}
+
+tr.users-table-row--even td {
+  background-color: var(--el-bg-color);
+}
+
+tr.users-table-row--odd td {
+  background-color: var(--el-fill-color-lighter);
+}
+
+tr:hover td {
+  background-color: var(--el-color-primary-light-9);
+}
+
 td:last-of-type {
   text-align: right;
 }
