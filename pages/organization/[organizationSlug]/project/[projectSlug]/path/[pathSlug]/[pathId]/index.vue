@@ -17,6 +17,7 @@
       <LeaveButton v-if="isProjectUser" label="Leave project" @left="onProjectLeft" />
       <DeleteButton v-if="canDelete" :label="deleteButtonLabel" @deleted="onDeleted" />
     </ActionsBar>
+    <AISummaryPanel v-if="pathSummary" :summary="pathSummary" />
     <el-row :gutter="20">
       <el-col v-for="child in path.children" :span="6" :md="6" :sm="12" :xs="24">
         <FolderCard :path="child" :parent="path" :can-write="canWrite" @moved="reload" />
@@ -241,6 +242,8 @@ const canDelete = computed(() => path.value.project ? canAdministrate.value : ca
 const canPull = computed(() => path.value.rootProject && path.value.rootProject.permissions.includes(ProjectPermission.Pull))
 
 const isProject = computed(() => !!path.value.project)
+
+const pathSummary = computed(() => path.value.summary?.trim() ?? '')
 
 const isProjectUser = computed(() => path.value.rootProject &&
   (

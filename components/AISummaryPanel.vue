@@ -4,18 +4,57 @@
       <el-icon class="AISummaryPanel-icon" aria-hidden="true">
         <MagicStick />
       </el-icon>
-      <span>AI-generated summary</span>
+      <span>Summary</span>
     </div>
-    <p class="AISummaryPanel-text">{{ summary }}</p>
+    <p
+      :class="[
+        'AISummaryPanel-text',
+        { 'AISummaryPanel-text--collapsed': canExpand && !isExpanded },
+      ]"
+      v-html="formattedSummary"
+    ></p>
+    <button
+      v-if="canExpand"
+      type="button"
+      class="AISummaryPanel-toggle"
+      :aria-expanded="isExpanded"
+      @click="isExpanded = !isExpanded"
+    >
+      {{ isExpanded ? 'Show less' : 'Show more' }}
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { MagicStick } from '@element-plus/icons-vue'
 
-defineProps<{
+const props = defineProps<{
   summary: string
 }>()
+
+const MAX_VISIBLE_LINES = 10
+const MIN_EXPANDABLE_CHAR_COUNT = 1200
+const isExpanded = ref(false)
+
+const escapeHtml = (value: string) => value
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;')
+
+const formattedSummary = computed(() => escapeHtml(props.summary).replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>'))
+
+const canExpand = computed(() => {
+  const explicitLineCount = props.summary.split(/\r?\n/).length
+  const plainLength = props.summary.trim().length
+
+  return explicitLineCount > MAX_VISIBLE_LINES || plainLength > MIN_EXPANDABLE_CHAR_COUNT
+})
+
+watch(() => props.summary, () => {
+  isExpanded.value = false
+})
 </script>
 
 <style scoped>
@@ -96,5 +135,34 @@ defineProps<{
   color: var(--el-text-color-primary);
   line-height: 1.65;
   white-space: pre-line;
+}
+
+.AISummaryPanel-text--collapsed {
+  max-height: calc(1.65em * 10);
+  overflow: hidden;
+}
+
+.AISummaryPanel-toggle {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--el-color-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.AISummaryPanel-toggle:hover,
+.AISummaryPanel-toggle:focus-visible {
+  color: var(--el-color-primary-light-3);
+}
+
+.AISummaryPanel-toggle:focus-visible {
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: 4px;
+  border-radius: 6px;
 }
 </style>

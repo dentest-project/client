@@ -225,6 +225,7 @@ interface Path extends ProjectRootPath {
   project?: PathProject,
   parent?: Path,
   path: string,
+  summary?: string,
   children: PathList,
   features: Array<PathFeature>
 }
