@@ -6,13 +6,13 @@
       </el-icon>
       <span>Summary</span>
     </div>
-    <p
+    <div
       :class="[
         'AISummaryPanel-text',
         { 'AISummaryPanel-text--collapsed': canExpand && !isExpanded },
       ]"
-      v-html="formattedSummary"
-    ></p>
+      v-html="renderedSummary"
+    ></div>
     <button
       v-if="canExpand"
       type="button"
@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import { MagicStick } from '@element-plus/icons-vue'
+import MarkdownIt from 'markdown-it'
 
 const props = defineProps<{
   summary: string
@@ -36,14 +37,23 @@ const MAX_VISIBLE_LINES = 10
 const MIN_EXPANDABLE_CHAR_COUNT = 1200
 const isExpanded = ref(false)
 
-const escapeHtml = (value: string) => value
-  .replaceAll('&', '&amp;')
-  .replaceAll('<', '&lt;')
-  .replaceAll('>', '&gt;')
-  .replaceAll('"', '&quot;')
-  .replaceAll("'", '&#39;')
+const markdown = new MarkdownIt({
+  html: false,
+  linkify: true,
+  breaks: true,
+})
 
-const formattedSummary = computed(() => escapeHtml(props.summary).replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>'))
+const defaultLinkOpenRenderer = markdown.renderer.rules.link_open
+  ?? ((tokens, idx, options, _env, self) => self.renderToken(tokens, idx, options))
+
+markdown.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+  tokens[idx].attrSet('target', '_blank')
+  tokens[idx].attrSet('rel', 'noopener noreferrer nofollow')
+
+  return defaultLinkOpenRenderer(tokens, idx, options, env, self)
+}
+
+const renderedSummary = computed(() => markdown.render(props.summary ?? ''))
 
 const canExpand = computed(() => {
   const explicitLineCount = props.summary.split(/\r?\n/).length
@@ -131,15 +141,114 @@ watch(() => props.summary, () => {
 .AISummaryPanel-text {
   position: relative;
   z-index: 1;
-  margin: 0;
   color: var(--el-text-color-primary);
   line-height: 1.65;
-  white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
 .AISummaryPanel-text--collapsed {
   max-height: calc(1.65em * 10);
   overflow: hidden;
+}
+
+.AISummaryPanel-text :deep(h1),
+.AISummaryPanel-text :deep(h2),
+.AISummaryPanel-text :deep(h3),
+.AISummaryPanel-text :deep(h4),
+.AISummaryPanel-text :deep(h5),
+.AISummaryPanel-text :deep(h6) {
+  margin: 0 0 0.8rem;
+  color: var(--el-text-color-primary);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.AISummaryPanel-text :deep(h1) {
+  font-size: 1.2rem;
+}
+
+.AISummaryPanel-text :deep(h2) {
+  font-size: 1.1rem;
+}
+
+.AISummaryPanel-text :deep(h3),
+.AISummaryPanel-text :deep(h4),
+.AISummaryPanel-text :deep(h5),
+.AISummaryPanel-text :deep(h6) {
+  font-size: 1rem;
+}
+
+.AISummaryPanel-text :deep(p),
+.AISummaryPanel-text :deep(ul),
+.AISummaryPanel-text :deep(ol),
+.AISummaryPanel-text :deep(blockquote),
+.AISummaryPanel-text :deep(pre),
+.AISummaryPanel-text :deep(table) {
+  margin: 0 0 0.85rem;
+}
+
+.AISummaryPanel-text :deep(ul),
+.AISummaryPanel-text :deep(ol) {
+  padding-left: 1.35rem;
+}
+
+.AISummaryPanel-text :deep(li + li) {
+  margin-top: 0.35rem;
+}
+
+.AISummaryPanel-text :deep(blockquote) {
+  padding-left: 0.9rem;
+  border-left: 3px solid rgba(104, 109, 224, 0.35);
+  color: var(--el-text-color-secondary);
+}
+
+.AISummaryPanel-text :deep(code) {
+  padding: 0.15rem 0.35rem;
+  border-radius: 6px;
+  background: rgba(31, 35, 41, 0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace;
+  font-size: 0.92em;
+}
+
+.AISummaryPanel-text :deep(pre) {
+  overflow-x: auto;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: rgba(31, 35, 41, 0.08);
+}
+
+.AISummaryPanel-text :deep(pre code) {
+  padding: 0;
+  background: transparent;
+}
+
+.AISummaryPanel-text :deep(a) {
+  color: var(--el-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.AISummaryPanel-text :deep(hr) {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid rgba(104, 109, 224, 0.2);
+}
+
+.AISummaryPanel-text :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.AISummaryPanel-text :deep(th),
+.AISummaryPanel-text :deep(td) {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(104, 109, 224, 0.18);
+  text-align: left;
+  vertical-align: top;
+}
+
+.AISummaryPanel-text :deep(*:last-child) {
+  margin-bottom: 0;
 }
 
 .AISummaryPanel-toggle {

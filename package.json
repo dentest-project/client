@@ -29,6 +29,7 @@
     "eslint-plugin-vue": "^9.25.0",
     "highlight.js": ">=11.9.0",
     "lodash": "^4.17.21",
+    "markdown-it": "^14.1.1",
     "mobile-drag-drop": "^2.3.0-rc.2",
     "nuxt": "^3.11.2",
     "pinia": "^2.1.7",
