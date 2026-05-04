@@ -1,6 +1,6 @@
 <template>
   <div v-if="mode === Mode.View" class="EditableParagraph" :class="editable ? 'EditableParagraph--editable' : ''" @click="onParagraphClicked">
-    <div v-for="line in lines">
+    <div v-for="(line, index) in lines" :key="index">
       {{ line }}
     </div>
   </div>
@@ -26,7 +26,8 @@ enum Mode {
 const props = defineProps<{
   modelValue: string,
   placeholder: string,
-  editable: boolean
+  editable: boolean,
+  emptyLabel?: string
 }>()
 
 const mode = ref(Mode.View)
@@ -52,6 +53,7 @@ const onInputBlur = () => {
     return
   }
 
+  initialValue = props.modelValue
   emit('submit')
 }
 
@@ -61,22 +63,36 @@ const onParagraphClicked = () => {
   }
 }
 
-const lines = computed(() => props.modelValue.split('\n'))
+const lines = computed(() => {
+  if (props.modelValue.trim().length === 0) {
+    return props.emptyLabel ? [props.emptyLabel] : ['']
+  }
+
+  return props.modelValue.split('\n')
+})
 
 watch(() => props.editable, (editable) => {
   if (!editable) {
     mode.value = Mode.View
   }
 })
+
+watch(() => props.modelValue, (newValue) => {
+  if (mode.value === Mode.View) {
+    initialValue = newValue
+  }
+})
 </script>
 
-<style>
-.EditableParagraph, .EditableParagraph-textarea textarea {
+<style scoped>
+.EditableParagraph,
+.EditableParagraph-textarea :deep(textarea) {
   padding: 1rem;
 }
 
-.EditableParagraph--editable:hover, .EditableParagraph-textarea textarea {
-  background-color: rgba(0, 0, 0, 0.2);
+.EditableParagraph--editable:hover,
+.EditableParagraph-textarea :deep(textarea) {
+  background-color: var(--el-color-primary-light-9);
   color: inherit;
 }
 

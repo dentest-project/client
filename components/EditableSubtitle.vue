@@ -1,5 +1,7 @@
 <template>
-  <h2 v-if="mode === Mode.View" class="editableSubtitle" @click="mode = Mode.Edit">{{ modelValue.trim().length > 0 ? modelValue : emptyLabel }}</h2>
+  <component v-if="mode === Mode.View" :is="headingTag ?? 'h2'" class="editableSubtitle" @click="mode = Mode.Edit">
+    {{ displayValue }}
+  </component>
   <form v-else @submit.prevent="onSubmit">
     <el-input
       class="editableSubtitle-input"
@@ -18,7 +20,8 @@ import { Mode } from '~/types'
 const props = defineProps<{
   modelValue: string,
   label: string,
-  emptyLabel?: string
+  emptyLabel?: string,
+  headingTag?: 'h2' | 'h3'
 }>()
 
 const emit = defineEmits(['cancel', 'submit', 'update:modelValue'])
@@ -26,8 +29,16 @@ const emit = defineEmits(['cancel', 'submit', 'update:modelValue'])
 const mode = ref(Mode.View)
 let initialValue: string
 
+const displayValue = computed(() => props.modelValue.trim().length > 0 ? props.modelValue : props.emptyLabel)
+
 onMounted(() => {
   initialValue = props.modelValue
+})
+
+watch(() => props.modelValue, (newValue) => {
+  if (mode.value === Mode.View) {
+    initialValue = newValue
+  }
 })
 
 const onSubmit = () => {
@@ -45,7 +56,7 @@ const onSubmit = () => {
 </script>
 
 <style>
-h2.editableSubtitle:hover {
+.editableSubtitle:hover {
   cursor: pointer;
   background-color: var(--el-color-primary-light-9);
 }

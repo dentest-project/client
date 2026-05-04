@@ -29,6 +29,47 @@ enum Context {
   Organization
 }
 
+enum DomainAssociationCardinality {
+  EventuallyOne = 'eventually_one',
+  Many = 'many',
+  One = 'one'
+}
+
+enum DomainPropertyConstraintKind {
+  Format = 'format',
+  Max = 'max',
+  MaxLength = 'max_length',
+  Min = 'min',
+  MinLength = 'min_length',
+  Pattern = 'pattern',
+  Precision = 'precision',
+  Scale = 'scale'
+}
+
+enum DomainPropertyStringFormat {
+  CountryCode = 'country_code',
+  Email = 'email',
+  Ipv4 = 'ipv4',
+  Ipv6 = 'ipv6',
+  Phone = 'phone',
+  Slug = 'slug',
+  Uri = 'uri',
+  Url = 'url',
+  UUID = 'uuid'
+}
+
+enum DomainPropertyType {
+  Boolean = 'boolean',
+  Date = 'date',
+  Datetime = 'datetime',
+  Decimal = 'decimal',
+  Integer = 'integer',
+  String = 'string',
+  Text = 'text',
+  Time = 'time',
+  UUID = 'uuid'
+}
+
 enum OrganizationPermission {
   Admin = 'admin',
   ProjectCreate = 'project_create',
@@ -135,6 +176,13 @@ interface CreatePathParent {
   id: string
 }
 
+interface DomainEntityBase {
+  name: string,
+  description: string,
+  properties: Array<DomainProperty>,
+  associations: Array<DomainAssociation>
+}
+
 interface CreateProject {
   title: string,
   visibility: ProjectVisibility,
@@ -153,6 +201,74 @@ interface CreateProjectRootPath {
 interface CreateTag {
   name: string,
   color: string
+}
+
+interface DomainAssociationBase {
+  id?: string | null,
+  sourceName: string,
+  sourceCardinality: DomainAssociationCardinality,
+  sourcePosition: number,
+  targetName: string,
+  targetCardinality: DomainAssociationCardinality,
+  targetPosition: number,
+  description?: string | null
+}
+
+interface DomainAssociation extends DomainAssociationBase {
+  sourceEntity?: DomainEntitySummary | null,
+  targetEntity?: DomainEntitySummary | null
+}
+
+interface DomainEntity extends DomainEntityBase {
+  id?: string | null,
+  targetAssociations: Array<DomainAssociation>
+}
+
+interface DomainEntityDraft extends DomainEntity {
+  project: DomainEntityProject
+}
+
+interface DomainAssociationRequest extends DomainAssociationBase {
+  targetEntity: DomainEntityIdentifier
+}
+
+interface CreateDomainEntityRequest {
+  name: string,
+  description: string,
+  project: DomainEntityProject,
+  properties: Array<DomainProperty>,
+  associations: Array<DomainAssociationRequest>
+}
+
+interface DomainEntityProject {
+  id: string
+}
+
+interface DomainEntityIdentifier {
+  id: string
+}
+
+interface DomainEntitySummary extends DomainEntityIdentifier {
+  name: string
+}
+
+interface DomainProperty {
+  id?: string | null,
+  name: string,
+  description: string,
+  position: number,
+  type: DomainPropertyType,
+  nullable: boolean,
+  constraints: Array<DomainPropertyConstraint>
+}
+
+interface DomainPropertyConstraint {
+  id?: string | null,
+  kind: DomainPropertyConstraintKind,
+  stringValue?: string | null,
+  integerValue?: number | null,
+  decimalValue?: string | null,
+  format?: DomainPropertyStringFormat | null
 }
 
 interface Feature {
@@ -398,6 +514,10 @@ interface UpdateFeatureStatus {
 
 interface UpdateFeaturePath extends CreateFeaturePath {}
 
+interface UpdateDomainEntityRequest extends CreateDomainEntityRequest {
+  id: string
+}
+
 interface UpdateMe {
   username: string,
   email: string
@@ -438,6 +558,7 @@ interface User extends BaseUser {
 }
 
 type BreadcrumbItems = Array<BreadcrumbItem>
+type DomainEntityList = Array<DomainEntity>
 type OrganizationList = Array<Organization>
 type OrganizationUserList = Array<OrganizationUser>
 type PathList = Array<Path>
@@ -454,12 +575,28 @@ export {
   BreadcrumbItems,
   ContentStrategy,
   Context,
+  CreateDomainEntityRequest,
   CreateFeature,
   CreatePath,
   CreateProject,
   CreateStep,
   CreateTag,
   Delay,
+  DomainAssociation,
+  DomainAssociationBase,
+  DomainAssociationCardinality,
+  DomainAssociationRequest,
+  DomainEntity,
+  DomainEntityDraft,
+  DomainEntityIdentifier,
+  DomainEntityList,
+  DomainEntityProject,
+  DomainEntitySummary,
+  DomainProperty,
+  DomainPropertyConstraint,
+  DomainPropertyConstraintKind,
+  DomainPropertyStringFormat,
+  DomainPropertyType,
   FakeDataType,
   Feature,
   FeatureStatus,
@@ -513,6 +650,7 @@ export {
   UpdateFeaturePath,
   UpdateFeatureParentPath,
   UpdateFeatureStatus,
+  UpdateDomainEntityRequest,
   UpdateMe,
   UpdateOrganizationName,
   UpdatePath,

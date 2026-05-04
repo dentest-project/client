@@ -12,6 +12,7 @@
       <AddFeatureButton v-if="canWrite" @click="createFeatureDialog = true" />
       <AddFolderButton v-if="canWrite" @click="createFolderDialog = true" />
       <GetPullTokenButton v-if="canPull" @click="getPullTokenDialog = true" />
+      <DomainModelLink v-if="path.rootProject" :to="domainModelLink" />
       <UsersLink v-if="canAdministrate" :to="usersLink" />
       <VisibilityButton v-if="canAdministrate && path.rootProject" :visibility="path.rootProject.visibility" @click="onVisibilityUpdated" />
       <LeaveButton v-if="isProjectUser" label="Leave project" @left="onProjectLeft" />
@@ -266,6 +267,7 @@ const nextVisibility = computed(() => {
 })
 
 const usersLink = computed(() => path.value.rootProject ? $routes.projectUsers(path.value.rootProject) : '')
+const domainModelLink = computed(() => path.value.rootProject ? $routes.projectDomainModel(path.value.rootProject) : '')
 
 const breadcrumb = computed((): BreadcrumbItems => {
   const items = [] as BreadcrumbItems

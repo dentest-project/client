@@ -2,11 +2,14 @@ import { defineNuxtPlugin } from 'nuxt/app'
 import axios from 'axios'
 import type {
   BaseUser,
+  CreateDomainEntityRequest,
   CreateFeature,
   CreatePath,
   CreateProject,
   CreateStep,
   CreateTag,
+  DomainEntity,
+  DomainEntityList,
   Feature,
   Issue,
   Login,
@@ -31,6 +34,7 @@ import type {
   ResetPasswordRequest,
   Step,
   Tag,
+  UpdateDomainEntityRequest,
   UpdateFeature,
   UpdateFeatureParentPath,
   UpdateFeatureStatus,
@@ -85,6 +89,8 @@ const put = async (url: string, body: any) => await query(url, { method: 'PUT', 
 export default defineNuxtPlugin(() => ({
   provide: {
     'api': {
+      createDomainEntity: async (domainEntity: CreateDomainEntityRequest): Promise<DomainEntity> =>
+        post('domain-entities', domainEntity),
       createFeature: async (feature: CreateFeature): Promise<Feature> => post('features', feature),
       createOrganization: async (organization: Organization): Promise<Organization> => post('organizations', organization),
       createOrganizationUser: async (organization: Organization, user: BaseUser): Promise<OrganizationUser> => post(`organizations/${organization.id}/users/${user.id}`, {}),
@@ -118,6 +124,7 @@ export default defineNuxtPlugin(() => ({
       getProject: async (projectSlug: string, organizationSlug?: string): Promise<Project> => {
         return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}`) : get(`projects/${projectSlug}`);
       },
+      getProjectDomainModel: async (projectId: string): Promise<DomainEntityList> => get(`projects/${projectId}/domain-model`),
       getProjects: async (): Promise<ProjectList> => get(`projects`),
       getProjectUsers: async (projectSlug: string, organizationSlug?: string): Promise<ProjectUserList> => {
         return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}/users`) : get(`projects/${projectSlug}/users`);
@@ -155,6 +162,8 @@ export default defineNuxtPlugin(() => ({
       updateOrganizationUser: async (organizationId: string, userId: string, permissions: Array<OrganizationPermission>): Promise<OrganizationUser> => put(`organizations/${organizationId}/users/${userId}`, { permissions }),
       updatePath: async (path: UpdatePath): Promise<Path> => put('paths', path),
       updatePathParent: async (path: UpdatePathParent): Promise<Path> => put('paths', { id: path.id, parent: { id: path.newParentId } }),
+      updateDomainEntity: async (domainEntity: UpdateDomainEntityRequest): Promise<DomainEntity> =>
+        put('domain-entities', domainEntity),
       updateProject: async (project: UpdateProject): Promise<Project> => put('projects', project),
       updateProjectUser: async (projectId: string, userId: string, permissions: Array<ProjectPermission>): Promise<ProjectUser> => put(`projects/${projectId}/users/${userId}`, { permissions }),
       updateStep: async (step: UpdateStep): Promise<Step> => put('steps', step),

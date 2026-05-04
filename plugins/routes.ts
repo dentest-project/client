@@ -22,6 +22,21 @@ export default defineNuxtPlugin(() => ({
           ? `/organization/${project.organization.slug}/project/${project.slug}/path/${project.rootPath.slug}/${project.rootPath.id}`
           : `/project/${project.slug}/path/${project.rootPath.slug}/${project.rootPath.id}`
       },
+      projectDomainEntity: (project: Project, entityId: string): string => {
+        return project.organization
+          ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model/entities/${entityId}`
+          : `/project/${project.slug}/domain-model/entities/${entityId}`
+      },
+      projectDomainEntityCreate: (project: Project): string => {
+        return project.organization
+          ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model/entities/new`
+          : `/project/${project.slug}/domain-model/entities/new`
+      },
+      projectDomainModel: (project: Project): string => {
+        return project.organization
+          ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model`
+          : `/project/${project.slug}/domain-model`
+      },
       organizationUsers: (organizationSlug: string) => `/organization/${organizationSlug}/users`,
       organizationIssueTrackers: (organization: Organization) => `/organization/${organization.slug}/issue-trackers`,
       projectUsers: function (project: Project): string {
