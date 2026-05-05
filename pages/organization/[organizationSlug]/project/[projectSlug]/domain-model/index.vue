@@ -8,11 +8,24 @@
     <Panel v-if="domainModel.length === 0" type="info">
       {{ canWrite ? 'This project has no entities yet. Create the first one to start shaping the model.' : 'This project has no entities yet.' }}
     </Panel>
-    <el-row v-else :gutter="20">
-      <el-col v-for="entity in domainModel" :key="entity.id" :xs="24" :sm="12" :lg="8">
-        <DomainEntityCard :entity="entity" :to="$routes.projectDomainEntity(project, entity.id as string)" />
-      </el-col>
-    </el-row>
+    <template v-else>
+      <DomainModelGraph
+        :entities="domainModel"
+        :entity-link="entityId => $routes.projectDomainEntity(project, entityId)"
+      />
+      <el-row :gutter="20">
+        <el-col
+          v-for="entity in domainModel"
+          :key="entity.id"
+          :xs="24"
+          :sm="12"
+          :lg="8"
+          class="DomainModel-cardColumn"
+        >
+          <DomainEntityCard :entity="entity" :to="$routes.projectDomainEntity(project, entity.id as string)" />
+        </el-col>
+      </el-row>
+    </template>
   </el-main>
 </template>
 
@@ -75,3 +88,9 @@ const breadcrumb = computed((): BreadcrumbItems => {
   return items
 })
 </script>
+
+<style scoped>
+.DomainModel-cardColumn {
+  margin-bottom: 1.25rem;
+}
+</style>

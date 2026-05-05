@@ -27,7 +27,6 @@ const description = computed(() => props.entity.description.trim().length > 0 ? 
 <style scoped>
 .DomainEntityCard-card {
   height: 100%;
-  margin-bottom: 1rem;
 }
 
 .DomainEntityCard-header {

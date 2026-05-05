@@ -415,10 +415,10 @@
             <template #header>
               <div class="DomainEntityEditor-cardHeader">
                 <div class="DomainEntityEditor-cardHeading">
-                  <h3 class="DomainEntityEditor-cardTitle">{{ getAssociationTitle(association) }}</h3>
+                  <h3 class="DomainEntityEditor-cardTitle">{{ getIncomingAssociationTitle(association) }}</h3>
                   <div class="DomainEntityEditor-cardMeta DomainEntityEditor-cardMeta--association">
                     <el-tag effect="plain">{{ getDomainAssociationCardinalityLabel(association.sourceCardinality) }}</el-tag>
-                    <span class="DomainEntityEditor-cardMetaText">to {{ getTextOrFallback(association.targetName, entityTitle) }}</span>
+                    <span class="DomainEntityEditor-cardMetaText">via {{ getIncomingAssociationMemberTitle(association) }}</span>
                   </div>
                 </div>
               </div>
@@ -535,6 +535,12 @@ const getTextOrFallback = (value: string | null | undefined, fallback: string): 
 const getPropertyTitle = (property: DomainProperty): string => getTextOrFallback(property.name, 'Untitled property')
 
 const getAssociationTitle = (association: DomainAssociation): string => getTextOrFallback(association.sourceName, 'Untitled association')
+
+const getIncomingAssociationTitle = (association: DomainAssociation): string =>
+  getTextOrFallback(association.sourceEntity?.name, 'Unknown entity')
+
+const getIncomingAssociationMemberTitle = (association: DomainAssociation): string =>
+  getTextOrFallback(association.sourceName, 'Untitled association')
 
 const getAssociationTargetSummary = (association: DomainAssociation): string => {
   const targetEntityName = association.targetEntity?.name?.trim() ?? ''
