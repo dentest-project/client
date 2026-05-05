@@ -9,10 +9,7 @@
       {{ canWrite ? 'This project has no entities yet. Create the first one to start shaping the model.' : 'This project has no entities yet.' }}
     </Panel>
     <template v-else>
-      <DomainModelGraph
-        :entities="domainModel"
-        :entity-link="entityId => $routes.projectDomainEntity(project, entityId)"
-      />
+      <DomainModelGraph :entities="domainModel" />
       <el-row :gutter="20">
         <el-col
           v-for="entity in domainModel"

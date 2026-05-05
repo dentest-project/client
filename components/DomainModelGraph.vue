@@ -24,19 +24,24 @@ import { useThemeStore } from '~/store/theme'
 import { DomainAssociationCardinality, type DomainEntity, type DomainEntityList } from '~/types'
 
 const props = defineProps<{
-  entities: DomainEntityList,
-  entityLink: (entityId: string) => string
+  entities: DomainEntityList
 }>()
 
-const router = useRouter()
 const themeStore = useThemeStore()
 const graphContainer = ref<HTMLDivElement | null>(null)
 const graphReady = ref(false)
 const loadError = ref('')
+const focusedNodeId = ref<string | null>(null)
 
 let graph: any = null
 let cytoscapeFactory: any = null
 let elkRegistered = false
+const edgeCurveClassNames = ['edge-curve-0', 'edge-curve-1', 'edge-curve-2', 'edge-curve-3', 'edge-curve-4'] as const
+
+type GraphElement = {
+  classes?: string,
+  data: Record<string, string>
+}
 
 const formatEntityName = (name: string): string => name.trim().length > 0 ? name.trim() : 'Untitled entity'
 
@@ -48,6 +53,9 @@ const formatCardinality = (cardinality: DomainAssociationCardinality): string =>
   [DomainAssociationCardinality.Many]: '*'
 }[cardinality] ?? cardinality)
 
+const getEdgeCurveClassName = (entityIndex: number, associationIndex: number): string =>
+  edgeCurveClassNames[(entityIndex + associationIndex) % edgeCurveClassNames.length]
+
 const graphElements = computed(() => {
   const nodes = props.entities.map((entity, index) => ({
     data: {
@@ -58,12 +66,13 @@ const graphElements = computed(() => {
   }))
 
   const edges = props.entities.flatMap((entity, entityIndex) =>
-    entity.associations.reduce<Array<{ data: Record<string, string> }>>((items, association, associationIndex) => {
+    entity.associations.reduce<GraphElement[]>((items, association, associationIndex) => {
       if (!association.targetEntity?.id) {
         return items
       }
 
       items.push({
+        classes: getEdgeCurveClassName(entityIndex, associationIndex),
         data: {
           id: association.id ?? `association-${getEntityNodeId(entity, entityIndex)}-${association.targetEntity.id}-${associationIndex}`,
           source: getEntityNodeId(entity, entityIndex),
@@ -125,10 +134,29 @@ const buildGraphStyle = () => {
       }
     },
     {
-      selector: 'node:selected',
+      selector: 'node.is-dimmed',
+      style: {
+        'border-opacity': 0.2,
+        'opacity': 0.35,
+        'text-opacity': 0.45
+      }
+    },
+    {
+      selector: 'node.is-focused-entity',
       style: {
         'border-color': nodeBorderActive,
-        'border-width': 2.5
+        'border-width': 3,
+        'opacity': 1,
+        'text-opacity': 1
+      }
+    },
+    {
+      selector: 'node.is-linked-entity',
+      style: {
+        'border-color': readCssVar('--el-color-warning', '#e6a23c'),
+        'border-width': 2.5,
+        'opacity': 1,
+        'text-opacity': 1
       }
     },
     {
@@ -136,7 +164,8 @@ const buildGraphStyle = () => {
       style: {
         'arrow-scale': 0.9,
         'color': textSecondary,
-        'curve-style': 'round-taxi',
+        'control-point-weight': 0.5,
+        'curve-style': 'unbundled-bezier',
         'font-size': 10,
         'line-color': edgeColor,
         'min-zoomed-font-size': 9,
@@ -151,15 +180,61 @@ const buildGraphStyle = () => {
         'target-label': 'data(targetLabel)',
         'target-text-offset': 14,
         'target-text-rotation': 'none',
-        'taxi-direction': 'downward',
-        'taxi-radius': 8,
-        'taxi-turn': 24,
-        'taxi-turn-min-distance': 18,
         'text-background-color': labelBackground,
         'text-background-opacity': 0.9,
         'text-background-padding': '2px',
         'text-rotation': 'none',
         'width': 1.8
+      }
+    },
+    {
+      selector: 'edge.is-dimmed',
+      style: {
+        'line-opacity': 0.18,
+        'opacity': 0.25,
+        'source-text-opacity': 0.35,
+        'target-text-opacity': 0.35
+      }
+    },
+    {
+      selector: 'edge.is-active-link',
+      style: {
+        'line-color': nodeBorderActive,
+        'opacity': 1,
+        'source-text-opacity': 1,
+        'target-arrow-color': nodeBorderActive,
+        'target-text-opacity': 1,
+        'width': 2.4
+      }
+    },
+    {
+      selector: '.edge-curve-0',
+      style: {
+        'control-point-distance': -96
+      }
+    },
+    {
+      selector: '.edge-curve-1',
+      style: {
+        'control-point-distance': -48
+      }
+    },
+    {
+      selector: '.edge-curve-2',
+      style: {
+        'control-point-distance': 0
+      }
+    },
+    {
+      selector: '.edge-curve-3',
+      style: {
+        'control-point-distance': 48
+      }
+    },
+    {
+      selector: '.edge-curve-4',
+      style: {
+        'control-point-distance': 96
       }
     }
   ]
@@ -183,6 +258,54 @@ const createLayoutOptions = () => ({
     'elk.separateConnectedComponents': true
   }
 })
+
+const clearFocusState = () => {
+  focusedNodeId.value = null
+
+  if (!graph) {
+    return
+  }
+
+  graph.elements().removeClass('is-dimmed is-focused-entity is-linked-entity is-active-link')
+}
+
+const applyFocusState = (nodeId: string | null) => {
+  if (!graph || !nodeId) {
+    clearFocusState()
+    return
+  }
+
+  const focusedNode = graph.getElementById(nodeId)
+
+  if (!focusedNode || focusedNode.empty()) {
+    clearFocusState()
+    return
+  }
+
+  const connectedEdges = focusedNode.connectedEdges()
+  const linkedNodes = graph.collection()
+
+  connectedEdges.forEach((edge: any) => {
+    const sourceNode = edge.source()
+    const targetNode = edge.target()
+
+    if (sourceNode.id() !== focusedNode.id()) {
+      linkedNodes.merge(sourceNode)
+    }
+
+    if (targetNode.id() !== focusedNode.id()) {
+      linkedNodes.merge(targetNode)
+    }
+  })
+
+  focusedNodeId.value = nodeId
+
+  graph.elements().removeClass('is-dimmed is-focused-entity is-linked-entity is-active-link')
+  graph.elements().addClass('is-dimmed')
+  connectedEdges.removeClass('is-dimmed').addClass('is-active-link')
+  linkedNodes.removeClass('is-dimmed').addClass('is-linked-entity')
+  focusedNode.removeClass('is-dimmed').addClass('is-focused-entity')
+}
 
 const ensureGraphFactory = async () => {
   if (cytoscapeFactory) {
@@ -210,6 +333,7 @@ const runLayout = () => {
   }
 
   graph.layout(createLayoutOptions()).run()
+  applyFocusState(focusedNodeId.value)
 }
 
 const fitGraph = () => {
@@ -244,13 +368,20 @@ const syncGraph = async () => {
       })
 
       graph.on('tap', 'node', (event: any) => {
-        const entityId = String(event.target.data('entityId') ?? '')
+        const nodeId = String(event.target.id() ?? '')
 
-        if (entityId.length === 0) {
+        if (nodeId.length === 0) {
+          clearFocusState()
           return
         }
 
-        void router.push(props.entityLink(entityId))
+        applyFocusState(focusedNodeId.value === nodeId ? null : nodeId)
+      })
+
+      graph.on('tap', (event: any) => {
+        if (event.target === graph) {
+          clearFocusState()
+        }
       })
     } else {
       graph.batch(() => {
@@ -262,6 +393,7 @@ const syncGraph = async () => {
       runLayout()
     }
 
+    applyFocusState(focusedNodeId.value)
     graphReady.value = true
   } catch (error) {
     graphReady.value = false
@@ -280,6 +412,7 @@ watch(() => themeStore.theme, () => {
   }
 
   graph.style(buildGraphStyle())
+  applyFocusState(focusedNodeId.value)
 })
 
 useResizeObserver(graphContainer, () => {
