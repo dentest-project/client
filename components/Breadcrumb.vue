@@ -1,8 +1,17 @@
 <template>
   <el-breadcrumb :separator-icon="ArrowRight">
-    <el-breadcrumb-item v-for="item in items">
-      <NuxtLink v-if="item.href && !item.disabled" :to="item.href">{{ item.text }}</NuxtLink>
-      <span v-else>{{ item.text }}</span>
+    <el-breadcrumb-item
+      v-for="item in items"
+      :key="`${item.text}-${item.href ?? 'no-href'}-${item.disabled ? 'disabled' : 'enabled'}`"
+    >
+      <NuxtLink
+        v-if="item.href && !item.disabled"
+        :key="`link-${item.text}-${item.href}`"
+        :to="item.href"
+      >
+        {{ item.text }}
+      </NuxtLink>
+      <span v-else :key="`label-${item.text}`">{{ item.text }}</span>
     </el-breadcrumb-item>
   </el-breadcrumb>
 </template>

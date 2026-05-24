@@ -32,6 +32,23 @@ export default defineNuxtPlugin(() => ({
           ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model/entities/new`
           : `/project/${project.slug}/domain-model/entities/new`
       },
+      projectFixture: (project: Project, fixtureId: string): string => {
+        return project.organization
+          ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model/fixtures/${fixtureId}`
+          : `/project/${project.slug}/domain-model/fixtures/${fixtureId}`
+      },
+      projectFixtureCreate: (project: Project, entityId?: string): string => {
+        const basePath = project.organization
+          ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model/fixture/new`
+          : `/project/${project.slug}/domain-model/fixture/new`
+
+        return entityId ? `${basePath}?entityId=${entityId}` : basePath
+      },
+      projectFixtures: (project: Project): string => {
+        return project.organization
+          ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model/fixtures`
+          : `/project/${project.slug}/domain-model/fixtures`
+      },
       projectDomainModel: (project: Project): string => {
         return project.organization
           ? `/organization/${project.organization.slug}/project/${project.slug}/domain-model`

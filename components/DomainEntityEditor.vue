@@ -14,6 +14,9 @@
         <EditableTitle v-model="draft.name" empty-label="Untitled entity" label="Entity name" />
       </div>
       <h1 v-else class="DomainEntityEditor-name">{{ entityTitle }}</h1>
+      <div v-if="hasHeaderActions" class="DomainEntityEditor-headerActions">
+        <slot name="header-actions" />
+      </div>
       <Panel type="info">
         <EditableParagraph
           v-model="draft.description"
@@ -506,6 +509,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   submit: [value: DomainEntityDraft]
 }>()
+const slots = useSlots()
 
 const cloneValue = <T>(value: T): T => JSON.parse(JSON.stringify(value))
 
@@ -521,6 +525,8 @@ watch(() => props.initialValue, (newValue) => {
 }, { deep: true })
 
 const selectableEntities = computed(() => props.projectDomainModel.filter(entity => !!entity.id))
+
+const hasHeaderActions = computed(() => !!slots['header-actions'])
 
 const validationErrors = computed(() => validateDomainEntity(normalizeDomainEntityDraft(cloneValue(draft.value)), props.projectDomainModel))
 
@@ -846,6 +852,13 @@ const onSubmitted = () => {
 .DomainEntityEditor-hero {
   margin-top: 1.5rem;
   margin-bottom: 2rem;
+}
+
+.DomainEntityEditor-headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
 }
 
 .DomainEntityEditor-label {

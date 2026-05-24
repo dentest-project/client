@@ -4,6 +4,7 @@
     <h1>Domain model</h1>
     <ActionsBar>
       <AddDomainEntityButton v-if="canWrite" :to="$routes.projectDomainEntityCreate(project)" />
+      <DomainFixturesLink :to="$routes.projectFixtures(project)" />
     </ActionsBar>
     <Panel v-if="domainModel.length === 0" type="info">
       {{ canWrite ? 'This project has no entities yet. Create the first one to start shaping the model.' : 'This project has no entities yet.' }}

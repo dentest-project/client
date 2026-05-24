@@ -5,7 +5,7 @@
         <Breadcrumb :items="breadcrumb" />
         <EditableTitle
           v-if="isLoggedIn && canWrite && feature.status === FeatureStatus.Draft"
-          v-model="feature.title"
+          v-model="featureTitle"
           label="Title"
           @update:model-value="markUnsaved"
           @cancel="markSaved"
@@ -99,6 +99,16 @@ let changeVersion = 0
 let saveInFlight = false
 let pendingSaveRequested = false
 let pendingFeatureReload = false
+
+const featureTitle = computed({
+  get: (): string => feature.value.title,
+  set: (value: string) => {
+    feature.value = {
+      ...feature.value,
+      title: value
+    }
+  }
+})
 
 useHead({
   title: (feature.value.rootProject?.organization

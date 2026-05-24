@@ -8,7 +8,11 @@
       :project-domain-model="projectDomainModel"
       save-label="Save entity"
       @submit="onSubmitted"
-    />
+    >
+      <template v-if="canWrite" #header-actions>
+        <DeleteButton label="Delete entity" @deleted="onDeleted" />
+      </template>
+    </DomainEntityEditor>
   </el-main>
 </template>
 
@@ -37,7 +41,7 @@ definePageMeta({
   ]
 })
 
-const { $api, $routes } = useNuxtApp()
+const { $api, $router, $routes } = useNuxtApp()
 const { params } = useRoute()
 
 const project = ref<Project>(await $api.getProject(params.projectSlug, params.organizationSlug))
@@ -82,6 +86,26 @@ const onSubmitted = async (submittedEntity: DomainEntityDraft) => {
     ElNotification({
       title: 'An error occurred',
       message: formatApiErrorMessage(error, 'An error occurred while updating the entity'),
+      type: 'error',
+    })
+  }
+}
+
+const onDeleted = async () => {
+  try {
+    await $api.deleteDomainEntity(params.entityId as string)
+
+    ElNotification({
+      title: 'Entity deleted',
+      message: 'The entity has been successfully deleted',
+      type: 'success',
+    })
+
+    await $router.push($routes.projectDomainModel(project.value))
+  } catch (error) {
+    ElNotification({
+      title: 'An error occurred',
+      message: formatApiErrorMessage(error, 'An error occurred while deleting the entity'),
       type: 'error',
     })
   }

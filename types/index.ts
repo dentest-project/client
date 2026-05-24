@@ -252,6 +252,16 @@ interface DomainEntitySummary extends DomainEntityIdentifier {
   name: string
 }
 
+interface DomainAssociationIdentifier {
+  id: string
+}
+
+interface DomainAssociationSummary extends DomainAssociationIdentifier {
+  sourceName: string,
+  targetName: string,
+  targetEntity?: DomainEntitySummary | null
+}
+
 interface DomainProperty {
   id?: string | null,
   name: string,
@@ -262,6 +272,14 @@ interface DomainProperty {
   constraints: Array<DomainPropertyConstraint>
 }
 
+interface DomainPropertyIdentifier {
+  id: string
+}
+
+interface DomainPropertySummary extends DomainPropertyIdentifier {
+  name: string
+}
+
 interface DomainPropertyConstraint {
   id?: string | null,
   kind: DomainPropertyConstraintKind,
@@ -269,6 +287,81 @@ interface DomainPropertyConstraint {
   integerValue?: number | null,
   decimalValue?: string | null,
   format?: DomainPropertyStringFormat | null
+}
+
+interface DomainFixturePropertyValueBase {
+  id?: string | null,
+  property: DomainPropertyIdentifier
+}
+
+interface DomainFixturePropertyValue extends DomainFixturePropertyValueBase {
+  property: DomainPropertySummary,
+  stringValue?: string | null,
+  integerValue?: number | null,
+  decimalValue?: string | null,
+  booleanValue?: boolean | null
+}
+
+interface DomainFixturePropertyValueDraft extends DomainFixturePropertyValueBase {
+  enabled: boolean,
+  stringValue?: string | null,
+  integerValue?: number | null,
+  decimalValue?: string | null,
+  booleanValue?: boolean | null
+}
+
+interface DomainFixturePropertyValueRequest extends DomainFixturePropertyValueBase {
+  stringValue?: string | null,
+  integerValue?: number | null,
+  decimalValue?: string | null,
+  booleanValue?: boolean | null
+}
+
+interface DomainFixtureSummary {
+  id: string,
+  name: string,
+  entity?: DomainEntitySummary
+}
+
+interface DomainFixtureAssociationValue {
+  id?: string | null,
+  association: DomainAssociationSummary,
+  targetFixture: DomainFixtureSummary
+}
+
+interface DomainFixtureAssociationValueRequest {
+  id?: string | null,
+  association: DomainAssociationIdentifier,
+  targetFixture: DomainEntityIdentifier
+}
+
+interface DomainFixture {
+  id?: string | null,
+  name: string,
+  entity: DomainEntitySummary,
+  propertyValues: Array<DomainFixturePropertyValue>,
+  associationValues: Array<DomainFixtureAssociationValue>
+}
+
+interface DomainFixtureDraft {
+  id?: string | null,
+  name: string,
+  project: DomainEntityProject,
+  entity: DomainEntityIdentifier,
+  propertyValues: Array<DomainFixturePropertyValueDraft>,
+  associationValues: Array<DomainFixtureAssociationValue>
+}
+
+interface CreateDomainFixtureRequest {
+  name: string,
+  project: DomainEntityProject,
+  entity: DomainEntityIdentifier,
+  propertyValues: Array<DomainFixturePropertyValueRequest>,
+  associationValues: Array<DomainFixtureAssociationValueRequest>
+}
+
+interface UpdateDomainFixtureRequest extends CreateDomainFixtureRequest {
+  id: string
 }
 
 interface Feature {
@@ -559,6 +652,7 @@ interface User extends BaseUser {
 
 type BreadcrumbItems = Array<BreadcrumbItem>
 type DomainEntityList = Array<DomainEntity>
+type DomainFixtureList = Array<DomainFixture>
 type OrganizationList = Array<Organization>
 type OrganizationUserList = Array<OrganizationUser>
 type PathList = Array<Path>
@@ -576,6 +670,7 @@ export {
   ContentStrategy,
   Context,
   CreateDomainEntityRequest,
+  CreateDomainFixtureRequest,
   CreateFeature,
   CreatePath,
   CreateProject,
@@ -585,16 +680,29 @@ export {
   DomainAssociation,
   DomainAssociationBase,
   DomainAssociationCardinality,
+  DomainAssociationIdentifier,
   DomainAssociationRequest,
+  DomainAssociationSummary,
   DomainEntity,
   DomainEntityDraft,
   DomainEntityIdentifier,
   DomainEntityList,
   DomainEntityProject,
   DomainEntitySummary,
+  DomainFixture,
+  DomainFixtureAssociationValue,
+  DomainFixtureAssociationValueRequest,
+  DomainFixtureDraft,
+  DomainFixtureList,
+  DomainFixturePropertyValue,
+  DomainFixturePropertyValueDraft,
+  DomainFixturePropertyValueRequest,
+  DomainFixtureSummary,
   DomainProperty,
+  DomainPropertyIdentifier,
   DomainPropertyConstraint,
   DomainPropertyConstraintKind,
+  DomainPropertySummary,
   DomainPropertyStringFormat,
   DomainPropertyType,
   FakeDataType,
@@ -650,6 +758,7 @@ export {
   UpdateFeaturePath,
   UpdateFeatureParentPath,
   UpdateFeatureStatus,
+  UpdateDomainFixtureRequest,
   UpdateDomainEntityRequest,
   UpdateMe,
   UpdateOrganizationName,

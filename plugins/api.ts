@@ -3,6 +3,7 @@ import axios from 'axios'
 import type {
   BaseUser,
   CreateDomainEntityRequest,
+  CreateDomainFixtureRequest,
   CreateFeature,
   CreatePath,
   CreateProject,
@@ -10,6 +11,8 @@ import type {
   CreateTag,
   DomainEntity,
   DomainEntityList,
+  DomainFixture,
+  DomainFixtureList,
   Feature,
   Issue,
   Login,
@@ -35,6 +38,7 @@ import type {
   Step,
   Tag,
   UpdateDomainEntityRequest,
+  UpdateDomainFixtureRequest,
   UpdateFeature,
   UpdateFeatureParentPath,
   UpdateFeatureStatus,
@@ -91,6 +95,8 @@ export default defineNuxtPlugin(() => ({
     'api': {
       createDomainEntity: async (domainEntity: CreateDomainEntityRequest): Promise<DomainEntity> =>
         post('domain-entities', domainEntity),
+      createDomainFixture: async (projectId: string, domainFixture: CreateDomainFixtureRequest): Promise<DomainFixture> =>
+        post(`projects/${projectId}/fixtures`, domainFixture),
       createFeature: async (feature: CreateFeature): Promise<Feature> => post('features', feature),
       createOrganization: async (organization: Organization): Promise<Organization> => post('organizations', organization),
       createOrganizationUser: async (organization: Organization, user: BaseUser): Promise<OrganizationUser> => post(`organizations/${organization.id}/users/${user.id}`, {}),
@@ -100,6 +106,8 @@ export default defineNuxtPlugin(() => ({
       createProjectUserToken: async (projectId: string, userId: string): Promise<ProjectUserToken> => put(`projects/${projectId}/users/${userId}/token`, {}),
       createStep: async (step: CreateStep): Promise<Step> => post('steps', step),
       createTag: async (projectId: string, tag: CreateTag): Promise<Tag> => post(`projects/${projectId}/tags`, tag),
+      deleteDomainEntity: async (id: string): Promise<void> => del(`domain-entities/${id}`),
+      deleteDomainFixture: async (id: string): Promise<void> => del(`fixtures/${id}`),
       deleteFeature: async (id: string): Promise<void> => del(`features/${id}`),
       deleteMe: async (): Promise<void> => del('me'),
       deleteOrganization: async (id: string): Promise<void> => del(`organizations/${id}`),
@@ -109,6 +117,7 @@ export default defineNuxtPlugin(() => ({
       deleteProject: async (id: string): Promise<void> => del(`projects/${id}`),
       deleteProjectUser: async (projectId: string, userId: string): Promise<void> => del(`projects/${projectId}/users/${userId}`),
       deleteStep: async (id: string): Promise<void> => del(`steps/${id}`),
+      getDomainFixtureById: async (fixtureId: string): Promise<DomainFixture> => get(`fixtures/${fixtureId}`),
       getFeature: async (pathId: string, featureSlug: string): Promise<Feature> => get(`paths/${pathId}/features/${featureSlug}`),
       getFeatureById: async (featureId: string): Promise<Feature> => get(`features/${featureId}`),
       getFeatureIssueTrackerConfigurations: async (pathId: string, featureSlug: string): Promise<OrganizationIssueTrackerConfigurationEmbedded[]> => get(`paths/${pathId}/features/${featureSlug}/issue-tracker-configurations`),
@@ -125,6 +134,7 @@ export default defineNuxtPlugin(() => ({
         return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}`) : get(`projects/${projectSlug}`);
       },
       getProjectDomainModel: async (projectId: string): Promise<DomainEntityList> => get(`projects/${projectId}/domain-model`),
+      getProjectFixtures: async (projectId: string): Promise<DomainFixtureList> => get(`projects/${projectId}/fixtures`),
       getProjects: async (): Promise<ProjectList> => get(`projects`),
       getProjectUsers: async (projectSlug: string, organizationSlug?: string): Promise<ProjectUserList> => {
         return organizationSlug ? get(`organizations/${organizationSlug}/projects/${projectSlug}/users`) : get(`projects/${projectSlug}/users`);
@@ -164,6 +174,8 @@ export default defineNuxtPlugin(() => ({
       updatePathParent: async (path: UpdatePathParent): Promise<Path> => put('paths', { id: path.id, parent: { id: path.newParentId } }),
       updateDomainEntity: async (domainEntity: UpdateDomainEntityRequest): Promise<DomainEntity> =>
         put('domain-entities', domainEntity),
+      updateDomainFixture: async (projectId: string, domainFixture: UpdateDomainFixtureRequest): Promise<DomainFixture> =>
+        put(`projects/${projectId}/fixtures`, domainFixture),
       updateProject: async (project: UpdateProject): Promise<Project> => put('projects', project),
       updateProjectUser: async (projectId: string, userId: string, permissions: Array<ProjectPermission>): Promise<ProjectUser> => put(`projects/${projectId}/users/${userId}`, { permissions }),
       updateStep: async (step: UpdateStep): Promise<Step> => put('steps', step),
