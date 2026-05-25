@@ -1,9 +1,8 @@
 #syntax=docker/dockerfile:1.4
 
-# Prod image
-FROM node:lts AS app_node
+ARG NODE_VERSION=24
+FROM node:${NODE_VERSION}-bookworm AS app_node_base
 
-ENV NODE_ENV=production
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
 WORKDIR /srv/app
@@ -12,6 +11,12 @@ WORKDIR /srv/app
 COPY --link . .
 
 RUN NODE_ENV=development npm install
+
+# Prod image
+FROM app_node_base AS app_node
+
+ENV NODE_ENV=production
+
 RUN rm -Rf docker/
 RUN NODE_ENV=development npm run build
 
@@ -21,7 +26,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 
 # Dev image
-FROM app_node AS app_node_dev
+FROM app_node_base AS app_node_dev
 
 ENV NODE_ENV=development
 

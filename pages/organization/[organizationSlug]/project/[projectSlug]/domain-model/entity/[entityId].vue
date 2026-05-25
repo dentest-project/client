@@ -33,12 +33,7 @@ import {
 } from '~/types'
 
 definePageMeta({
-  auth: false,
-  alias: [
-    '/project/:projectSlug/domain-model/entity/:entityId',
-    '/project/:projectSlug/domain-model/entities/:entityId',
-    '/organization/:organizationSlug/project/:projectSlug/domain-model/entities/:entityId'
-  ]
+  auth: false
 })
 
 const { $api, $router, $routes } = useNuxtApp()

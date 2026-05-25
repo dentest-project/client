@@ -13,6 +13,84 @@ const hmrConfig = hmrHost || hmrPort || hmrClientPort || hmrProtocol ? {
   ...(hmrProtocol ? { protocol: hmrProtocol } : {}),
 } : undefined
 
+const projectCompatibilityRoutes = [
+  {
+    name: 'project-projectSlug-users',
+    path: '/project/:projectSlug/users',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/users/index.vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model',
+    path: '/project/:projectSlug/domain-model',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/index.vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-entity-new',
+    path: '/project/:projectSlug/domain-model/entity/new',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/entity/new.vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-entities-new',
+    path: '/project/:projectSlug/domain-model/entities/new',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/entity/new.vue',
+  },
+  {
+    name: 'organization-organizationSlug-project-projectSlug-domain-model-entities-new',
+    path: '/organization/:organizationSlug/project/:projectSlug/domain-model/entities/new',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/entity/new.vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-entity-entityId',
+    path: '/project/:projectSlug/domain-model/entity/:entityId',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/entity/[entityId].vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-entities-entityId',
+    path: '/project/:projectSlug/domain-model/entities/:entityId',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/entity/[entityId].vue',
+  },
+  {
+    name: 'organization-organizationSlug-project-projectSlug-domain-model-entities-entityId',
+    path: '/organization/:organizationSlug/project/:projectSlug/domain-model/entities/:entityId',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/entity/[entityId].vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-fixtures',
+    path: '/project/:projectSlug/domain-model/fixtures',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/fixtures/index.vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-fixture-new',
+    path: '/project/:projectSlug/domain-model/fixture/new',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/fixtures/new.vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-fixtures-new',
+    path: '/project/:projectSlug/domain-model/fixtures/new',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/fixtures/new.vue',
+  },
+  {
+    name: 'organization-organizationSlug-project-projectSlug-domain-model-fixture-new',
+    path: '/organization/:organizationSlug/project/:projectSlug/domain-model/fixture/new',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/fixtures/new.vue',
+  },
+  {
+    name: 'project-projectSlug-domain-model-fixtures-fixtureId',
+    path: '/project/:projectSlug/domain-model/fixtures/:fixtureId',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/domain-model/fixtures/[fixtureId].vue',
+  },
+  {
+    name: 'project-projectSlug-path-pathSlug-pathId',
+    path: '/project/:projectSlug/path/:pathSlug/:pathId',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/path/[pathSlug]/[pathId]/index.vue',
+  },
+  {
+    name: 'project-projectSlug-path-pathSlug-pathId-feature-featureSlug',
+    path: '/project/:projectSlug/path/:pathSlug/:pathId/feature/:featureSlug',
+    file: '~/pages/organization/[organizationSlug]/project/[projectSlug]/path/[pathSlug]/[pathId]/feature/[featureSlug]/index.vue',
+  },
+]
+
 export default defineNuxtConfig({
     /*
     ** Global CSS
@@ -42,9 +120,14 @@ export default defineNuxtConfig({
       '@sidebase/nuxt-auth',
       '@element-plus/nuxt',
       '@pinia/nuxt',
-      '@pinia-plugin-persistedstate/nuxt',
+      'pinia-plugin-persistedstate/nuxt',
       '@vueuse/nuxt',
     ],
+    hooks: {
+      'pages:extend'(pages) {
+        pages.push(...projectCompatibilityRoutes)
+      },
+    },
     /*
     ** Build configuration
     */

@@ -80,8 +80,7 @@ import {
 } from '~/types'
 
 definePageMeta({
-  auth: false,
-  alias: '/project/:projectSlug/path/:pathSlug/:pathId/feature/:featureSlug'
+  auth: false
 })
 
 const { $api, $router, $routes } = useNuxtApp()

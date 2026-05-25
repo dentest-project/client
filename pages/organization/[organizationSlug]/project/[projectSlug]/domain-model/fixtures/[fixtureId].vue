@@ -36,8 +36,7 @@ import {
 } from '~/types'
 
 definePageMeta({
-  auth: false,
-  alias: '/project/:projectSlug/domain-model/fixtures/:fixtureId'
+  auth: false
 })
 
 const route = useRoute()

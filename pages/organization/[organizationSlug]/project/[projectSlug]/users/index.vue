@@ -25,10 +25,6 @@ import {
 const { $api, $routes } = useNuxtApp()
 const { params } = useRoute()
 
-definePageMeta({
-  alias: '/project/:projectSlug/users'
-})
-
 const project = ref(await $api.getProject(params.projectSlug, params.organizationSlug))
 const users = ref(await $api.getProjectUsers(params.projectSlug))
 

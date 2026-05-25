@@ -6,7 +6,7 @@
       <h1 v-else>Dentest</h1>
     </el-menu-item>
     <div class="spacer" />
-    <el-menu-item class="switch">
+    <el-menu-item index="1" class="switch">
       <DarkModeSwitch :model-value="lightMode" @update:model-value="v => $emit('update:lightModeValue', v)" />
     </el-menu-item>
     <el-menu-item index="2">

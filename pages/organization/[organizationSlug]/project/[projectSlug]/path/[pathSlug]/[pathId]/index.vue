@@ -51,8 +51,7 @@ import {
 } from '~/types'
 
 definePageMeta({
-  auth: false,
-  alias: '/project/:projectSlug/path/:pathSlug/:pathId'
+  auth: false
 })
 
 const { $api, $router, $routes } = useNuxtApp()

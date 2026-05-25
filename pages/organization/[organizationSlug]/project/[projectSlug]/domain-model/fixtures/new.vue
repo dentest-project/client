@@ -32,12 +32,7 @@ import {
 } from '~/types'
 
 definePageMeta({
-  auth: false,
-  alias: [
-    '/project/:projectSlug/domain-model/fixture/new',
-    '/project/:projectSlug/domain-model/fixtures/new',
-    '/organization/:organizationSlug/project/:projectSlug/domain-model/fixture/new'
-  ]
+  auth: false
 })
 
 const route = useRoute()

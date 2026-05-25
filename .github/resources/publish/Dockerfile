@@ -1,6 +1,7 @@
 #syntax=docker/dockerfile:1.4
 
-FROM node:lts AS app_main
+ARG NODE_VERSION=24
+FROM node:${NODE_VERSION}-bookworm AS app_main
 
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--openssl-legacy-provider"
