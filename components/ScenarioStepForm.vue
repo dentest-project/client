@@ -1,8 +1,10 @@
 <template>
   <div class="ScenarioStepForm">
-    <el-button size="small" title="Reorder step">
-      <DragHandle><el-icon><Sort /></el-icon></DragHandle>
-    </el-button>
+    <DragHandle>
+      <el-button size="small" title="Reorder step">
+        <el-icon><Sort /></el-icon>
+      </el-button>
+    </DragHandle>
     <div class="ScenarioStepForm-inner">
       <div class="ScenarioStepForm-parts">
         <el-select
