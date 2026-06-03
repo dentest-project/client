@@ -5,6 +5,8 @@ x-app: &app
   environment:
     API_URL: ${API_URL:-https://api.dentest.tech}
     HOST: 0.0.0.0
+    NITRO_HOST: 0.0.0.0
+    NITRO_PORT: 3000
   healthcheck:
     test:
       - CMD-SHELL

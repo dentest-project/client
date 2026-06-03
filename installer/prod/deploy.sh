@@ -9,8 +9,11 @@ LOCK_DIR="${LOCK_DIR:-.deploy.lock.d}"
 PROXY_CONF="${PROXY_CONF:-./installer/prod/nginx/default.conf}"
 PROXY_TEMPLATE="${PROXY_TEMPLATE:-./installer/prod/nginx/default.conf.template}"
 HEALTH_TIMEOUT_SECONDS="${HEALTH_TIMEOUT_SECONDS:-120}"
+PROXY_HEALTH_TIMEOUT_SECONDS="${PROXY_HEALTH_TIMEOUT_SECONDS:-30}"
 DRAIN_SECONDS="${DRAIN_SECONDS:-30}"
 SERVER_NAME="${SERVER_NAME:-_}"
+PROXY_STARTED_BY_DEPLOY=0
+STOPPED_LEGACY_MAIN_IDS=""
 
 export COMPOSE_PROJECT_NAME
 
@@ -158,6 +161,87 @@ restore_previous_proxy_conf() {
   fi
 }
 
+reload_proxy() {
+  compose exec -T proxy nginx -t && compose exec -T proxy nginx -s reload
+}
+
+rollback_proxy_switch() {
+  proxy_id="$(compose ps -q proxy 2>/dev/null || true)"
+
+  if [ -f "${PROXY_CONF}.previous" ]; then
+    log "Restoring previous proxy configuration"
+    restore_previous_proxy_conf
+
+    if [ "$PROXY_STARTED_BY_DEPLOY" != "1" ] && is_running "$proxy_id"; then
+      reload_proxy || true
+    fi
+  fi
+
+  if [ "$PROXY_STARTED_BY_DEPLOY" = "1" ]; then
+    compose stop proxy || true
+  fi
+
+  restart_legacy_main "$STOPPED_LEGACY_MAIN_IDS"
+}
+
+print_service_diagnostics() {
+  service="$1"
+  container_id="$(compose ps -q "$service" 2>/dev/null || true)"
+
+  compose ps || true
+
+  if [ -n "$container_id" ]; then
+    docker logs "$container_id" --tail 80 || true
+  fi
+}
+
+expect_ok_response() {
+  label="$1"
+  shift
+
+  response="$("$@" 2>&1)" || {
+    log "$label failed"
+    printf '%s\n' "$response"
+    return 1
+  }
+
+  if [ "$response" != "ok" ]; then
+    log "$label returned an unexpected response"
+    printf '%s\n' "$response"
+    return 1
+  fi
+}
+
+validate_upstream_reachable() {
+  service="$1"
+
+  expect_ok_response \
+    "Upstream probe for $service" \
+    docker run --rm \
+      --network "${COMPOSE_PROJECT_NAME}_default" \
+      nginx:1.27-alpine \
+      wget -q -T 3 -O - "http://${service}:3000/healthz"
+}
+
+wait_for_proxy_healthy() {
+  deadline="$(($(date +%s) + PROXY_HEALTH_TIMEOUT_SECONDS))"
+
+  while :; do
+    if expect_ok_response \
+      "Proxy health probe" \
+      compose exec -T proxy wget -q -T 3 -O - "http://127.0.0.1/healthz"; then
+      return 0
+    fi
+
+    if [ "$(date +%s)" -ge "$deadline" ]; then
+      log "proxy did not return a healthy response within ${PROXY_HEALTH_TIMEOUT_SECONDS}s"
+      return 1
+    fi
+
+    sleep 2
+  done
+}
+
 absolute_path() {
   case "$1" in
     /*)
@@ -190,19 +274,11 @@ reload_or_start_proxy() {
   proxy_id="$(compose ps -q proxy 2>/dev/null || true)"
 
   if is_running "$proxy_id"; then
-    if compose exec -T proxy nginx -t; then
-      if compose exec -T proxy nginx -s reload; then
-        rm -f "${PROXY_CONF}.previous"
-        return
-      fi
-
-      restore_previous_proxy_conf
-      compose exec -T proxy nginx -t || true
-      return 1
+    if reload_proxy; then
+      return
     fi
 
-    restore_previous_proxy_conf
-    compose exec -T proxy nginx -t || true
+    rollback_proxy_switch
     return 1
   fi
 
@@ -216,12 +292,14 @@ reload_or_start_proxy() {
 
     log "Stopping legacy main container before starting proxy on the public port"
     docker stop $legacy_main_ids
+    STOPPED_LEGACY_MAIN_IDS="$legacy_main_ids"
   fi
 
   if ! compose up -d --no-deps proxy; then
     restart_legacy_main "$legacy_main_ids"
     return 1
   fi
+  PROXY_STARTED_BY_DEPLOY=1
 
   if ! compose exec -T proxy nginx -t; then
     compose stop proxy || true
@@ -266,9 +344,26 @@ compose up -d --force-recreate --no-deps "$next_service"
 log "Waiting for $next_service to become healthy"
 wait_for_healthy "$next_service"
 
+log "Checking that nginx can reach $next_service"
+if ! validate_upstream_reachable "$next_service"; then
+  print_service_diagnostics "$next_service"
+  exit 1
+fi
+
 render_proxy_conf "$next_service"
 install_proxy_conf
-reload_or_start_proxy
+if ! reload_or_start_proxy; then
+  exit 1
+fi
+
+log "Checking proxy after switch"
+if ! wait_for_proxy_healthy; then
+  rollback_proxy_switch
+  print_service_diagnostics "$next_service"
+  exit 1
+fi
+
+rm -f "${PROXY_CONF}.previous"
 
 printf '%s\n' "$next_color" > "$STATE_FILE"
 
