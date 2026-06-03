@@ -8,9 +8,16 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    concurrency:
+      group: prod-docker-deploy
+      cancel-in-progress: false
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
       - name: Deploy
         env:
           DEPLOYER_AGENT_PRIVATE_KEY: ${{ secrets.PROD_DEPLOYER_AGENT_PRIVATE_KEY }}
@@ -18,13 +25,22 @@ jobs:
           DEPLOY_DIR: "/var/www/dockerize-dentest"
           ACTOR: ${{ github.actor }}
           CR_PAT: ${{ secrets.READ_PACKAGES_REGISTRY_TOKEN }}
-        run: echo "Adding deployer agent identity" &&
-          eval `ssh-agent -s` && ssh-add <(echo "$DEPLOYER_AGENT_PRIVATE_KEY") &&
-          echo "Creating directories on server" &&
-          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "mkdir -p $DEPLOY_DIR" &&
-          echo "Uploading installer to server" &&
-          scp -o StrictHostKeyChecking=no -r installer deployer-agent@$DEPLOY_TO:$DEPLOY_DIR/ &&
-          echo "Logging Docker in Github package registry" &&
-          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "echo $CR_PAT | docker login ghcr.io -u $ACTOR --password-stdin" &&
-          echo "Running container" &&
-          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "cd $DEPLOY_DIR && API_URL=https://api.dentest.tech HTTP_PORT=8001 COMPOSE_PROJECT_NAME=dentest_client SERVER_NAME=http://127.0.0.1 docker compose -f ./installer/prod/docker-compose.yml up -d --remove-orphans --build"
+        run: |
+          IMAGE_TAG="$(git describe --tags --exact-match "${{ github.event.workflow_run.head_sha }}")"
+          APP_IMAGE="ghcr.io/dentest-project/client:$IMAGE_TAG"
+
+          echo "Adding deployer agent identity"
+          eval `ssh-agent -s`
+          ssh-add <(echo "$DEPLOYER_AGENT_PRIVATE_KEY")
+
+          echo "Creating directories on server"
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "mkdir -p $DEPLOY_DIR"
+
+          echo "Uploading installer to server"
+          scp -o StrictHostKeyChecking=no -r installer deployer-agent@$DEPLOY_TO:$DEPLOY_DIR/
+
+          echo "Logging Docker in Github package registry"
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "echo $CR_PAT | docker login ghcr.io -u $ACTOR --password-stdin"
+
+          echo "Deploying with blue/green switch"
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "cd $DEPLOY_DIR && APP_IMAGE=$APP_IMAGE API_URL=https://api.dentest.tech HTTP_PORT=8001 COMPOSE_PROJECT_NAME=dentest_client SERVER_NAME=_ sh ./installer/prod/deploy.sh"

@@ -1,18 +1,35 @@
+x-app: &app
+  image: ${APP_IMAGE:-ghcr.io/dentest-project/client:latest}
+  restart: unless-stopped
+  stop_grace_period: 60s
+  environment:
+    API_URL: ${API_URL:-https://api.dentest.tech}
+    HOST: 0.0.0.0
+  healthcheck:
+    test:
+      - CMD-SHELL
+      - 'node -e "fetch(''http://127.0.0.1:3000/healthz'').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"'
+    interval: 5s
+    timeout: 3s
+    retries: 24
+    start_period: 10s
+  extra_hosts:
+    - host.docker.internal:host-gateway
+    - ${API_HOST:-api.dentest.local}:host-gateway
+
 services:
-  main:
-    build:
-      context: ../..
-      target: app_main
-      dockerfile: ./installer/prod/Dockerfile
+  proxy:
+    image: nginx:1.27-alpine
     restart: unless-stopped
-    environment:
-      API_URL: ${API_URL:-https://api.dentest.tech}
     ports:
-      - target: 3000
+      - target: 80
         published: ${HTTP_PORT:-80}
         protocol: tcp
     volumes:
-      - ./build:/srv/app/build
-    extra_hosts:
-      - host.docker.internal:host-gateway
-      - ${API_HOST:-api.dentest.local}:host-gateway
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  app_blue:
+    <<: *app
+
+  app_green:
+    <<: *app
