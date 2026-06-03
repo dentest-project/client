@@ -1,9 +1,12 @@
 <template>
   <div class="ScenarioStepForm">
-    <DragHandle>
-      <el-button class="ScenarioStepForm-dragHandle" size="small" title="Reorder step">
-        <el-icon><Sort /></el-icon>
-      </el-button>
+    <DragHandle
+      tag="div"
+      class="ScenarioStepForm-dragHandle"
+      title="Drag to reorder step"
+      aria-label="Drag to reorder step"
+    >
+      <el-icon class="ScenarioStepForm-dragHandleIcon"><Sort /></el-icon>
     </DragHandle>
     <div class="ScenarioStepForm-inner">
       <div class="ScenarioStepForm-parts">
@@ -247,11 +250,31 @@ const headers = computed(() => props.modelValue.step?.extraParamTemplate ? (prop
 }
 
 .ScenarioStepForm-dragHandle {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 3rem;
+  min-height: 3rem;
+  border-radius: var(--el-border-radius-base);
   cursor: grab;
+  color: var(--el-text-color-secondary);
+  touch-action: none;
+  user-select: none;
+}
+
+.ScenarioStepForm-dragHandle:hover {
+  background-color: var(--el-fill-color);
+  color: var(--el-text-color-primary);
 }
 
 .ScenarioStepForm-dragHandle:active {
   cursor: grabbing;
+}
+
+.ScenarioStepForm-dragHandleIcon {
+  pointer-events: none;
 }
 
 .ScenarioStepForm-inner {
