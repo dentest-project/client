@@ -1,7 +1,7 @@
 <template>
   <div class="ScenarioStepForm">
     <DragHandle>
-      <el-button size="small" title="Reorder step">
+      <el-button class="ScenarioStepForm-dragHandle" size="small" title="Reorder step">
         <el-icon><Sort /></el-icon>
       </el-button>
     </DragHandle>
@@ -244,7 +244,14 @@ const headers = computed(() => props.modelValue.step?.extraParamTemplate ? (prop
 
 .ScenarioStepForm:hover {
   background-color: var(--el-fill-color-lighter);
+}
+
+.ScenarioStepForm-dragHandle {
   cursor: grab;
+}
+
+.ScenarioStepForm-dragHandle:active {
+  cursor: grabbing;
 }
 
 .ScenarioStepForm-inner {
