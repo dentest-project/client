@@ -481,12 +481,6 @@ interface ProjectUserToken {
   token: string
 }
 
-interface Register {
-  username: string,
-  email: string,
-  password: string
-}
-
 interface ResetPassword {
   code: string,
   newPassword: string
@@ -734,7 +728,6 @@ export {
   ProjectUserToken,
   ProjectVisibility,
   PulledFeature,
-  Register,
   ResetPassword,
   ResetPasswordRequest,
   SaveStatus,

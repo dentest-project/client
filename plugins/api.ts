@@ -32,7 +32,6 @@ import type {
   ProjectUserList,
   ProjectUserToken,
   PulledFeature,
-  Register,
   ResetPassword,
   ResetPasswordRequest,
   Step,
@@ -48,7 +47,6 @@ import type {
   UpdatePathParent,
   UpdateProject,
   UpdateStep,
-  User
 } from '~/types'
 
 interface QueryOptions {
@@ -143,7 +141,6 @@ export default defineNuxtPlugin(() => ({
       getProjectUserToken: async (projectId: string, userId: string): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`),
       login: async (user: Login): Promise<LoginResponse> => post(`login`, user),
       pullFeatures: async (pullToken: string): Promise<PulledFeature[]> => get('pull/features?inlineParameterWrapper=%22&withId=1', { headers: { Authorization: `Pull ${pullToken}` } }),
-      register: async (user: Register): Promise<User> => post(`register`, user),
       resetPassword: (resetPassword: ResetPassword): Promise<void> => post('reset-password', resetPassword),
       resetPasswordRequest: (resetPasswordRequest: ResetPasswordRequest): Promise<void> => post('reset-password-request', resetPasswordRequest),
       saveFeature: async (feature: UpdateFeature): Promise<Feature> => {

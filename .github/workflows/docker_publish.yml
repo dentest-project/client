@@ -24,6 +24,6 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
         run: |
-          docker build . -f ./.github/resources/publish/Dockerfile --build-arg API_URL=https://api.dentest.tech --tag ghcr.io/dentest-project/client:${{ env.RELEASE_VERSION }} --tag ghcr.io/dentest-project/client:latest --no-cache
+          docker build . -f ./.github/resources/publish/Dockerfile --build-arg API_URL=https://api.dentest.tech --build-arg KETAL_URL=https://ketal.dentest.tech/rpc --tag ghcr.io/dentest-project/client:${{ env.RELEASE_VERSION }} --tag ghcr.io/dentest-project/client:latest --no-cache
           docker push ghcr.io/dentest-project/client:${{ env.RELEASE_VERSION }}
           docker push ghcr.io/dentest-project/client:latest

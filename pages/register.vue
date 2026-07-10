@@ -12,9 +12,13 @@
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus'
-import type { Register } from '~/types'
+import {
+  RegisterErrorCode,
+  isKetalJsonRpcError
+} from '~/api/ketal'
+import type { RegisterParams } from '~/api/ketal'
 
-const { $api, $router } = useNuxtApp()
+const { $ketal, $router } = useNuxtApp()
 const { signIn } = useAuth()
 
 useHead({
@@ -28,9 +32,9 @@ definePageMeta({
   }
 })
 
-const onSubmit = async (data: Register): Promise<void> => {
+const onSubmit = async (data: RegisterParams): Promise<void> => {
   try {
-    await $api.register(data)
+    await $ketal.register(data)
     await signIn( {
       username: data.username,
       password: data.password
@@ -44,7 +48,7 @@ const onSubmit = async (data: Register): Promise<void> => {
 
     setTimeout(() => { $router.push('/') }, 2000)
   } catch (error) {
-    if (error.statusCode === 409) {
+    if (isKetalJsonRpcError(error) && error.code === RegisterErrorCode.UserAlreadyExists) {
       ElNotification({
         title: 'Already taken',
         message: 'This email or username is already existing. Try to login instead',

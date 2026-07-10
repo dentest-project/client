@@ -3,7 +3,12 @@
 ARG NODE_VERSION=24
 FROM node:${NODE_VERSION}-bookworm AS app_node_base
 
+ARG API_URL=http://api.dentest.local
+ARG KETAL_URL=http://ketal.dentest.local/rpc
+
 ENV NODE_OPTIONS=--openssl-legacy-provider
+ENV API_URL="${API_URL}"
+ENV KETAL_URL="${KETAL_URL}"
 
 WORKDIR /srv/app
 

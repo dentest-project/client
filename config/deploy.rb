@@ -1,3 +1,5 @@
+require "shellwords"
+
 set :application, "dentest_client"
 set :repo_url, "git@github.com:entest-project/client.git"
 set :deploy_to, ENV['DEPLOY_DIR']
@@ -6,10 +8,18 @@ set :keep_releases, 5
 
 server ENV['DEPLOY_TO'], user: "deployer-agent"
 
+def build_env
+  {
+    "KETAL_URL" => ENV["KETAL_URL"]
+  }.map { |key, value| value && !value.empty? ? "#{key}=#{Shellwords.escape(value)}" : nil }
+    .compact
+    .join(" ")
+end
+
 task :install do
   on roles(:all) do |h|
      execute "cd #{release_path} && npm install"
-     execute "cd #{release_path} && npm run build"
+     execute "cd #{release_path} && #{[build_env, 'npm run build'].reject(&:empty?).join(' ')}"
   end
 end
 

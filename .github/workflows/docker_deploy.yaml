@@ -43,4 +43,4 @@ jobs:
           ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "echo $CR_PAT | docker login ghcr.io -u $ACTOR --password-stdin"
 
           echo "Deploying with blue/green switch"
-          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "cd $DEPLOY_DIR && APP_IMAGE=$APP_IMAGE API_URL=https://api.dentest.tech HTTP_PORT=8001 COMPOSE_PROJECT_NAME=dentest_client SERVER_NAME=_ sh ./installer/prod/deploy.sh"
+          ssh -o StrictHostKeyChecking=no deployer-agent@$DEPLOY_TO "cd $DEPLOY_DIR && APP_IMAGE=$APP_IMAGE API_URL=https://api.dentest.tech KETAL_URL=https://ketal.dentest.tech/rpc HTTP_PORT=8001 COMPOSE_PROJECT_NAME=dentest_client SERVER_NAME=_ sh ./installer/prod/deploy.sh"

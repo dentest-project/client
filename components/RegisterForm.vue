@@ -25,11 +25,15 @@
 </template>
 
 <script setup lang="ts">
+import type { RegisterParams } from '~/api/ketal'
+
 const username = ref('')
 const email = ref('')
 const password = ref('')
 
-const emit = defineEmits(['submit'])
+const emit = defineEmits<{
+  submit: [value: RegisterParams]
+}>()
 
 const onSubmit = () => {
   emit('submit', {

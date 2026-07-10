@@ -6,6 +6,7 @@ const hmrHost = process.env.HMR_HOST
 const hmrPort = process.env.HMR_PORT ? Number(process.env.HMR_PORT) : undefined
 const hmrClientPort = process.env.HMR_CLIENT_PORT ? Number(process.env.HMR_CLIENT_PORT) : undefined
 const hmrProtocol = process.env.HMR_PROTOCOL
+const ketalUrl = process.env.KETAL_URL || 'http://ketal.dentest.local/rpc'
 const hmrConfig = hmrHost || hmrPort || hmrClientPort || hmrProtocol ? {
   ...(hmrHost ? { host: hmrHost } : {}),
   ...(hmrPort ? { port: hmrPort } : {}),
@@ -105,6 +106,7 @@ export default defineNuxtConfig({
       '~/plugins/api.ts',
       '~/plugins/colors.ts',
       '~/plugins/draggable.ts',
+      '~/plugins/ketal.ts',
       '~/plugins/mode.ts',
       '~/plugins/routes.ts',
       '~/plugins/vue-json-pretty.ts',
@@ -163,7 +165,8 @@ export default defineNuxtConfig({
     },
     vite: {
       define: {
-        API_URL: JSON.stringify(process.env.API_URL)
+        API_URL: JSON.stringify(process.env.API_URL),
+        KETAL_URL: JSON.stringify(ketalUrl)
       },
       server: {
         watch: {
