@@ -9,8 +9,14 @@ set :keep_releases, 5
 server ENV['DEPLOY_TO'], user: "deployer-agent"
 
 def build_env
+  api_url = ENV["NUXT_PUBLIC_API_URL"] || ENV["API_URL"]
+  ketal_url = ENV["NUXT_PUBLIC_KETAL_URL"] || ENV["KETAL_URL"]
+
   {
-    "KETAL_URL" => ENV["KETAL_URL"]
+    "API_URL" => api_url,
+    "NUXT_PUBLIC_API_URL" => api_url,
+    "KETAL_URL" => ketal_url,
+    "NUXT_PUBLIC_KETAL_URL" => ketal_url
   }.map { |key, value| value && !value.empty? ? "#{key}=#{Shellwords.escape(value)}" : nil }
     .compact
     .join(" ")

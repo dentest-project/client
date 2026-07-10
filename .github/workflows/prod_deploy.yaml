@@ -16,5 +16,8 @@ jobs:
           DEPLOY_TO: ${{ secrets.PROD_SERVER }}
           DEPLOY_DIR: ${{ secrets.PROD_DEPLOY_TO }}
           PORT: 3000
+          API_URL: https://api.dentest.tech
+          NUXT_PUBLIC_API_URL: https://api.dentest.tech
           KETAL_URL: https://ketal.dentest.tech/rpc
+          NUXT_PUBLIC_KETAL_URL: https://ketal.dentest.tech/rpc
         run: sudo gem install capistrano && eval `ssh-agent -s` && ssh-add <(echo "$DEPLOYER_AGENT_PRIVATE_KEY") && cap production deploy

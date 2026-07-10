@@ -14,9 +14,4 @@ declare module 'vue' {
   }
 }
 
-declare global {
-  const API_URL: string | undefined
-  const KETAL_URL: string
-}
-
 export {}

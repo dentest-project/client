@@ -54,12 +54,18 @@ interface QueryOptions {
   body?: any
 }
 
+let apiBaseUrl = ''
+
+const setApiBaseUrl = (value: string) => {
+  apiBaseUrl = value
+}
+
 const query = async (url: string, options: QueryOptions) => {
   const { token } = useAuthState()
 
   try {
     const result = await axios.request({
-      baseURL: API_URL,
+      baseURL: apiBaseUrl,
       url,
       method: options.method ?? 'GET',
       data: options.body,
@@ -88,9 +94,14 @@ const post = async (url: string, body: any) => await query(url, { method: 'POST'
 
 const put = async (url: string, body: any) => await query(url, { method: 'PUT', body })
 
-export default defineNuxtPlugin(() => ({
-  provide: {
-    'api': {
+export default defineNuxtPlugin(() => {
+  const config = useRuntimeConfig()
+
+  setApiBaseUrl(config.public.apiUrl as string)
+
+  return {
+    provide: {
+      'api': {
       createDomainEntity: async (domainEntity: CreateDomainEntityRequest): Promise<DomainEntity> =>
         post('domain-entities', domainEntity),
       createDomainFixture: async (projectId: string, domainFixture: CreateDomainFixtureRequest): Promise<DomainFixture> =>
@@ -176,5 +187,7 @@ export default defineNuxtPlugin(() => ({
       updateProject: async (project: UpdateProject): Promise<Project> => put('projects', project),
       updateProjectUser: async (projectId: string, userId: string, permissions: Array<ProjectPermission>): Promise<ProjectUser> => put(`projects/${projectId}/users/${userId}`, { permissions }),
       updateStep: async (step: UpdateStep): Promise<Step> => put('steps', step),
+      }
     }
-}}))
+  }
+})

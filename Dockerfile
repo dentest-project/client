@@ -8,7 +8,9 @@ ARG KETAL_URL=http://ketal.dentest.local/rpc
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
 ENV API_URL="${API_URL}"
+ENV NUXT_PUBLIC_API_URL="${API_URL}"
 ENV KETAL_URL="${KETAL_URL}"
+ENV NUXT_PUBLIC_KETAL_URL="${KETAL_URL}"
 
 WORKDIR /srv/app
 

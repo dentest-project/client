@@ -6,7 +6,8 @@ const hmrHost = process.env.HMR_HOST
 const hmrPort = process.env.HMR_PORT ? Number(process.env.HMR_PORT) : undefined
 const hmrClientPort = process.env.HMR_CLIENT_PORT ? Number(process.env.HMR_CLIENT_PORT) : undefined
 const hmrProtocol = process.env.HMR_PROTOCOL
-const ketalUrl = process.env.KETAL_URL || 'http://ketal.dentest.local/rpc'
+const apiUrl = process.env.NUXT_PUBLIC_API_URL || process.env.API_URL || 'http://api.dentest.local'
+const ketalUrl = process.env.NUXT_PUBLIC_KETAL_URL || process.env.KETAL_URL || 'http://ketal.dentest.local/rpc'
 const hmrConfig = hmrHost || hmrPort || hmrClientPort || hmrProtocol ? {
   ...(hmrHost ? { host: hmrHost } : {}),
   ...(hmrPort ? { port: hmrPort } : {}),
@@ -125,6 +126,12 @@ export default defineNuxtConfig({
       'pinia-plugin-persistedstate/nuxt',
       '@vueuse/nuxt',
     ],
+    runtimeConfig: {
+      public: {
+        apiUrl,
+        ketalUrl,
+      },
+    },
     hooks: {
       'pages:extend'(pages) {
         pages.push(...projectCompatibilityRoutes)
@@ -139,7 +146,7 @@ export default defineNuxtConfig({
         ]
     },
     auth: {
-      baseURL: `${process.env.API_URL}/`,
+      baseURL: `${apiUrl}/`,
       globalAppMiddleware: true,
       provider: {
         type: 'local',
@@ -164,10 +171,6 @@ export default defineNuxtConfig({
         }
     },
     vite: {
-      define: {
-        API_URL: JSON.stringify(process.env.API_URL),
-        KETAL_URL: JSON.stringify(ketalUrl)
-      },
       server: {
         watch: {
           usePolling: true,

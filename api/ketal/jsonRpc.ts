@@ -7,6 +7,11 @@ import type {
 } from './types'
 
 const JSON_RPC_VERSION = '2.0'
+let ketalBaseUrl = ''
+
+export const setKetalBaseUrl = (value: string) => {
+  ketalBaseUrl = value
+}
 
 const createRequestId = (): string => {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -47,7 +52,7 @@ export const callKetalMethod = async <TParams extends object, TResult>(
   }
 
   try {
-    const response = await axios.post<unknown>(KETAL_URL, request, {
+    const response = await axios.post<unknown>(ketalBaseUrl, request, {
       headers: {
         'Content-Type': 'application/json'
       }
