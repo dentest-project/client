@@ -60,12 +60,12 @@ is_running() {
 
 detect_active_color() {
   if [ -f "$PROXY_CONF" ]; then
-    if grep -q 'proxy_pass http://app_blue:3000' "$PROXY_CONF"; then
+    if grep -Eq 'proxy_pass http://app_blue:3000|set[[:space:]]+\$app_upstream[[:space:]]+app_blue;' "$PROXY_CONF"; then
       printf '%s\n' blue
       return
     fi
 
-    if grep -q 'proxy_pass http://app_green:3000' "$PROXY_CONF"; then
+    if grep -Eq 'proxy_pass http://app_green:3000|set[[:space:]]+\$app_upstream[[:space:]]+app_green;' "$PROXY_CONF"; then
       printf '%s\n' green
       return
     fi
