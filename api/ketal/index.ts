@@ -1,6 +1,8 @@
+import { login } from './endpoints/login'
 import { register } from './endpoints/register'
 
 export const ketalApi = {
+  login,
   register
 }
 

@@ -390,15 +390,6 @@ interface Issue {
   link: string
 }
 
-interface Login {
-  username: string,
-  password: string
-}
-
-interface LoginResponse {
-  token: string
-}
-
 interface MultilineStepParam extends StepParam {
   content: string
 }
@@ -705,8 +696,6 @@ export {
   InlineStepParam,
   Issue,
   IssueTracker,
-  Login,
-  LoginResponse,
   Mode,
   MultilineStepParam,
   Organization,

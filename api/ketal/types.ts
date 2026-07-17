@@ -24,10 +24,3 @@ export interface JsonRpcFailureResponse {
   id: JsonRpcId,
   error: JsonRpcErrorPayload
 }
-
-export type JsonRpcResponse<TResult> = JsonRpcSuccessResponse<TResult> | JsonRpcFailureResponse
-
-export interface KetalEndpoint<TParams, TResult> {
-  method: string,
-  call: (params: TParams) => Promise<TResult>
-}

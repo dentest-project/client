@@ -1,7 +1,8 @@
 import type { Session, User } from '~/types'
+import type { LoginParams } from '~/api/ketal'
 
-const loggedInUser = (sessionData): User => {
-  return sessionData ? (sessionData as Session).user : {
+const loggedInUser = (sessionData?: Session | null): User => {
+  return sessionData ? sessionData.user : {
     id: '',
     username: '',
     email: '',
@@ -17,4 +18,15 @@ const isAuthenticated = (sessionStatus: string, sessionData?: Session | null) =>
   return sessionStatus === 'loading' && !!sessionData
 }
 
-export { loggedInUser, isAuthenticated }
+const logIn = async (credentials: LoginParams): Promise<void> => {
+  const { $ketal } = useNuxtApp()
+  const { setToken } = useAuthState()
+  const { getSession } = useAuth()
+
+  const { token } = await $ketal.login(credentials)
+
+  setToken(token)
+  await getSession()
+}
+
+export { loggedInUser, isAuthenticated, logIn }

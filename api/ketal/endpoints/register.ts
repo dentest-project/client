@@ -1,5 +1,4 @@
 import { callKetalMethod } from '../jsonRpc'
-import type { KetalEndpoint } from '../types'
 
 export interface RegisterParams {
   username: string,
@@ -23,8 +22,3 @@ const method = 'Register'
 
 export const register = async (params: RegisterParams): Promise<RegisterResult> =>
   callKetalMethod<RegisterParams, RegisterResult>(method, params)
-
-export const registerEndpoint: KetalEndpoint<RegisterParams, RegisterResult> = {
-  method,
-  call: register
-}

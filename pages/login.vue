@@ -15,9 +15,14 @@
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus'
-import type { Login } from '~/types'
+import {
+  LoginErrorCode,
+  isKetalJsonRpcError
+} from '~/api/ketal'
+import type { LoginParams } from '~/api/ketal'
+import { logIn } from '~/helpers/auth'
 
-const { signIn } = useAuth()
+const { $router } = useNuxtApp()
 
 definePageMeta({
   title: 'Login | Dentest',
@@ -31,16 +36,17 @@ useHead({
   title: `Login | Dentest`
 })
 
-const onSubmit = async (data: Login) => {
+const onSubmit = async (data: LoginParams): Promise<void> => {
   try {
-    await signIn(data, { callbackUrl: '/' })
+    await logIn(data)
     ElNotification({
       title: 'Hey!',
       message: 'Welcome back!',
       type: 'success',
     })
+    setTimeout(() => { $router.push('/') }, 2000)
   } catch (error) {
-    if (error.statusCode === 401) {
+    if (isKetalJsonRpcError(error) && error.code === LoginErrorCode.InvalidCredentials) {
       ElNotification({
         title: 'Invalid credentials',
         message: 'This combination username/password does not exist',

@@ -17,9 +17,9 @@ import {
   isKetalJsonRpcError
 } from '~/api/ketal'
 import type { RegisterParams } from '~/api/ketal'
+import { logIn } from '~/helpers/auth'
 
 const { $ketal, $router } = useNuxtApp()
-const { signIn } = useAuth()
 
 useHead({
   title: 'Register | Dentest'
@@ -35,10 +35,10 @@ definePageMeta({
 const onSubmit = async (data: RegisterParams): Promise<void> => {
   try {
     await $ketal.register(data)
-    await signIn( {
-      username: data.username,
+    await logIn({
+      subject: data.username,
       password: data.password
-    }, { callbackUrl: '/' })
+    })
 
     ElNotification({
       title: 'Hey!',
