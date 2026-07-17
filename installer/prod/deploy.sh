@@ -1,21 +1,27 @@
 #!/bin/sh
 set -eu
 
-COMPOSE_FILE="${COMPOSE_FILE:-./installer/prod/docker-compose.yml}"
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)"
+PROJECT_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+COMPOSE_FILE="${COMPOSE_FILE:-$SCRIPT_DIR/docker-compose.yml}"
 COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-dentest_client}"
-STATE_FILE="${STATE_FILE:-.active_color}"
-LOCK_FILE="${LOCK_FILE:-.deploy.lock}"
-LOCK_DIR="${LOCK_DIR:-.deploy.lock.d}"
-PROXY_CONF="${PROXY_CONF:-./installer/prod/nginx/default.conf}"
-PROXY_TEMPLATE="${PROXY_TEMPLATE:-./installer/prod/nginx/default.conf.template}"
+HTTP_PORT="${HTTP_PORT:-80}"
+STATE_FILE="${STATE_FILE:-$PROJECT_DIR/.active_color}"
+LOCK_FILE="${LOCK_FILE:-$PROJECT_DIR/.deploy.lock}"
+LOCK_DIR="${LOCK_DIR:-$PROJECT_DIR/.deploy.lock.d}"
+PROXY_CONF="${PROXY_CONF:-$SCRIPT_DIR/nginx/default.conf}"
+PROXY_TEMPLATE="${PROXY_TEMPLATE:-$SCRIPT_DIR/nginx/default.conf.template}"
 HEALTH_TIMEOUT_SECONDS="${HEALTH_TIMEOUT_SECONDS:-120}"
 PROXY_HEALTH_TIMEOUT_SECONDS="${PROXY_HEALTH_TIMEOUT_SECONDS:-30}"
+SMOKE_TEST_PATH="${SMOKE_TEST_PATH:-/}"
 DRAIN_SECONDS="${DRAIN_SECONDS:-30}"
 SERVER_NAME="${SERVER_NAME:-_}"
 PROXY_STARTED_BY_DEPLOY=0
 STOPPED_LEGACY_MAIN_IDS=""
 
 export COMPOSE_PROJECT_NAME
+export HTTP_PORT
 
 compose() {
   docker compose -f "$COMPOSE_FILE" "$@"
@@ -195,8 +201,10 @@ print_service_diagnostics() {
   fi
 }
 
-expect_ok_response() {
+expect_exact_response() {
   label="$1"
+  expected="$2"
+  shift
   shift
 
   response="$("$@" 2>&1)" || {
@@ -205,11 +213,40 @@ expect_ok_response() {
     return 1
   }
 
-  if [ "$response" != "ok" ]; then
+  if [ "$response" != "$expected" ]; then
     log "$label returned an unexpected response"
     printf '%s\n' "$response"
     return 1
   fi
+}
+
+expect_ok_response() {
+  label="$1"
+  shift
+
+  expect_exact_response "$label" ok "$@"
+}
+
+expect_http_success() {
+  label="$1"
+  shift
+
+  response="$("$@" 2>&1)" || {
+    log "$label failed"
+    printf '%s\n' "$response"
+    return 1
+  }
+}
+
+smoke_test_path() {
+  case "$SMOKE_TEST_PATH" in
+    /*)
+      printf '%s\n' "$SMOKE_TEST_PATH"
+      ;;
+    *)
+      printf '/%s\n' "$SMOKE_TEST_PATH"
+      ;;
+  esac
 }
 
 validate_upstream_reachable() {
@@ -223,14 +260,57 @@ validate_upstream_reachable() {
       wget -q -T 3 -O - "http://${service}:3000/healthz"
 }
 
+validate_upstream_smoke() {
+  service="$1"
+  path="$(smoke_test_path)"
+
+  expect_http_success \
+    "Upstream smoke probe for $service $path" \
+    docker run --rm \
+      --network "${COMPOSE_PROJECT_NAME}_default" \
+      nginx:1.27-alpine \
+      wget -q -T 5 -O /dev/null "http://${service}:3000${path}"
+}
+
+validate_proxy_loaded_upstream() {
+  expected_service="$1"
+
+  expect_exact_response \
+    "Proxy active upstream probe" \
+    "$expected_service" \
+    compose exec -T proxy wget -q -T 3 -O - "http://127.0.0.1/__active_upstream"
+}
+
+validate_proxy_smoke() {
+  path="$(smoke_test_path)"
+
+  expect_http_success \
+    "Proxy smoke probe $path" \
+    compose exec -T proxy wget -q -T 5 -O /dev/null "http://127.0.0.1${path}"
+}
+
+validate_published_proxy_smoke() {
+  path="$(smoke_test_path)"
+
+  expect_http_success \
+    "Published proxy smoke probe :${HTTP_PORT}${path}" \
+    docker run --rm \
+      --network host \
+      nginx:1.27-alpine \
+      wget -q -T 5 -O /dev/null "http://127.0.0.1:${HTTP_PORT}${path}"
+}
+
 wait_for_proxy_healthy() {
+  expected_service="$1"
   deadline="$(($(date +%s) + PROXY_HEALTH_TIMEOUT_SECONDS))"
 
   while :; do
     if expect_ok_response \
       "Proxy health probe" \
       compose exec -T proxy wget -q -T 3 -O - "http://127.0.0.1/healthz"; then
-      return 0
+      if validate_proxy_loaded_upstream "$expected_service"; then
+        return 0
+      fi
     fi
 
     if [ "$(date +%s)" -ge "$deadline" ]; then
@@ -350,6 +430,12 @@ if ! validate_upstream_reachable "$next_service"; then
   exit 1
 fi
 
+log "Smoke testing $next_service"
+if ! validate_upstream_smoke "$next_service"; then
+  print_service_diagnostics "$next_service"
+  exit 1
+fi
+
 render_proxy_conf "$next_service"
 install_proxy_conf
 if ! reload_or_start_proxy; then
@@ -357,8 +443,25 @@ if ! reload_or_start_proxy; then
 fi
 
 log "Checking proxy after switch"
-if ! wait_for_proxy_healthy; then
+if ! wait_for_proxy_healthy "$next_service"; then
   rollback_proxy_switch
+  print_service_diagnostics proxy
+  print_service_diagnostics "$next_service"
+  exit 1
+fi
+
+log "Smoke testing proxy after switch"
+if ! validate_proxy_smoke; then
+  rollback_proxy_switch
+  print_service_diagnostics proxy
+  print_service_diagnostics "$next_service"
+  exit 1
+fi
+
+log "Smoke testing published proxy port after switch"
+if ! validate_published_proxy_smoke; then
+  rollback_proxy_switch
+  print_service_diagnostics proxy
   print_service_diagnostics "$next_service"
   exit 1
 fi

@@ -11,6 +11,14 @@ server {
   resolver_timeout 2s;
   set $app_upstream __APP_UPSTREAM__;
 
+  location = /__active_upstream {
+    access_log off;
+    allow 127.0.0.1;
+    deny all;
+    default_type text/plain;
+    return 200 "$app_upstream\n";
+  }
+
   location = /healthz {
     access_log off;
     proxy_http_version 1.1;
