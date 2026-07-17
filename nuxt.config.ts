@@ -1,19 +1,34 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { resolve as resolvePath } from 'node:path'
 import { Session } from './types'
 
 // @ts-ignore
 const hmrHost = process.env.HMR_HOST
 const hmrPort = process.env.HMR_PORT ? Number(process.env.HMR_PORT) : undefined
-const hmrClientPort = process.env.HMR_CLIENT_PORT ? Number(process.env.HMR_CLIENT_PORT) : undefined
+const hmrClientPort = process.env.HMR_CLIENT_PORT
+  ? Number(process.env.HMR_CLIENT_PORT)
+  : undefined
 const hmrProtocol = process.env.HMR_PROTOCOL
-const apiUrl = process.env.NUXT_PUBLIC_API_URL || process.env.API_URL || 'http://api.dentest.local'
-const ketalUrl = process.env.NUXT_PUBLIC_KETAL_URL || process.env.KETAL_URL || 'http://ketal.dentest.local/rpc'
-const hmrConfig = hmrHost || hmrPort || hmrClientPort || hmrProtocol ? {
-  ...(hmrHost ? { host: hmrHost } : {}),
-  ...(hmrPort ? { port: hmrPort } : {}),
-  ...(hmrClientPort ? { clientPort: hmrClientPort } : {}),
-  ...(hmrProtocol ? { protocol: hmrProtocol } : {}),
-} : undefined
+const apiUrl =
+  process.env.NUXT_PUBLIC_API_URL ||
+  process.env.API_URL ||
+  'http://api.dentest.local'
+const ketalUrl =
+  process.env.NUXT_PUBLIC_KETAL_URL ||
+  process.env.KETAL_URL ||
+  'http://ketal.dentest.local/rpc'
+const isDevServer =
+  process.env.NODE_ENV === 'development' &&
+  process.env.npm_lifecycle_event !== 'build'
+const hmrConfig =
+  hmrHost || hmrPort || hmrClientPort || hmrProtocol
+    ? {
+        ...(hmrHost ? { host: hmrHost } : {}),
+        ...(hmrPort ? { port: hmrPort } : {}),
+        ...(hmrClientPort ? { clientPort: hmrClientPort } : {}),
+        ...(hmrProtocol ? { protocol: hmrProtocol } : {}),
+      }
+    : undefined
 
 const projectCompatibilityRoutes = [
   {
@@ -94,89 +109,94 @@ const projectCompatibilityRoutes = [
 ]
 
 export default defineNuxtConfig({
-    /*
-    ** Global CSS
-    */
-    css: [
-      // 'vue-json-pretty/lib/styles.css'
-    ],
-    /*
-    ** Plugins to load before mounting the App
-    */
-    plugins: [
-      '~/plugins/api.ts',
-      '~/plugins/colors.ts',
-      '~/plugins/draggable.ts',
-      '~/plugins/ketal.ts',
-      '~/plugins/mode.ts',
-      '~/plugins/routes.ts',
-      '~/plugins/vue-json-pretty.ts',
-    ],
-    /*
-    ** Nuxt.js dev-modules
-    */
-    buildModules: [],
-    /*
-    ** Nuxt.js modules
-    */
-    modules: [
-      '@sidebase/nuxt-auth',
-      '@element-plus/nuxt',
-      '@pinia/nuxt',
-      'pinia-plugin-persistedstate/nuxt',
-      '@vueuse/nuxt',
-    ],
-    runtimeConfig: {
-      public: {
-        apiUrl,
-        ketalUrl,
-      },
-    },
-    hooks: {
-      'pages:extend'(pages) {
-        pages.push(...projectCompatibilityRoutes)
-      },
-    },
-    /*
-    ** Build configuration
-    */
-    build: {
-        vendor: [
-            'vue-slider-component'
-        ]
-    },
-    auth: {
-      baseURL: `${apiUrl}/`,
-      globalAppMiddleware: true,
-      provider: {
-        type: 'local',
-        endpoints: {
-          signIn: { path: '/login', method: 'post' },
-          signOut: { path: '/logout', method: 'post' },
-          signUp: { path: '/register', method: 'post' },
-          getSession: { path: '/me', method: 'get' }
-        },
-        sessionDataType: Session,
-        token: {
-          maxAgeInSeconds: 31557600
+  alias: {
+    ...(isDevServer
+      ? {
+          '#app-manifest': resolvePath('.nuxt/manifest/meta/dev.json'),
         }
+      : {}),
+  },
+  /*
+   ** Global CSS
+   */
+  css: [
+    // 'vue-json-pretty/lib/styles.css'
+  ],
+  /*
+   ** Plugins to load before mounting the App
+   */
+  plugins: [
+    '~/plugins/api.ts',
+    '~/plugins/colors.ts',
+    '~/plugins/draggable.ts',
+    '~/plugins/ketal.ts',
+    '~/plugins/mode.ts',
+    '~/plugins/routes.ts',
+    '~/plugins/vue-json-pretty.ts',
+  ],
+  /*
+   ** Nuxt.js dev-modules
+   */
+  buildModules: [],
+  /*
+   ** Nuxt.js modules
+   */
+  modules: [
+    '@sidebase/nuxt-auth',
+    '@element-plus/nuxt',
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
+    '@vueuse/nuxt',
+  ],
+  runtimeConfig: {
+    public: {
+      apiUrl,
+      ketalUrl,
+    },
+  },
+  hooks: {
+    'pages:extend'(pages) {
+      pages.push(...projectCompatibilityRoutes)
+    },
+  },
+  /*
+   ** Build configuration
+   */
+  build: {
+    vendor: ['vue-slider-component'],
+  },
+  auth: {
+    baseURL: `${apiUrl}/`,
+    globalAppMiddleware: true,
+    provider: {
+      type: 'local',
+      endpoints: {
+        signIn: { path: '/login', method: 'post' },
+        signOut: { path: '/logout', method: 'post' },
+        signUp: { path: '/register', method: 'post' },
+        getSession: { path: '/me', method: 'get' },
       },
-      addDefaultCallbackUrl: '/'
+      sessionDataType: Session,
+      token: {
+        maxAgeInSeconds: 31557600,
+      },
     },
-    loaders: {
-        vue: {
-            compilerOptions: {
-                preserveWhiteSpace: false,
-            }
-        }
+    addDefaultCallbackUrl: '/',
+  },
+  loaders: {
+    vue: {
+      compilerOptions: {
+        preserveWhiteSpace: false,
+      },
     },
-    vite: {
-      server: {
-        watch: {
-          usePolling: true,
-          interval: 100,
-        },
-        ...(hmrConfig ? { hmr: hmrConfig } : {}),
-      }
+  },
+  vite: {
+    server: {
+      watch: {
+        usePolling: true,
+        interval: 100,
+      },
+      ...(hmrConfig ? { hmr: hmrConfig } : {}),
     },
+  },
 })

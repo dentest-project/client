@@ -31,7 +31,6 @@ import type {
   ProjectUserToken,
   PulledFeature,
   ResetPassword,
-  ResetPasswordRequest,
   Step,
   Tag,
   UpdateDomainEntityRequest,
@@ -150,7 +149,6 @@ export default defineNuxtPlugin(() => {
       getProjectUserToken: async (projectId: string, userId: string): Promise<ProjectUserToken> => get(`projects/${projectId}/users/${userId}/token`),
       pullFeatures: async (pullToken: string): Promise<PulledFeature[]> => get('pull/features?inlineParameterWrapper=%22&withId=1', { headers: { Authorization: `Pull ${pullToken}` } }),
       resetPassword: (resetPassword: ResetPassword): Promise<void> => post('reset-password', resetPassword),
-      resetPasswordRequest: (resetPasswordRequest: ResetPasswordRequest): Promise<void> => post('reset-password-request', resetPasswordRequest),
       saveFeature: async (feature: UpdateFeature): Promise<Feature> => {
         const toSave = {
           ...feature,

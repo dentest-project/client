@@ -1,8 +1,10 @@
 import { login } from './endpoints/login'
 import { register } from './endpoints/register'
+import { requestPasswordReset } from './endpoints/requestPasswordReset'
 
 export const ketalApi = {
   login,
+  requestPasswordReset,
   register
 }
 

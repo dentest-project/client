@@ -10,14 +10,21 @@
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus'
-import type { ResetPasswordRequest } from '~/types'
+import {
+  RequestPasswordResetErrorCode,
+  isKetalJsonRpcError
+} from '~/api/ketal'
+import type {
+  RequestPasswordResetParams,
+  RequestPasswordResetTooEarlyErrorData
+} from '~/api/ketal'
 
 interface ResetPasswordFormOutput {
   password: string
 }
 
 const { query } = useRoute()
-const { $api, $router } = useNuxtApp()
+const { $api, $ketal, $router } = useNuxtApp()
 
 useHead({
   title: 'Password forgotten | Dentest',
@@ -33,20 +40,48 @@ definePageMeta({
 const code = typeof query.code === 'string' ? query.code : ''
 const isRequest: boolean = !code
 
-const onRequestSubmit = async (data: ResetPasswordRequest): Promise<void> => {
+const isRequestPasswordResetTooEarlyErrorData = (data: unknown): data is RequestPasswordResetTooEarlyErrorData =>
+  data !== null &&
+  typeof data === 'object' &&
+  typeof (data as { remainingMinutes?: unknown }).remainingMinutes === 'number'
+
+const formatMinutes = (minutes: number): string => `${minutes} minute${minutes > 1 ? 's' : ''}`
+
+const onRequestSubmit = async (data: RequestPasswordResetParams): Promise<void> => {
   try {
-    await $api.resetPasswordRequest(data)
+    await $ketal.requestPasswordReset(data)
     ElNotification({
       title: 'Request sent',
       message: 'We sent you a link to reset your password. Check your emails.',
       type: 'success',
     })
   } catch (error) {
-    ElNotification({
-      title: 'An error occurred',
-      message: 'An error occurred while attempting to request a password reset',
-      type: 'error',
-    })
+    if (isKetalJsonRpcError(error) && error.code === RequestPasswordResetErrorCode.UserNotFound) {
+      ElNotification({
+        title: 'Unknown account',
+        message: 'No account matches this username or email',
+        type: 'error',
+      })
+    } else if (
+      isKetalJsonRpcError(error) &&
+      error.code === RequestPasswordResetErrorCode.ResetPasswordRequestTooEarly
+    ) {
+      const message = isRequestPasswordResetTooEarlyErrorData(error.data)
+        ? `Please wait ${formatMinutes(error.data.remainingMinutes)} before requesting another reset link`
+        : 'Please wait before requesting another reset link'
+
+      ElNotification({
+        title: 'Request already sent',
+        message,
+        type: 'error',
+      })
+    } else {
+      ElNotification({
+        title: 'An error occurred',
+        message: 'An error occurred while attempting to request a password reset',
+        type: 'error',
+      })
+    }
   }
 }
 

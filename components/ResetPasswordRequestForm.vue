@@ -1,9 +1,9 @@
 <template>
   <form @submit.prevent="onSubmit">
     <el-input
-      v-model="email"
-      type="email"
-      placeholder="Email"
+      v-model="subject"
+      maxlength="255"
+      placeholder="Username or email"
       required
     />
     <el-input type="submit" value="Send me an email to reset my password" />
@@ -11,13 +11,18 @@
 </template>
 
 <script setup lang="ts">
-const email = ref('')
-const emit = defineEmits(['submit'])
+import type { RequestPasswordResetParams } from '~/api/ketal'
+
+const subject = ref('')
+
+const emit = defineEmits<{
+  submit: [value: RequestPasswordResetParams]
+}>()
 
 const onSubmit = () => {
-  emit('submit', {
-    email: email.value,
-  })
+  const value: RequestPasswordResetParams = { subject: subject.value }
+
+  emit('submit', value)
 }
 </script>
 

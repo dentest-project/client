@@ -477,11 +477,6 @@ interface ResetPassword {
   newPassword: string
 }
 
-interface ResetPasswordRequest {
-  email: string
-}
-
-
 interface Scenario {
   id: string,
   type: ScenarioType,
@@ -718,7 +713,6 @@ export {
   ProjectVisibility,
   PulledFeature,
   ResetPassword,
-  ResetPasswordRequest,
   SaveStatus,
   Scenario,
   ScenarioStep,
