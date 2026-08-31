@@ -1,11 +1,13 @@
 import { login } from './endpoints/login'
 import { register } from './endpoints/register'
 import { requestPasswordReset } from './endpoints/requestPasswordReset'
+import { resetPassword } from './endpoints/resetPassword'
 
 export const ketalApi = {
   login,
   requestPasswordReset,
-  register
+  resetPassword,
+  register,
 }
 
 export type KetalApi = typeof ketalApi

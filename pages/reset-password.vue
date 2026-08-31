@@ -12,19 +12,19 @@
 import { ElNotification } from 'element-plus'
 import {
   RequestPasswordResetErrorCode,
-  isKetalJsonRpcError
+  ResetPasswordErrorCode,
+  isRequestPasswordResetTooEarlyError,
+  isKetalJsonRpcError,
 } from '~/api/ketal'
 import type {
   RequestPasswordResetParams,
-  RequestPasswordResetTooEarlyErrorData
+  ResetPasswordParams,
 } from '~/api/ketal'
 
-interface ResetPasswordFormOutput {
-  password: string
-}
+type ResetPasswordFormOutput = Pick<ResetPasswordParams, 'password'>
 
 const { query } = useRoute()
-const { $api, $ketal, $router } = useNuxtApp()
+const { $ketal, $router } = useNuxtApp()
 
 useHead({
   title: 'Password forgotten | Dentest',
@@ -33,21 +33,19 @@ useHead({
 definePageMeta({
   auth: {
     unauthenticatedOnly: true,
-    navigateAuthenticatedTo: '/'
-  }
+    navigateAuthenticatedTo: '/',
+  },
 })
 
 const code = typeof query.code === 'string' ? query.code : ''
 const isRequest: boolean = !code
 
-const isRequestPasswordResetTooEarlyErrorData = (data: unknown): data is RequestPasswordResetTooEarlyErrorData =>
-  data !== null &&
-  typeof data === 'object' &&
-  typeof (data as { remainingMinutes?: unknown }).remainingMinutes === 'number'
+const formatMinutes = (minutes: number): string =>
+  `${minutes} minute${minutes > 1 ? 's' : ''}`
 
-const formatMinutes = (minutes: number): string => `${minutes} minute${minutes > 1 ? 's' : ''}`
-
-const onRequestSubmit = async (data: RequestPasswordResetParams): Promise<void> => {
+const onRequestSubmit = async (
+  data: RequestPasswordResetParams,
+): Promise<void> => {
   try {
     await $ketal.requestPasswordReset(data)
     ElNotification({
@@ -56,29 +54,26 @@ const onRequestSubmit = async (data: RequestPasswordResetParams): Promise<void> 
       type: 'success',
     })
   } catch (error) {
-    if (isKetalJsonRpcError(error) && error.code === RequestPasswordResetErrorCode.UserNotFound) {
+    if (
+      isKetalJsonRpcError(error) &&
+      error.code === RequestPasswordResetErrorCode.UserNotFound
+    ) {
       ElNotification({
         title: 'Unknown account',
         message: 'No account matches this username or email',
         type: 'error',
       })
-    } else if (
-      isKetalJsonRpcError(error) &&
-      error.code === RequestPasswordResetErrorCode.ResetPasswordRequestTooEarly
-    ) {
-      const message = isRequestPasswordResetTooEarlyErrorData(error.data)
-        ? `Please wait ${formatMinutes(error.data.remainingMinutes)} before requesting another reset link`
-        : 'Please wait before requesting another reset link'
-
+    } else if (isRequestPasswordResetTooEarlyError(error)) {
       ElNotification({
         title: 'Request already sent',
-        message,
+        message: `Please wait ${formatMinutes(error.data.remainingMinutes)} before requesting another reset link`,
         type: 'error',
       })
     } else {
       ElNotification({
         title: 'An error occurred',
-        message: 'An error occurred while attempting to request a password reset',
+        message:
+          'An error occurred while attempting to request a password reset',
         type: 'error',
       })
     }
@@ -87,20 +82,25 @@ const onRequestSubmit = async (data: RequestPasswordResetParams): Promise<void> 
 
 const onSubmit = async (data: ResetPasswordFormOutput): Promise<void> => {
   try {
-    await $api.resetPassword({
+    await $ketal.resetPassword({
       code,
-      newPassword: data.password,
+      password: data.password,
     })
     ElNotification({
       title: 'Password reset!',
       message: 'Your password was successfully reset',
       type: 'success',
     })
-    setTimeout(() => { $router.push('/login') }, 2000)
+    setTimeout(() => {
+      $router.push('/login')
+    }, 2000)
   } catch (error) {
-    if (error.statusCode === 404) {
+    if (
+      isKetalJsonRpcError(error) &&
+      error.code === ResetPasswordErrorCode.UserNotFound
+    ) {
       ElNotification({
-        title: 'We couldn\'t reset your password',
+        title: "We couldn't reset your password",
         message: 'It seems the link you used was not valid',
         type: 'error',
       })

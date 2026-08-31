@@ -5,6 +5,7 @@
       placeholder="New password"
       type="password"
       minlength="8"
+      maxlength="100"
       show-password
       show-word-limit
       required
@@ -15,8 +16,13 @@
 </template>
 
 <script setup lang="ts">
+import type { ResetPasswordParams } from '~/api/ketal'
+
 const password = ref('')
-const emit = defineEmits(['submit'])
+
+const emit = defineEmits<{
+  submit: [value: Pick<ResetPasswordParams, 'password'>]
+}>()
 
 const onSubmit = () => {
   emit('submit', {

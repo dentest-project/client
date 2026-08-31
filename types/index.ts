@@ -472,11 +472,6 @@ interface ProjectUserToken {
   token: string
 }
 
-interface ResetPassword {
-  code: string,
-  newPassword: string
-}
-
 interface Scenario {
   id: string,
   type: ScenarioType,
@@ -712,7 +707,6 @@ export {
   ProjectUserToken,
   ProjectVisibility,
   PulledFeature,
-  ResetPassword,
   SaveStatus,
   Scenario,
   ScenarioStep,
