@@ -18,6 +18,7 @@ SMOKE_TEST_PATH="${SMOKE_TEST_PATH:-/}"
 DRAIN_SECONDS="${DRAIN_SECONDS:-30}"
 SERVER_NAME="${SERVER_NAME:-_}"
 PROXY_STARTED_BY_DEPLOY=0
+PROXY_RECREATED_BY_DEPLOY=0
 STOPPED_LEGACY_MAIN_IDS=""
 
 export COMPOSE_PROJECT_NAME
@@ -158,13 +159,25 @@ install_proxy_conf() {
     cp "$PROXY_CONF" "${PROXY_CONF}.previous"
   fi
 
-  mv "${PROXY_CONF}.next" "$PROXY_CONF"
+  # The proxy bind-mounts this file directly. Keep its inode when it already
+  # exists so a running container sees the new contents before nginx reloads.
+  cp "${PROXY_CONF}.next" "$PROXY_CONF"
+  rm -f "${PROXY_CONF}.next"
 }
 
 restore_previous_proxy_conf() {
   if [ -f "${PROXY_CONF}.previous" ]; then
-    mv "${PROXY_CONF}.previous" "$PROXY_CONF"
+    # Roll back in place for the same bind-mount reason as installation.
+    cp "${PROXY_CONF}.previous" "$PROXY_CONF"
+    rm -f "${PROXY_CONF}.previous"
   fi
+}
+
+proxy_mount_has_current_config() {
+  host_checksum="$(sha256sum "$PROXY_CONF" | awk '{print $1}')"
+  mounted_checksum="$(compose exec -T proxy sha256sum /etc/nginx/conf.d/default.conf 2>/dev/null | awk '{print $1}')"
+
+  [ -n "$mounted_checksum" ] && [ "$mounted_checksum" = "$host_checksum" ]
 }
 
 reload_proxy() {
@@ -180,6 +193,9 @@ rollback_proxy_switch() {
 
     if [ "$PROXY_STARTED_BY_DEPLOY" != "1" ] && is_running "$proxy_id"; then
       reload_proxy || true
+    elif [ "$PROXY_RECREATED_BY_DEPLOY" = "1" ]; then
+      log "Restarting proxy with the previous configuration"
+      compose up -d --force-recreate --no-deps proxy || true
     fi
   fi
 
@@ -354,6 +370,23 @@ reload_or_start_proxy() {
   proxy_id="$(compose ps -q proxy 2>/dev/null || true)"
 
   if is_running "$proxy_id"; then
+    if ! proxy_mount_has_current_config; then
+      log "Recreating proxy to refresh its stale configuration bind mount"
+
+      if ! validate_proxy_config_standalone; then
+        rollback_proxy_switch
+        return 1
+      fi
+
+      PROXY_RECREATED_BY_DEPLOY=1
+      if compose up -d --force-recreate --no-deps proxy && compose exec -T proxy nginx -t; then
+        return
+      fi
+
+      rollback_proxy_switch
+      return 1
+    fi
+
     if reload_proxy; then
       return
     fi
