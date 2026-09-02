@@ -21,7 +21,7 @@ const apiEndpoint = (path: string): string =>
 const isDevServer =
   process.env.NODE_ENV === 'development' &&
   process.env.npm_lifecycle_event !== 'build'
-const hmrConfig =
+const wsConfig =
   hmrHost || hmrPort || hmrClientPort || hmrProtocol
     ? {
         ...(hmrHost ? { host: hmrHost } : {}),
@@ -118,6 +118,11 @@ export default defineNuxtConfig({
   devtools: {
     enabled: devtoolsEnabled,
   },
+  vue: {
+    compilerOptions: {
+      whitespace: 'condense',
+    },
+  },
   /*
    ** Global CSS
    */
@@ -136,10 +141,6 @@ export default defineNuxtConfig({
     '~/plugins/routes.ts',
     '~/plugins/vue-json-pretty.ts',
   ],
-  /*
-   ** Nuxt.js dev-modules
-   */
-  buildModules: [],
   /*
    ** Nuxt.js modules
    */
@@ -160,12 +161,6 @@ export default defineNuxtConfig({
     'pages:extend'(pages) {
       pages.push(...projectCompatibilityRoutes)
     },
-  },
-  /*
-   ** Build configuration
-   */
-  build: {
-    vendor: ['vue-slider-component'],
   },
   auth: {
     baseURL: '/api/auth',
@@ -192,13 +187,6 @@ export default defineNuxtConfig({
     },
     addDefaultCallbackUrl: '/',
   },
-  loaders: {
-    vue: {
-      compilerOptions: {
-        preserveWhiteSpace: false,
-      },
-    },
-  },
   vite: {
     resolve: {
       alias: {
@@ -214,7 +202,7 @@ export default defineNuxtConfig({
         usePolling: true,
         interval: 100,
       },
-      ...(hmrConfig ? { hmr: hmrConfig } : {}),
+      ...(wsConfig ? { ws: wsConfig } : {}),
     },
   },
 })
