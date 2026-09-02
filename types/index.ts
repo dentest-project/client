@@ -489,9 +489,7 @@ interface ScenarioStep {
   priority: number
 }
 
-interface Session {
-  user: User
-}
+type Session = User
 
 interface CreateStep {
   id: string
@@ -621,8 +619,7 @@ interface UpdateStep {
 }
 
 interface User extends BaseUser {
-  email: string,
-  roles: RoleList
+  email: string
 }
 
 type BreadcrumbItems = Array<BreadcrumbItem>
@@ -633,8 +630,6 @@ type OrganizationUserList = Array<OrganizationUser>
 type PathList = Array<Path>
 type ProjectList = Array<Project>
 type ProjectUserList = Array<ProjectUser>
-type RoleList = Array<string>
-
 function isInlineStepParam(param: StepParam): param is InlineStepParam {
   return 'content' in param && typeof 'content' === 'string' && 'stepPart' in param;
 }

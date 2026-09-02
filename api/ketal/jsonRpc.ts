@@ -3,18 +3,26 @@ import { KetalJsonRpcError, KetalTransportError } from './errors'
 import type {
   JsonRpcFailureResponse,
   JsonRpcRequest,
-  JsonRpcSuccessResponse
+  JsonRpcSuccessResponse,
 } from './types'
 
 const JSON_RPC_VERSION = '2.0'
 let ketalBaseUrl = ''
+
+export interface CallKetalMethodOptions {
+  authorization?: string
+  baseUrl?: string
+}
 
 export const setKetalBaseUrl = (value: string) => {
   ketalBaseUrl = value
 }
 
 const createRequestId = (): string => {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
     return crypto.randomUUID()
   }
 
@@ -24,39 +32,59 @@ const createRequestId = (): string => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object'
 
-const isJsonRpcSuccessResponse = <TResult>(value: unknown): value is JsonRpcSuccessResponse<TResult> =>
+const isJsonRpcSuccessResponse = <TResult>(
+  value: unknown,
+): value is JsonRpcSuccessResponse<TResult> =>
   isRecord(value) && value.jsonrpc === JSON_RPC_VERSION && 'result' in value
 
-const isJsonRpcFailureResponse = (value: unknown): value is JsonRpcFailureResponse =>
+const isJsonRpcFailureResponse = (
+  value: unknown,
+): value is JsonRpcFailureResponse =>
   isRecord(value) &&
   value.jsonrpc === JSON_RPC_VERSION &&
   isRecord(value.error) &&
   typeof value.error.code === 'number' &&
   typeof value.error.message === 'string'
 
-const assertMatchingResponseId = (requestId: string, responseId: JsonRpcSuccessResponse<unknown>['id']): void => {
+const assertMatchingResponseId = (
+  requestId: string,
+  responseId: JsonRpcSuccessResponse<unknown>['id'],
+): void => {
   if (responseId !== requestId) {
-    throw new KetalTransportError('Ketal returned a JSON-RPC response for another request')
+    throw new KetalTransportError(
+      'Ketal returned a JSON-RPC response for another request',
+    )
   }
 }
 
-export const callKetalMethod = async <TParams extends object, TResult>(
+export const callKetalMethod = async <
+  TParams extends object | undefined,
+  TResult,
+>(
   method: string,
-  params: TParams
+  params: TParams,
+  options: CallKetalMethodOptions = {},
 ): Promise<TResult> => {
   const request: JsonRpcRequest<TParams> = {
     jsonrpc: JSON_RPC_VERSION,
     id: createRequestId(),
     method,
-    params
+    ...(params === undefined ? {} : { params }),
   }
 
   try {
-    const response = await axios.post<unknown>(ketalBaseUrl, request, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    const response = await axios.post<unknown>(
+      options.baseUrl ?? ketalBaseUrl,
+      request,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.authorization
+            ? { Authorization: options.authorization }
+            : {}),
+        },
+      },
+    )
 
     if (isJsonRpcFailureResponse(response.data)) {
       const { error } = response.data
@@ -65,7 +93,9 @@ export const callKetalMethod = async <TParams extends object, TResult>(
     }
 
     if (!isJsonRpcSuccessResponse<TResult>(response.data)) {
-      throw new KetalTransportError('Ketal returned an invalid JSON-RPC response')
+      throw new KetalTransportError(
+        'Ketal returned an invalid JSON-RPC response',
+      )
     }
 
     assertMatchingResponseId(request.id, response.data.id)
@@ -73,7 +103,11 @@ export const callKetalMethod = async <TParams extends object, TResult>(
     return response.data.result
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new KetalTransportError(error.message, error.response?.status ?? 502, error)
+      throw new KetalTransportError(
+        error.message,
+        error.response?.status ?? 502,
+        error,
+      )
     }
 
     throw error

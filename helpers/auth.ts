@@ -2,15 +2,19 @@ import type { Session, User } from '~/types'
 import type { LoginParams } from '~/api/ketal'
 
 const loggedInUser = (sessionData?: Session | null): User => {
-  return sessionData ? sessionData.user : {
-    id: '',
-    username: '',
-    email: '',
-    roles: []
-  }
+  return (
+    sessionData ?? {
+      id: '',
+      username: '',
+      email: '',
+    }
+  )
 }
 
-const isAuthenticated = (sessionStatus: string, sessionData?: Session | null) => {
+const isAuthenticated = (
+  sessionStatus: string,
+  sessionData?: Session | null,
+) => {
   if (sessionStatus === 'authenticated') {
     return true
   }

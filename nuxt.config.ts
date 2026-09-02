@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve as resolvePath } from 'node:path'
-import { Session } from './types'
 
 // @ts-ignore
 const hmrHost = process.env.HMR_HOST
@@ -17,6 +16,8 @@ const ketalUrl =
   process.env.NUXT_PUBLIC_KETAL_URL ||
   process.env.KETAL_URL ||
   'http://ketal.dentest.local/rpc'
+const apiEndpoint = (path: string): string =>
+  `${apiUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
 const isDevServer =
   process.env.NODE_ENV === 'development' &&
   process.env.npm_lifecycle_event !== 'build'
@@ -166,17 +167,24 @@ export default defineNuxtConfig({
     vendor: ['vue-slider-component'],
   },
   auth: {
-    baseURL: `${apiUrl}/`,
+    baseURL: '/api/auth',
+    disableInternalRouting: false,
     globalAppMiddleware: true,
     provider: {
       type: 'local',
       endpoints: {
-        signIn: { path: '/login', method: 'post' },
-        signOut: { path: '/logout', method: 'post' },
-        signUp: { path: '/register', method: 'post' },
-        getSession: { path: '/me', method: 'get' },
+        signIn: { path: apiEndpoint('/login'), method: 'post' },
+        signOut: { path: apiEndpoint('/logout'), method: 'post' },
+        signUp: { path: apiEndpoint('/register'), method: 'post' },
+        getSession: { path: '/session', method: 'get' },
       },
-      sessionDataType: Session,
+      session: {
+        dataType: {
+          id: 'string',
+          username: 'string',
+          email: 'string',
+        },
+      },
       token: {
         maxAgeInSeconds: 31557600,
       },
