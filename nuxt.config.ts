@@ -30,6 +30,11 @@ const hmrConfig =
         ...(hmrProtocol ? { protocol: hmrProtocol } : {}),
       }
     : undefined
+const devtoolsEnabled =
+  isDevServer &&
+  (process.env.NUXT_DEVTOOLS_ENABLED === undefined
+    ? hmrClientPort === undefined
+    : process.env.NUXT_DEVTOOLS_ENABLED === 'true')
 
 const projectCompatibilityRoutes = [
   {
@@ -110,12 +115,8 @@ const projectCompatibilityRoutes = [
 ]
 
 export default defineNuxtConfig({
-  alias: {
-    ...(isDevServer
-      ? {
-          '#app-manifest': resolvePath('.nuxt/manifest/meta/dev.json'),
-        }
-      : {}),
+  devtools: {
+    enabled: devtoolsEnabled,
   },
   /*
    ** Global CSS
@@ -199,6 +200,15 @@ export default defineNuxtConfig({
     },
   },
   vite: {
+    resolve: {
+      alias: {
+        ...(isDevServer
+          ? {
+              '#app-manifest': resolvePath('config/app-manifest.dev.json'),
+            }
+          : {}),
+      },
+    },
     server: {
       watch: {
         usePolling: true,

@@ -4,7 +4,12 @@
       <form @submit.prevent="onSubmit">
         <el-input v-model="projectName" placeholder="Project name" autofocus required clearable />
         <el-select v-model="projectVisibility">
-          <el-option v-for="visibility of visibilities" :label="visibility.label" :value="visibility.value" />
+          <el-option
+            v-for="visibility of visibilities"
+            :key="visibility.value"
+            :label="visibility.label"
+            :value="visibility.value"
+          />
         </el-select>
         <el-input type="submit" value="Create project" />
       </form>
@@ -16,10 +21,15 @@
 import { ElNotification } from 'element-plus'
 import { type CreateProject, type Organization, ProjectVisibility } from '~/types'
 
-const props = defineProps<{
-  modelValue: boolean
-  organization?: Organization
-}>()
+const props = withDefaults(
+  defineProps<{
+    modelValue?: boolean
+    organization?: Organization
+  }>(),
+  {
+    modelValue: false,
+  },
+)
 const { $api } = useNuxtApp()
 
 const emit = defineEmits(['created', 'update:modelValue'])

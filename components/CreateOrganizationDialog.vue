@@ -12,9 +12,14 @@
 <script setup lang="ts">
 import { ElNotification } from 'element-plus'
 
-defineProps<{
-  modelValue: boolean
-}>()
+withDefaults(
+  defineProps<{
+    modelValue?: boolean
+  }>(),
+  {
+    modelValue: false,
+  },
+)
 const { $api } = useNuxtApp()
 
 const emit = defineEmits(['created', 'update:modelValue'])
