@@ -584,12 +584,6 @@ interface UpdateDomainEntityRequest extends CreateDomainEntityRequest {
   id: string
 }
 
-interface UpdateMe {
-  username: string,
-  email: string
-  password?: string
-}
-
 interface UpdateOrganizationName {
   id: string,
   name: string
@@ -725,7 +719,6 @@ export {
   UpdateFeatureStatus,
   UpdateDomainFixtureRequest,
   UpdateDomainEntityRequest,
-  UpdateMe,
   UpdateOrganizationName,
   UpdatePath,
   UpdatePathParent,

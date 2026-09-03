@@ -7,13 +7,17 @@
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus'
-import type { UpdateMe } from '~/types'
+import {
+  UpdateMyPersonalInformationErrorCode,
+  isKetalJsonRpcError,
+} from '~/api/ketal'
+import type { UpdateMyPersonalInformationParams } from '~/api/ketal'
 
-const { $api } = useNuxtApp()
-const { signOut } = useAuth()
+const { $api, $ketal } = useNuxtApp()
+const { getSession, signOut, token } = useAuth()
 
 useHead({
-  title: 'Update profile | Dentest'
+  title: 'Update profile | Dentest',
 })
 
 const onDelete = async () => {
@@ -36,9 +40,18 @@ const onDelete = async () => {
   }
 }
 
-const onSubmit = async (data: UpdateMe) => {
+const onSubmit = async (
+  data: UpdateMyPersonalInformationParams,
+): Promise<void> => {
   try {
-    await $api.updateMe(data)
+    if (!token.value) {
+      throw new Error('Authentication token is missing')
+    }
+
+    await $ketal.updateMyPersonalInformation(data, {
+      authorization: token.value,
+    })
+    await getSession()
 
     ElNotification({
       title: 'Account updated',
@@ -46,7 +59,10 @@ const onSubmit = async (data: UpdateMe) => {
       type: 'success',
     })
   } catch (error) {
-    if (error.statusCode === 409) {
+    if (
+      isKetalJsonRpcError(error) &&
+      error.code === UpdateMyPersonalInformationErrorCode.UserAlreadyExists
+    ) {
       ElNotification({
         title: 'Already taken',
         message: 'This email or username is already existing.',

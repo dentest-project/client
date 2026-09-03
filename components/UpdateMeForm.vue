@@ -2,12 +2,14 @@
   <form @submit.prevent="onSubmit">
     <el-input
       v-model="username"
+      maxlength="50"
       placeholder="Username"
       required
     />
     <el-input
       v-model="email"
       type="email"
+      maxlength="255"
       placeholder="Email"
       required
     />
@@ -16,6 +18,7 @@
       type="password"
       placeholder="Password"
       minlength="8"
+      maxlength="64"
       show-word-limit
       show-password
     />
@@ -43,6 +46,7 @@
 
 <script setup lang="ts">
 import { WarningFilled } from '@element-plus/icons-vue'
+import type { UpdateMyPersonalInformationParams } from '~/api/ketal'
 import { loggedInUser } from '~/helpers/auth'
 
 const { data } = useAuth()
@@ -51,24 +55,29 @@ const username = ref(loggedInUser(data.value).username)
 const email = ref(loggedInUser(data.value).email)
 const password = ref('')
 
-const emit = defineEmits(['delete', 'submit'])
+const emit = defineEmits<{
+  (event: 'delete'): void
+  (event: 'submit', value: UpdateMyPersonalInformationParams): void
+}>()
 
 const onDeleteButtonClicked = () => {
   emit('delete')
 }
 
-
 const onSubmit = () => {
-  emit('submit', {
+  const value: UpdateMyPersonalInformationParams = {
     username: username.value,
     email: email.value,
-    password: password.value.length ? password.value : undefined,
-  })
+    ...(password.value.length ? { password: password.value } : {}),
+  }
+
+  emit('submit', value)
 }
 </script>
 
 <style scoped>
-form .el-input, form .el-button {
+form .el-input,
+form .el-button {
   margin: 0.5rem;
   width: 100%;
 }

@@ -2,6 +2,7 @@ import { login } from './endpoints/login'
 import { register } from './endpoints/register'
 import { requestPasswordReset } from './endpoints/requestPasswordReset'
 import { resetPassword } from './endpoints/resetPassword'
+import { updateMyPersonalInformation } from './endpoints/updateMyPersonalInformation'
 import { whoAmI } from './endpoints/whoAmI'
 
 export const ketalApi = {
@@ -9,6 +10,7 @@ export const ketalApi = {
   requestPasswordReset,
   resetPassword,
   register,
+  updateMyPersonalInformation,
   whoAmI,
 }
 
