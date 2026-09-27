@@ -34,7 +34,6 @@
           @update:model-value="onTagsSelected"
         />
         <TagsList v-else :tags="feature.tags" />
-        <AISummaryPanel v-if="feature.status === FeatureStatus.Live && featureSummary" :summary="featureSummary" />
         <Panel v-else type="info">
           <EditableParagraph
             placeholder="Feature description"
