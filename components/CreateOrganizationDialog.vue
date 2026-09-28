@@ -1,8 +1,19 @@
 <template>
   <client-only>
-    <el-dialog :model-value="modelValue" @update:model-value="onDialogStatusChanged" title="Create an organization">
+    <el-dialog
+      :model-value="modelValue"
+      @update:model-value="onDialogStatusChanged"
+      title="Create an organization"
+    >
       <form @submit.prevent="onSubmit">
-        <el-input v-model="organizationName" placeholder="Organization name" autofocus required clearable />
+        <el-input
+          v-model="organizationName"
+          placeholder="Organization name"
+          maxlength="255"
+          autofocus
+          required
+          clearable
+        />
         <el-input type="submit" value="Create organization" />
       </form>
     </el-dialog>
@@ -11,6 +22,7 @@
 
 <script setup lang="ts">
 import { ElNotification } from 'element-plus'
+import { CreateOrganizationErrorCode, isKetalJsonRpcError } from '~/api/ketal'
 
 withDefaults(
   defineProps<{
@@ -20,7 +32,8 @@ withDefaults(
     modelValue: false,
   },
 )
-const { $api } = useNuxtApp()
+const { $ketal } = useNuxtApp()
+const { token } = useAuth()
 
 const emit = defineEmits(['created', 'update:modelValue'])
 
@@ -32,7 +45,10 @@ const onSubmit = async () => {
   }
 
   try {
-    await $api.createOrganization({ name: organizationName.value, permissions: [] })
+    await $ketal.createOrganization(
+      { name: organizationName.value.trim() },
+      { authorization: token.value! },
+    )
 
     ElNotification({
       title: 'Organization created',
@@ -45,7 +61,10 @@ const onSubmit = async () => {
 
     organizationName.value = ''
   } catch (error) {
-    if (error.statusCode === 409) {
+    if (
+      isKetalJsonRpcError(error) &&
+      error.code === CreateOrganizationErrorCode.OrganizationAlreadyExists
+    ) {
       ElNotification({
         title: 'Already taken',
         message: 'The organization name already exists on Dentest',
