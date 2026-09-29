@@ -102,7 +102,6 @@ export default defineNuxtPlugin(() => {
       createDomainFixture: async (projectId: string, domainFixture: CreateDomainFixtureRequest): Promise<DomainFixture> =>
         post(`projects/${projectId}/fixtures`, domainFixture),
       createFeature: async (feature: CreateFeature): Promise<Feature> => post('features', feature),
-      createOrganizationUser: async (organization: Organization, user: BaseUser): Promise<OrganizationUser> => post(`organizations/${organization.id}/users/${user.id}`, {}),
       createPath: async (path: CreatePath): Promise<Path> => post('paths', path),
       createProject: async (project: CreateProject): Promise<Project> => post('projects', project),
       createProjectUser: async (project: Project, user: BaseUser): Promise<ProjectUser> => post(`projects/${project.id}/users/${user.id}`, {}),

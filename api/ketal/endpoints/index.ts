@@ -1,3 +1,4 @@
+export * from './addUserToOrganization'
 export * from './createOrganization'
 export * from './login'
 export * from './register'

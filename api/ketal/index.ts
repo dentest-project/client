@@ -1,3 +1,4 @@
+import { addUserToOrganization } from './endpoints/addUserToOrganization'
 import { createOrganization } from './endpoints/createOrganization'
 import { login } from './endpoints/login'
 import { register } from './endpoints/register'
@@ -7,6 +8,7 @@ import { updateMyPersonalInformation } from './endpoints/updateMyPersonalInforma
 import { whoAmI } from './endpoints/whoAmI'
 
 export const ketalApi = {
+  addUserToOrganization,
   createOrganization,
   login,
   requestPasswordReset,

@@ -15,9 +15,19 @@
 
 <script setup async lang="ts">
 import { ElNotification } from 'element-plus'
-import { type BaseUser, type BreadcrumbItems, Context, type OrganizationUser } from '~/types'
+import {
+  AddUserToOrganizationErrorCode,
+  isKetalJsonRpcError,
+} from '~/api/ketal'
+import {
+  type BaseUser,
+  type BreadcrumbItems,
+  Context,
+  type OrganizationUser,
+} from '~/types'
 
-const { $api, $routes } = useNuxtApp()
+const { $api, $ketal, $routes } = useNuxtApp()
+const { token } = useAuth()
 const { params } = useRoute()
 
 const organization = ref(await $api.getOrganization(params.organizationSlug))
@@ -25,7 +35,10 @@ const users = ref(await $api.getOrganizationUsers(params.organizationSlug))
 
 const onUserAdded = async (user: BaseUser) => {
   try {
-    await $api.createOrganizationUser(organization.value, user)
+    await $ketal.addUserToOrganization(
+      { organizationId: organization.value.id!, userId: user.id },
+      { authorization: token.value! },
+    )
     ElNotification({
       title: 'User added',
       message: 'The user has been successfully added to the organization',
@@ -33,7 +46,11 @@ const onUserAdded = async (user: BaseUser) => {
     })
     await reload()
   } catch (error) {
-    if (error.statusCode === 409) {
+    if (
+      isKetalJsonRpcError(error) &&
+      error.code ===
+        AddUserToOrganizationErrorCode.UserAlreadyPartOfOrganization
+    ) {
       ElNotification({
         title: 'User already in',
         message: 'The user is already part of the organization',
@@ -61,7 +78,8 @@ const onUserRemoved = async (user: OrganizationUser) => {
   } catch (error) {
     ElNotification({
       title: 'An error occurred',
-      message: 'An error occurred while removing the user from the organization',
+      message:
+        'An error occurred while removing the user from the organization',
       type: 'error',
     })
   }
@@ -69,7 +87,11 @@ const onUserRemoved = async (user: OrganizationUser) => {
 
 const onUserUpdated = async (user: OrganizationUser) => {
   try {
-    await $api.updateOrganizationUser(organization.value.id, user.user.id, user.permissions)
+    await $api.updateOrganizationUser(
+      organization.value.id,
+      user.user.id,
+      user.permissions,
+    )
     ElNotification({
       title: 'User updated',
       message: 'The organization user has been successfully updated',
@@ -89,20 +111,22 @@ const reload = async () => {
   users.value = await $api.getOrganizationUsers(params.organizationSlug)
 }
 
-const breadcrumb = computed((): BreadcrumbItems => [
-  {
-    text: organization.value.name,
-    href: $routes.organization(organization.value.slug),
-    disabled: false,
-  },
-  {
-    text: 'Users',
-    href: '',
-    disabled: true,
-  }
-])
+const breadcrumb = computed(
+  (): BreadcrumbItems => [
+    {
+      text: organization.value.name,
+      href: $routes.organization(organization.value.slug),
+      disabled: false,
+    },
+    {
+      text: 'Users',
+      href: '',
+      disabled: true,
+    },
+  ],
+)
 
 useHead({
-  title: `Users - ${organization.value.name} | Dentest`
+  title: `Users - ${organization.value.name} | Dentest`,
 })
 </script>
