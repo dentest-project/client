@@ -6,7 +6,9 @@
         <span class="title">{{ organization.name }}</span>
       </div>
     </template>
-    <NuxtLink :to="$routes.organization(organization.slug)" class="el-button">See organization</NuxtLink>
+    <NuxtLink :to="$routes.organization(organization.slug)" class="el-button"
+      >See organization</NuxtLink
+    >
   </el-card>
 </template>
 
@@ -15,7 +17,7 @@ import { OfficeBuilding } from '@element-plus/icons-vue'
 import type { Organization } from '~/types'
 
 defineProps<{
-  organization: Organization
+  organization: Pick<Organization, 'name' | 'slug'>
 }>()
 </script>
 

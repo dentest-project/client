@@ -33,7 +33,6 @@ withDefaults(
   },
 )
 const { $ketal } = useNuxtApp()
-const { token } = useAuth()
 
 const emit = defineEmits(['created', 'update:modelValue'])
 
@@ -45,10 +44,7 @@ const onSubmit = async () => {
   }
 
   try {
-    await $ketal.createOrganization(
-      { name: organizationName.value.trim() },
-      { authorization: token.value! },
-    )
+    await $ketal.createOrganization({ name: organizationName.value.trim() })
 
     ElNotification({
       title: 'Organization created',

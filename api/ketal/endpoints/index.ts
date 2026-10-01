@@ -1,5 +1,6 @@
 export * from './addUserToOrganization'
 export * from './createOrganization'
+export * from './listMyOrganizations'
 export * from './login'
 export * from './register'
 export * from './requestPasswordReset'

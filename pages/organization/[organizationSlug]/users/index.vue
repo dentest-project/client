@@ -27,7 +27,6 @@ import {
 } from '~/types'
 
 const { $api, $ketal, $routes } = useNuxtApp()
-const { token } = useAuth()
 const { params } = useRoute()
 
 const organization = ref(await $api.getOrganization(params.organizationSlug))
@@ -35,10 +34,10 @@ const users = ref(await $api.getOrganizationUsers(params.organizationSlug))
 
 const onUserAdded = async (user: BaseUser) => {
   try {
-    await $ketal.addUserToOrganization(
-      { organizationId: organization.value.id!, userId: user.id },
-      { authorization: token.value! },
-    )
+    await $ketal.addUserToOrganization({
+      organizationId: organization.value.id!,
+      userId: user.id,
+    })
     ElNotification({
       title: 'User added',
       message: 'The user has been successfully added to the organization',

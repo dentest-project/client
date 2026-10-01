@@ -14,7 +14,7 @@ import {
 import type { UpdateMyPersonalInformationParams } from '~/api/ketal'
 
 const { $api, $ketal } = useNuxtApp()
-const { getSession, signOut, token } = useAuth()
+const { getSession, signOut } = useAuth()
 
 useHead({
   title: 'Update profile | Dentest',
@@ -44,13 +44,7 @@ const onSubmit = async (
   data: UpdateMyPersonalInformationParams,
 ): Promise<void> => {
   try {
-    if (!token.value) {
-      throw new Error('Authentication token is missing')
-    }
-
-    await $ketal.updateMyPersonalInformation(data, {
-      authorization: token.value,
-    })
+    await $ketal.updateMyPersonalInformation(data)
     await getSession()
 
     ElNotification({
